@@ -1,0 +1,61 @@
+@media only screen and (min-width: 1440px) and (max-width: 1919px) {
+  .h3 {
+    font-size: 18px;
+  }
+  .h2 {
+    font-size: 55px;
+  }
+  .p {
+    font-size: 15px;
+  }
+
+  .O_Menubar {
+    .A_Carina {
+      height: 45px;
+      width: 45px;
+    }
+    .M_MenuLinks {
+      padding: 16px 40px;
+      border-radius: 100px;
+      height: 45px;
+    }
+  }
+  .S_Main {
+    margin-top: 4vh;
+    width: 1400px;
+    max-height: 82vh;
+    .O_Music {
+      max-height: 120px;
+    }
+    .W_Grid {
+      min-height: 500px;
+
+      & > div {
+        border-radius: 30px;
+      }
+
+      .O_Offtop {
+        border-radius: 30px;
+      }
+
+      .O_CV {
+        .A_CV {
+          .Q_CV {
+            .Q_CV {
+              font-size: 140px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1439px) {
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+}
+
+@media only screen and (min-device-width: 0px) and (max-device-width: 767px) {
+}
