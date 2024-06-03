@@ -19,7 +19,25 @@
             </div>
         
         </a></div>
-        <div class = "O_MyLove"></div>
+
+        <% if @happiness_samples.present? %>
+        <% @happiness_samples.each do |happiness| %>
+          <div class="O_Happiness">
+            <div class ="W_HappinessTexts" >
+                <div class = "HappinessDate h3">меня порадовало</div>
+                <div class ="W_HappinessTexts2" >
+                    <div class = "HappinessDate h3"><%= happiness.date %></div>
+                    <div class = "HappinessText h3"><%= happiness.text %></div>
+                </div>
+            </div>
+            <% if happiness.image.present? %>
+                <%= image_tag "happiness/#{happiness.image}", alt: "Image for #{happiness.text}" %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+        
+        
         <div class = "O_Connect">
             <a href="https://t.me/okonnaya">
                 <svg width="775" height="779" viewBox="0 0 775 779" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,8 +49,16 @@
             </a>
         </div>
         <div class = "O_SomethingGood h3">что-то хорошее</div>
-        <div class = "O_MyCaps"></div>
-        <div class = "O_Hse"><a href="https://portfolio.hse.ru/Student/17433"></a></div>
+        <div class = "O_MyCaps">
+        <%= link_to "", caps_show_path, class: "A_CapsLink" %>
+        <%= image_tag random_image_from_caps if random_image_from_caps %>
+
+        </div>
+        <div class = "O_Hse"><a href="https://portfolio.hse.ru/Student/17433"></a>
+            <div class = "A_HseText h3"> студенческое портфолио </div>
+            <%= image_tag 'hselogo.png', class: 'A_HseImg' %>
+            
+        </div>
         <div class = "O_Pic"></div>
         
     </div>

@@ -142,9 +142,21 @@
         padding: 10px;
       }
     }
-    .O_MyLove {
+    .O_Happiness {
       grid-column: 1/5;
       grid-row: 2/4;
+      display: flex;
+      flex-direction: row;
+      padding: 2.4vh;
+      gap: 2vh;
+      .W_HappinessTexts {
+      }
+      img {
+        flex-basis: 0;
+        max-width: 40%;
+        // object-fit: contain;
+        border-radius: 20px;
+      }
     }
     .O_TgChannel {
       grid-column: 10;
@@ -205,6 +217,24 @@
     .O_Hse {
       grid-column: 5/7;
       grid-row: 4/6;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5vh;
+      position: relative;
+      a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+      }
+      .A_HseText {
+      }
+      .A_HseImg {
+        max-width: 70%;
+      }
     }
     .O_SomethingGood {
       grid-column: 2/4;
@@ -216,6 +246,22 @@
     .O_MyCaps {
       grid-column: 4;
       grid-row: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      img {
+        // height: 80%;
+        width: 80%;
+      }
+      a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+      }
     }
   }
 }
