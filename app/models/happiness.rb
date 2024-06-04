@@ -1,0 +1,2 @@
+class Happiness < ApplicationRecord
+end

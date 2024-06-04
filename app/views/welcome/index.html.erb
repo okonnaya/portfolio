@@ -24,14 +24,16 @@
         <% @happiness_samples.each do |happiness| %>
           <div class="O_Happiness">
             <div class ="W_HappinessTexts" >
-                <div class = "HappinessDate h3">меня порадовало</div>
                 <div class ="W_HappinessTexts2" >
-                    <div class = "HappinessDate h3"><%= happiness.date %></div>
-                    <div class = "HappinessText h3"><%= happiness.text %></div>
+                    <div class = "HappinessHead h3">меня порадовало</div>
+                     <div class = "HappinessText h3"><%= happiness.text %></div>
                 </div>
+                <div class = "HappinessDate h3"><%= happiness.date %></div>
             </div>
             <% if happiness.image.present? %>
+            <div class = "A_HappinessImageContainer">
                 <%= image_tag "happiness/#{happiness.image}", alt: "Image for #{happiness.text}" %>
+                </div>
             <% end %>
           </div>
         <% end %>
