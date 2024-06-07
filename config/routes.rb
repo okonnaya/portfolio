@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   get 'happiness/show'
-  get 'caps/show'
   get 'welcome/index'
   get 'happiness/show'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -12,7 +11,7 @@ Rails.application.routes.draw do
   resources :happiness, only: [:show, :index]
   resources :caps, only: [:show]
   
-
+  get 'caps', to: 'caps#show'
   get 'offtop', to: 'offtop#index'
   get 'work', to: 'work#index'
 end
