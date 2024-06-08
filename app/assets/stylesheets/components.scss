@@ -364,9 +364,9 @@
       display: grid;
       align-items: stretch;
       width: 100%;
-      min-height: 1000px;
+      min-height: 1200px;
       grid-template-columns: repeat(12, 1fr);
-      grid-template-rows: repeat(7, 1fr);
+      grid-template-rows: repeat(9, 1fr);
       grid-gap: 12px;
       .M_WorkCase {
         display: flex;
@@ -431,10 +431,7 @@
             top: 30%;
             right: 5%;
           }
-          .A_raskladpreview6 {
-            width: 12%;
-            height: auto;
-          }
+
           .A_raskladpreview2 {
             top: 20%;
             right: 6%;
@@ -443,24 +440,76 @@
             top: 2%;
             right: 33%;
           }
-          &.WorkCaseRasklad:hover {
-            .A_raskladpreview1 {
-              bottom: 5%;
-              transform: rotate(10deg);
-            }
-            .A_raskladpreview2 {
-              top: 10%;
-              transform: rotate(-5deg);
-            }
-            .A_raskladpreview3 {
-              top: 2%;
-              transform: rotate(2deg);
-            }
+        }
+        &.WorkCaseRasklad:hover {
+          .A_raskladpreview1 {
+            bottom: 5%;
+            transform: rotate(10deg);
+          }
+          .A_raskladpreview2 {
+            top: 10%;
+            transform: rotate(-5deg);
+          }
+          .A_raskladpreview3 {
+            top: 2%;
+            transform: rotate(2deg);
           }
         }
         &.WorkCaseLutok {
           grid-column: 4/10;
           grid-row: 3/5;
+          * {
+            transition: all 0.5s ease-in-out;
+          }
+
+          .A_lutokpreview1 {
+            width: 30%;
+            height: auto;
+            bottom: 30%;
+            right: 50%;
+          }
+          .A_lutokpreview4 {
+            width: 30%;
+            height: auto;
+            top: 20%;
+            right: -2%;
+          }
+          .A_lutokpreview5 {
+            width: 30%;
+            height: auto;
+            bottom: 2%;
+            right: 10%;
+          }
+          .A_lutokpreview2 {
+            width: 30%;
+            height: auto;
+            bottom: 10%;
+            right: 30%;
+          }
+          .A_lutokpreview3 {
+            width: 30%;
+            height: auto;
+            top: 5%;
+            right: 20%;
+          }
+        }
+        &.WorkCaseLutok:hover {
+          .A_lutokpreview1 {
+            bottom: 40%;
+            transform: rotate(-5deg);
+          }
+          .A_lutokpreview2 {
+            bottom: 13%;
+            transform: rotate(5deg);
+          }
+          .A_lutokpreview3 {
+            top: 2%;
+            transform: rotate(10deg);
+          }
+          .A_lutokpreview4 {
+            top: 22%;
+            transform: rotate(-2deg);
+          }
         }
         &.WorkCaseSberAI {
           grid-column: 4/8;
@@ -483,17 +532,21 @@
           grid-column: 8/10;
           grid-row: 5/7;
         }
+        &.WorkCaseHackaton {
+          grid-column: 4/10;
+          grid-row: 7/9;
+        }
         &.WorkCaseZine {
           grid-column: 4/6;
-          grid-row: 7/8;
+          grid-row: 9/10;
         }
         &.WorkCaseGotbit {
           grid-column: 6/8;
-          grid-row: 7/8;
+          grid-row: 9/10;
         }
         &.WorkCaseKandinsky {
           grid-column: 8/10;
-          grid-row: 7/8;
+          grid-row: 9/10;
           background: repeating-linear-gradient(
             45deg,
             var(--base),
