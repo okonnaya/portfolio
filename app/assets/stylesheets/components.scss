@@ -15,6 +15,9 @@
   font-size: 15px;
   letter-spacing: -0.3px;
 }
+.A_UnderlinedLink {
+  text-decoration: underline;
+}
 
 //хед фут
 
@@ -84,21 +87,25 @@
 }
 
 .S_Main {
-  width: 1820px;
-  min-height: 80vh;
+  width: 85vw;
+  max-width: 2200px;
+  height: 70vh;
+  min-height: 700px;
+  max-height: 1100px;
   margin: 0 auto;
   position: relative;
   top: 0;
-  padding-top: 12vh;
+  margin-top: 180px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   .W_Grid {
     display: grid;
     align-items: stretch;
     width: 100%;
-    min-height: 800px;
+    height: 100%;
+    // min-height: 800px;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(5, 1fr);
     grid-gap: 12px;
@@ -116,13 +123,14 @@
       transition: all 0.2s;
     }
 
-    & > div:not(.O_Pic):hover {
+    & > div:hover {
       filter: brightness(0.95);
     }
     .O_Music {
       grid-column: 1/4;
       grid-row: 1;
       overflow: hidden;
+      background-color: #677989;
       cursor: image-url('pointer.svg'), auto !important;
     }
     .O_Offtop {
@@ -166,7 +174,7 @@
         display: flex;
         justify-content: flex-end;
         align-items: flex-end;
-        padding: 10px;
+        padding: 36px;
       }
     }
     .O_Happiness {
@@ -174,7 +182,7 @@
       grid-row: 2/4;
       display: flex;
       flex-direction: row;
-      padding: 2.4vh;
+      padding: 36px;
       gap: 2vh;
       .W_HappinessTexts {
         display: flex;
@@ -219,6 +227,7 @@
     .O_CV {
       grid-column: 11/13;
       grid-row: 1/3;
+      padding: 36px;
 
       .A_CV {
         display: flex;
@@ -238,8 +247,7 @@
       .A_ConnectText {
         z-index: 2;
         color: var(--base);
-        padding-left: 3vh;
-        padding-top: 3vh;
+        padding: 36px;
         padding-right: 70%;
       }
 
@@ -257,12 +265,14 @@
         }
       }
     }
-    .O_Pic {
-      grid-column: 11/13;
-      grid-row: 3/6;
-      background-image: url('A_DeskPic.jpeg');
-      background-size: cover;
-      background-position: center;
+    .O_Facebook {
+      grid-column: 11/12;
+      grid-row: 3/4;
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
     .O_Hse {
       grid-column: 5/7;
@@ -270,7 +280,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 2.5vh;
+      padding: 36px;
       position: relative;
 
       a {
@@ -332,14 +342,17 @@
   margin: 0 auto;
   position: relative;
   top: 0;
-  padding-top: 12vh;
+  margin-top: 180px;
   .W_WorkHead {
     width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: top;
+    align-items: center;
     gap: 8vh;
     .A_Heading {
       text-align: center;
+      max-width: 60%;
     }
   }
   .W_WorkInfo {
@@ -351,7 +364,7 @@
     .A_WorkInfo {
       color: var(--grey);
       text-align: center;
-      width: 15vw;
+      width: 10vw;
     }
   }
   .W_WorkCases {
@@ -371,7 +384,7 @@
       .M_WorkCase {
         display: flex;
         flex-direction: column;
-        padding: 2vh;
+        padding: 30px;
         justify-content: space-between;
         background-color: var(--white);
         border-radius: 30px;
@@ -379,14 +392,15 @@
         position: relative;
         box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
           0px 5px 8px 0px rgba(0, 0, 0, 0.02);
+        & * {
+          transition: all 0.5s ease-in-out;
+        }
         .W_WorkCaseBackground {
           position: absolute;
           width: 100%;
           height: 100%;
 
           img {
-            max-width: auto;
-            max-height: 100%;
             position: absolute;
           }
         }
@@ -409,9 +423,6 @@
         &.WorkCaseRasklad {
           grid-column: 4/10;
           grid-row: 1/3;
-          * {
-            transition: all 0.5s ease-in-out;
-          }
 
           .A_raskladpreview1 {
             width: 12%;
@@ -433,35 +444,36 @@
           }
 
           .A_raskladpreview2 {
+            height: 100%;
+            width: auto;
             top: 20%;
             right: 6%;
           }
           .A_raskladpreview3 {
+            height: 100%;
+            width: auto;
             top: 2%;
             right: 33%;
           }
+          &:hover {
+            .A_raskladpreview1 {
+              bottom: 5%;
+              transform: rotate(10deg);
+            }
+            .A_raskladpreview2 {
+              top: 10%;
+              transform: rotate(-5deg);
+            }
+            .A_raskladpreview3 {
+              top: 2%;
+              transform: rotate(2deg);
+            }
+          }
         }
-        &.WorkCaseRasklad:hover {
-          .A_raskladpreview1 {
-            bottom: 5%;
-            transform: rotate(10deg);
-          }
-          .A_raskladpreview2 {
-            top: 10%;
-            transform: rotate(-5deg);
-          }
-          .A_raskladpreview3 {
-            top: 2%;
-            transform: rotate(2deg);
-          }
-        }
+
         &.WorkCaseLutok {
           grid-column: 4/10;
           grid-row: 3/5;
-          * {
-            transition: all 0.5s ease-in-out;
-          }
-
           .A_lutokpreview1 {
             width: 30%;
             height: auto;
@@ -492,25 +504,26 @@
             top: 5%;
             right: 20%;
           }
+          &:hover {
+            .A_lutokpreview1 {
+              bottom: 40%;
+              transform: rotate(-5deg);
+            }
+            .A_lutokpreview2 {
+              bottom: 13%;
+              transform: rotate(5deg);
+            }
+            .A_lutokpreview3 {
+              top: 2%;
+              transform: rotate(10deg);
+            }
+            .A_lutokpreview4 {
+              top: 22%;
+              transform: rotate(-2deg);
+            }
+          }
         }
-        &.WorkCaseLutok:hover {
-          .A_lutokpreview1 {
-            bottom: 40%;
-            transform: rotate(-5deg);
-          }
-          .A_lutokpreview2 {
-            bottom: 13%;
-            transform: rotate(5deg);
-          }
-          .A_lutokpreview3 {
-            top: 2%;
-            transform: rotate(10deg);
-          }
-          .A_lutokpreview4 {
-            top: 22%;
-            transform: rotate(-2deg);
-          }
-        }
+
         &.WorkCaseSberAI {
           grid-column: 4/8;
           grid-row: 5/6;
@@ -527,22 +540,110 @@
         &.WorkCaseTinder {
           grid-column: 4/8;
           grid-row: 6/7;
+          .A_tinderpreview {
+            width: auto;
+            height: 100%;
+            bottom: -5%;
+            right: -2%;
+          }
+
+          &:hover {
+            .A_tinderpreview {
+              bottom: -3%;
+              right: 2%;
+              transform: rotate(-2deg);
+            }
+          }
         }
+
         &.WorkCasePortfolio {
           grid-column: 8/10;
           grid-row: 5/7;
+          .A_portfoliopreview {
+            width: 120%;
+            height: auto;
+            bottom: 15%;
+            right: -30%;
+          }
+
+          &:hover {
+            .A_portfoliopreview {
+              bottom: 16%;
+              right: -27%;
+              transform: rotate(2deg);
+            }
+          }
         }
         &.WorkCaseHackaton {
           grid-column: 4/10;
           grid-row: 7/9;
+          .A_hackatonpreview1 {
+            height: 110%;
+            width: auto;
+            transform: rotate(20deg);
+            top: 1%;
+            right: -3%;
+          }
+          .A_hackatonpreview2 {
+            object-fit: contain;
+            width: 20%;
+            height: auto;
+            top: 30%;
+            right: 50%;
+          }
+          .A_hackatonpreview3 {
+            object-fit: contain;
+            height: 120%;
+            width: auto;
+            top: 20%;
+            right: 30%;
+          }
+
+          &:hover {
+            .A_hackatonpreview1 {
+              transform: rotate(15deg);
+
+              top: -3%;
+            }
+            .A_hackatonpreview2 {
+              transform: rotate(5deg);
+              top: 25%;
+            }
+            .A_hackatonpreview3 {
+              transform: rotate(5deg);
+              top: 25%;
+            }
+          }
         }
         &.WorkCaseZine {
           grid-column: 4/6;
           grid-row: 9/10;
+          .A_zinepreview {
+            right: 0%;
+            top: -50%;
+            height: 200%;
+            width: auto;
+          }
+          &:hover {
+            .A_zinepreview {
+              transform: scale(1.1);
+            }
+          }
         }
         &.WorkCaseGotbit {
           grid-column: 6/8;
           grid-row: 9/10;
+          .A_gotbitpreview {
+            width: 150%;
+            height: auto;
+            top: 1%;
+            left: 30%;
+          }
+          &:hover {
+            .A_gotbitpreview {
+              transform: scale(1.1);
+            }
+          }
         }
         &.WorkCaseKandinsky {
           grid-column: 8/10;
@@ -565,6 +666,14 @@
     flex-direction: column;
     gap: 2vh;
     align-items: center;
+    .A_BackButton {
+      background-color: var(--black);
+      color: var(--white);
+      border-radius: 100px;
+      padding: 16px 24px;
+      box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
+        0px 5px 8px 0px rgba(0, 0, 0, 0.02);
+    }
     .W_WorkToggle {
       width: 100%;
       display: flex;
@@ -816,6 +925,120 @@
               // Offset (distance btw switch and box)
             );
           }
+        }
+      }
+    }
+
+    .W_WorkPicsWeb {
+      display: block;
+      position: relative;
+      width: 100%;
+      margin-top: 4vh;
+      height: 2350px;
+      &.DisplayNone {
+        display: none;
+      }
+      img {
+        position: absolute;
+        width: 30%;
+        height: auto;
+      }
+      .A_rasklad0 {
+        width: 40%;
+        left: 5%;
+        height: auto;
+      }
+      .A_raskladcard1 {
+        width: 25%;
+        right: 3%;
+        height: auto;
+      }
+      .A_raskladcard2 {
+        width: 28%;
+        right: 18%;
+        top: 200px;
+        height: auto;
+      }
+      .A_rasklad1 {
+        width: 40%;
+        top: 350px;
+        left: 12%;
+        height: auto;
+      }
+      .A_lutokmobile {
+        width: 18%;
+        top: 750px;
+        left: 0%;
+        height: auto;
+      }
+      .A_vector1 {
+        width: 20%;
+        top: 700px;
+        right: 15%;
+        height: auto;
+      }
+      .A_vector2 {
+        width: 18%;
+        top: 800px;
+        right: 0%;
+        height: auto;
+      }
+      .A_lutokmain {
+        width: 50%;
+        top: 1000px;
+        left: 20%;
+        height: auto;
+      }
+      .A_lutokblock {
+        width: 28%;
+        top: 1400px;
+        left: 0%;
+        height: auto;
+      }
+      .A_rasklad2 {
+        width: 40%;
+        top: 1500px;
+        right: 0%;
+        height: auto;
+      }
+      .A_hackaton1 {
+        width: 25%;
+        top: 1700px;
+        left: 30%;
+        height: auto;
+      }
+      .A_hackaton2 {
+        width: 20%;
+        top: 1900px;
+        left: 12%;
+        height: auto;
+      }
+    }
+    .W_WorkPicsGraphic {
+      display: flex;
+      position: relative;
+      width: 100%;
+      margin-top: 4vh;
+      gap: 20px;
+      flex-direction: row;
+      margin-bottom: 100px;
+      &.DisplayNone {
+        display: none;
+      }
+      .C_WorkPicsGraphic {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 120px;
+        margin-top: 140px;
+        &:nth-of-type(2n) {
+          margin-top: 0px;
+          gap: 190px;
+        }
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: 10px;
         }
       }
     }

@@ -2,5 +2,5 @@
 import '@hotwired/turbo-rails';
 import 'controllers';
 import './menubar';
-import 'controllers';
+import './worktoggleswitch';
 import '@hotwired/turbo-rails';
