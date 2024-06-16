@@ -10,8 +10,15 @@ Rails.application.routes.draw do
   
   resources :happiness, only: [:show, :index]
   resources :caps, only: [:show]
+
+  resources :reviews, only: [:show, :new, :create]
   
   get 'caps', to: 'caps#show'
   get 'offtop', to: 'offtop#index'
   get 'work', to: 'work#index'
+  get 'work/rasklad', to: 'work#rasklad'
+  get 'work/lutok', to: 'work#lutok'
+  get 'work/tinder', to: 'work#tinder'
+  get 'work/hackathon', to: 'work#hackathon'
+  get 'work/portfolio', to: 'work#portfolio'
 end

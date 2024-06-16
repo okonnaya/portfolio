@@ -2,7 +2,7 @@
 <div class="S_Work">
 <div class = "W_WorkHead">
     <div class="A_Heading h2">
-    <%= raw "привет! меня зовут карина, я&nbsp;продуктовая дизайнера с&nbsp;опытом в&nbsp;разработке и&nbsp;аналитике"%>
+    <%= raw "привет! меня зовут карина, я&nbsp;продуктовый дизайнер с&nbsp;опытом в&nbsp;разработке и&nbsp;аналитике"%>
     </div>
     <div class="A_Heading h2">
     cv:
@@ -12,7 +12,7 @@
 </div>
 <div class = "W_WorkInfo">
     <div class = "A_WorkInfo h3">HSE ART DESIGN & CODING 25’</div>
-        <div class = "A_WorkInfo h3">SberAI </br>LieuCommun</div>
+        <div class = "A_WorkInfo h3">SberAI </br>чихо</div>
         <div class = "A_WorkInfo h3">research, UX/UI, frontend</div>
     </div>
 
@@ -22,6 +22,7 @@
         <div class = "C_WorkCasesGrid">
 
             <div class = "M_WorkCase WorkCaseRasklad">
+            <%= link_to " ", work_rasklad_path, class: "A_WorkLink h3" %>
                 <div class = "A_WorkCaseHeading h3">расклад</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">UX/UI</div>
@@ -40,10 +41,10 @@
 
 
 
-                
             </div>
 
             <div class = "M_WorkCase WorkCaseLutok">
+            <%= link_to " ", work_lutok_path, class: "A_WorkLink h3" %>
                 <div class = "A_WorkCaseHeading h3">луток</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">UX/UI</div>
@@ -68,6 +69,7 @@
             </div>
 
             <div class = "M_WorkCase WorkCaseTinder">
+            <%= link_to " ", work_tinder_path, class: "A_WorkLink h3" %>
                 <div class = "A_WorkCaseHeading h3">tinder research</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">аналитика</div>
@@ -84,6 +86,7 @@
             </div>
 
             <div class = "M_WorkCase WorkCasePortfolio">
+            <%= link_to " ", work_portfolio_path, class: "A_WorkLink h3" %>
                 <div class = "A_WorkCaseHeading h3">портфолио </br> <span class="h3 beige"> (да, это!)</span></div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">UX/UI</div>
@@ -96,27 +99,22 @@
                 </div>
             </div>
 
-            <div class = "M_WorkCase WorkCaseHackaton">
+            <div class = "M_WorkCase WorkCasehackathon">
+            <%= link_to " ", work_hackathon_path, class: "A_WorkLink h3" %>
                 <div class = "A_WorkCaseHeading h3">хакатон второе дыхание</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">UX/UI</div>
                 </div>
 
                 <div class = W_WorkCaseBackground>
-                    <%= image_tag 'workpreview/hackatonpreview3.png', class: 'A_hackatonpreview3' %>
-                     <%= image_tag 'workpreview/hackatonpreview1.png', class: 'A_hackatonpreview1' %>
-                     <%= image_tag 'workpreview/hackatonpreview2.png', class: 'A_hackatonpreview2' %>
+                    <%= image_tag 'workpreview/hackathonpreview3.png', class: 'A_hackathonpreview3' %>
+                     <%= image_tag 'workpreview/hackathonpreview1.png', class: 'A_hackathonpreview1' %>
+                     <%= image_tag 'workpreview/hackathonpreview2.png', class: 'A_hackathonpreview2' %>
                 </div>
             </div>
 
-
-
-
-
-
-
-
             <div class = "M_WorkCase WorkCaseZine">
+                <a class = "A_WorkLink" href="https://portfolio.hse.ru/Project/135266#135266_2733005" target="_blank"></a>
                 <div class = "A_WorkCaseHeading h3">зин</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">графдиз</div>
@@ -128,6 +126,7 @@
             </div>
 
             <div class = "M_WorkCase WorkCaseGotbit">
+                <a class = "A_WorkLink" href="https://gotbit.io/" target="_blank"></a>
                 <div class = "A_WorkCaseHeading h3">gotbit.io</div>
                 <div class = "C_WorkCaseTags">
                     <div class = "A_WorkCaseTag p">frontend</div>
@@ -150,7 +149,7 @@
         </div>
     </div>
 
-    <a id="A_TopAnchor"></a>
+    <a id="cases"></a>
 
     <div class = "W_WorkPics">
         <div class="A_Heading h2">мои штуки</div>
@@ -170,8 +169,8 @@
         </div>
         <div class=W_WorkPicsWeb>
             <%= image_tag 'workpreview/web/lutokmain.png', class: 'A_lutokmain' %>
-            <%= image_tag 'workpreview/web/hackaton1.png', class: 'A_hackaton1' %>
-            <%= image_tag 'workpreview/web/hackaton2.png', class: 'A_hackaton2' %>
+            <%= image_tag 'workpreview/web/hackathon1.png', class: 'A_hackathon1' %>
+            <%= image_tag 'workpreview/web/hackathon2.png', class: 'A_hackathon2' %>
             <%= image_tag 'workpreview/web/vector1.png', class: 'A_vector1' %>
             <%= image_tag 'workpreview/web/vector2.png', class: 'A_vector2' %>
             <%= image_tag 'workpreview/web/rasklad0.png', class: 'A_rasklad0' %>
@@ -205,7 +204,7 @@
         </div>
         
         </div>
-        <a href="#A_TopAnchor" class="A_WorkCaseTag h3 A_BackButton">вверх к штукам</a>
+        <a href="#cases" class="A_WorkCaseTag h3 A_BackButton">вверх к штукам</a>
 </div>
 </div>
 

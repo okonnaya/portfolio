@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_03_120924) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_11_223643) do
   create_table "caps", force: :cascade do |t|
     t.string "heading"
     t.text "text"
@@ -24,6 +24,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_03_120924) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "date"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.date "date"
+    t.string "author"
+    t.text "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
