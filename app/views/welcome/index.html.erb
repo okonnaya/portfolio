@@ -22,23 +22,21 @@
         </a></div>
 
         <% if @happiness_samples.present? %>
-        <% @happiness_samples.each do |happiness| %>
-          <div class="O_Happiness">
-            <div class ="W_HappinessTexts" >
-                <div class ="W_HappinessTexts2" >
-                    <div class = "HappinessHead h3">меня порадовало</div>
-                     <div class = "HappinessText h3"><%= happiness.text.html_safe %></div>
-                </div>
-                <div class = "HappinessDate h3"><%= happiness.date %></div>
+        <% happiness = @happiness_samples.sample %>
+        <div class="O_Happiness">
+          <div class="W_HappinessTexts">
+            <div class="W_HappinessTexts2">
+              <div class="HappinessHead h3">меня порадовало</div>
+              <div class="HappinessText h3"><%= happiness.text.html_safe %></div>
             </div>
-            <% if happiness.image.present? %>
-            <div class = "A_HappinessImageContainer">
-                <%= image_tag "happiness/#{happiness.image}", alt: "Image for #{happiness.text}" %>
-                </div>
-            <% end %>
+            <div class="HappinessDate h3"><%= happiness.date %></div>
           </div>
-        <% end %>
+          <% if happiness.image.present? %>
+            <%= image_tag "happiness/#{happiness.image}", alt: "Image for #{happiness.text}" %>
+          <% end %>
+        </div>
       <% end %>
+      
         
         
         <div class = "O_Connect">

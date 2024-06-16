@@ -184,6 +184,7 @@
       flex-direction: row;
       padding: 36px;
       gap: 2vh;
+      justify-content: space-between;
       .W_HappinessTexts {
         display: flex;
         flex-direction: column;
@@ -198,21 +199,15 @@
           gap: 1vh;
         }
       }
-      .A_HappinessImageContainer {
+      img {
+        border-radius: 18px;
         position: relative;
         height: 100%;
-        width: 100%;
-        overflow: hidden;
-        border-radius: 18px;
-        img {
-          position: absolute;
-          height: 100%;
+        width: auto;
 
-          // top: 50%;
-          // left: 50%;
-          // transform: translate(-50%, -50%);
-          object-fit: contain;
-        }
+        // top: 50%;
+        // left: 50%;
+        // transform: translate(-50%, -50%);
       }
     }
     .O_TgChannel {
@@ -1222,7 +1217,7 @@
   min-height: 80vh;
   margin: 0 auto;
   position: relative;
-  gap: 2vh;
+  gap: 4vh;
   margin-top: 60px;
   display: flex;
   flex-direction: column;
@@ -1315,6 +1310,72 @@
           background-image: url('offtop/touch.jpg');
           background-size: cover;
           height: 200px;
+          background-position: center;
+        }
+        &.M_OfftopNitka {
+          background-image: url('offtop/nitka.jpg');
+          background-size: cover;
+          height: 400px;
+          background-position: center;
+        }
+        &.M_OfftopFont {
+          background-image: url('offtop/font.jpg');
+          background-size: cover;
+          height: 500px;
+          background-position: center;
+        }
+        &.M_ElioDance {
+          background-image: url('offtop/elio.gif');
+          background-size: cover;
+          height: 500px;
+          background-position: center;
+        }
+        &.M_Museum {
+          background-image: url('offtop/museum.png');
+          background-size: cover;
+          height: 200px;
+          background-position: center;
+        }
+        &.M_Sister {
+          background-image: url('offtop/sister.jpg');
+          background-size: cover;
+          height: 400px;
+          background-position: center;
+        }
+        &.M_Moment {
+          background-image: url('offtop/moment.jpeg');
+          background-size: cover;
+          height: 200px;
+          background-position: center;
+        }
+        &.M_Essay {
+          background-image: url('offtop/essay.jpeg');
+          background-size: cover;
+          height: 200px;
+          background-position: top;
+        }
+        &.M_Stone {
+          background-image: url('offtop/stone.gif');
+          background-size: cover;
+          height: 200px;
+          background-position: center;
+        }
+        &.M_Shrek {
+          background-image: url('offtop/shrek.gif');
+          background-size: cover;
+          height: 500px;
+          background-position: center;
+        }
+        &.M_Subway {
+          background-image: url('offtop/subway.jpeg');
+          background-size: cover;
+          height: 500px;
+          background-position: center;
+        }
+        &.M_Cat {
+          background-image: url('offtop/cat.jpeg');
+          background-size: cover;
+          height: 300px;
           background-position: center;
         }
       }
