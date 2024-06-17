@@ -1,0 +1,20 @@
+<div class="S_Caps">
+    <div class="A_Heading h2">отзывы
+    </div>
+    <div class="A_Text p">ревью на меня
+    </div>
+
+    <div class="C_CapsBlocks">
+    <% if @reviews_samples.present? %>
+      <% @reviews_samples.each do |review| %>
+        <div class="O_CapBlock">
+          <div class="A_CapHeading h3"><%= review.author.html_safe %></div>
+          <div class="A_CapText p"><%= review.text.html_safe %></div>
+          <div class="A_CapDate p"><%= review.date.html_safe %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  
+    
+</div>

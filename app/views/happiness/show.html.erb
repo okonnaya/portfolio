@@ -1,2 +1,27 @@
-<h1>Happiness#show</h1>
-<p>Find me in app/views/happiness/show.html.erb</p>
+<div class="S_Happiness">
+    <div class="A_Heading h2">мои радости
+    </div>
+    <div class="A_Text p">ревью на меня
+    </div>
+
+    <div class="C_HappinessBlocks">
+    <% if @happiness_samples.present? %>
+      <% @happiness_samples.each do |happiness| %>
+        <div class="O_Happiness">
+          <div class="W_HappinessTexts">
+            <div class="W_HappinessTexts2">
+              <div class="HappinessHead h3">меня порадовало</div>
+              <div class="HappinessText h3"><%= happiness.text.html_safe %></div>
+            </div>
+            <div class="HappinessDate h3"><%= happiness.date %></div>
+          </div>
+          <% if happiness.image.present? %>
+            <%= image_tag "happiness/#{happiness.image}", alt: "Image for #{happiness.text}" %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  
+    
+</div>

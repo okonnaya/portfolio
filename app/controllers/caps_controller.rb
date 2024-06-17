@@ -1,5 +1,5 @@
 class CapsController < ApplicationController
   def show
-    # @cap = Cap.find(params[:id])
+    @cap_samples = Cap.all
   end
 end

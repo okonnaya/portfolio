@@ -1,2 +1,20 @@
-<h1>Caps#show</h1>
-<p>Find me in app/views/caps/show.html.erb</p>
+<div class="S_Caps">
+    <div class="A_Heading h2">кепки
+    </div>
+    <div class="A_Text p">я собираю их с 2022 года. это моя золотая коллекция.
+    </div>
+
+    <div class="C_CapsBlocks">
+    <% if @cap_samples.present? %>
+      <% @cap_samples.each do |cap| %>
+        <div class="O_CapBlock">
+            <%= image_tag "caps/#{cap.id}.png" %>
+          <div class="A_CapHeading h3"><%= cap.heading.html_safe %></div>
+          <div class="A_CapText p"><%= cap.text.html_safe %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  
+    
+</div>

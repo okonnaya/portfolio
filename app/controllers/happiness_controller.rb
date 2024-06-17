@@ -1,5 +1,5 @@
 class HappinessController < ApplicationController
   def show
-    @happiness = Happiness.find(params[:id])
+    @happiness_samples = Happiness.all
   end
 end
