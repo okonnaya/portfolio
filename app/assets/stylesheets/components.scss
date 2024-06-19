@@ -363,6 +363,7 @@
   position: relative;
   top: 0;
   .W_WorkHead {
+    margin-top: 60px; //hee hee hee hee OwO
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -1278,6 +1279,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        gap: 4px;
         .p {
           color: var(--grey);
         }
