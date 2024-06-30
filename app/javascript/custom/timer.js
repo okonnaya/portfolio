@@ -1,6 +1,6 @@
 console.log('таймер');
 document.addEventListener('DOMContentLoaded', function () {
-  var deadline = new Date('May 31, 2019 4:24.000+03:00').getTime();
+  var deadline = Date.UTC(2019, 4, 31, 4, 24) + (3 * 60 * 60 * 1000); 
   var x = setInterval(function () {
     var now = new Date().getTime();
     // now-deadline = count up // deadline-now = count down
@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
     document.getElementById('timer').innerHTML =
       days +
-      ' days ' +
+      ' дней ' +
       hours +
-      ' hours ' +
+      ' часов ' +
       minutes +
-      ' mins ' +
+      ' мин ' +
       seconds +
-      ' secs';
+      ' сек';
     if (distance < 0) {
       clearInterval(x);
       document.getElementById('timer').innerHTML = '0d 0h 0m 0s';
