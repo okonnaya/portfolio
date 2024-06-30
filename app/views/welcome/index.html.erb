@@ -3,7 +3,7 @@
 
     <div class="W_Grid">
         <div class = "O_Music">
-        <iframe frameborder="0" style="border:none;width:100%;height:105%; cursor: image-url('pointer.svg'), auto !important;" width="100%" height="100%" src="https://music.yandex.ru/iframe/track/42276175/6145948">Слушайте <a href='https://music.yandex.ru/album/6145948/track/42276175'>Love It If We Made It</a> — <a href='https://music.yandex.ru/artist/1017640'>The 1975</a> на Яндекс Музыке</iframe>
+        <iframe frameborder="0" style="border:none;width:100%;height:105%; cursor: image-url('pointer.svg'), auto !important;" width="100%" height="100%" src="https://music.yandex.ru/iframe/track/39820798/5148607">Слушайте <a href='https://music.yandex.ru/album/5148607/track/39820798'>У нас есть всё</a> — <a href='https://music.yandex.ru/artist/41170'>Самое Большое Простое Число</a> на Яндекс Музыке</iframe>
         </div>
         <div class = "O_Offtop">
             <%= link_to "никто не зашёл в приколы", offtop_path, class: "A_OfftopLink h3" %>
@@ -24,6 +24,7 @@
         <% if @happiness_samples.present? %>
         <% happiness = @happiness_samples.sample %>
         <div class="O_Happiness">
+        <%= link_to "", happinesses_path, class: "A_HappinessLink" %>
           <div class="W_HappinessTexts">
             <div class="W_HappinessTexts2">
               <div class="HappinessHead h3">меня порадовало</div>
