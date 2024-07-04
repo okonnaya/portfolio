@@ -16,6 +16,6 @@
  *= require vars
  *= require basics
  *= require components
- *= require responsive
+ *= require responsive_new
  *= require music
  */

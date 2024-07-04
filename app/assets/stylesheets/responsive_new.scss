@@ -1,0 +1,172 @@
+body {
+    padding-top: 120px;
+  }
+  .h3,
+  .W_WorkPics .A_WorkToggle {
+    font-size: 18px;
+  }
+  .h2 {
+    font-size: 45px;
+  }
+  .p {
+    font-size: 15px;
+  }
+  
+  .O_Menubar {
+    .A_Carina {
+      height: 45px;
+      width: 45px;
+    }
+    .M_MenuLinks {
+      padding: 16px 40px;
+      border-radius: 100px;
+      height: 45px;
+    }
+  }
+  .S_Main {
+    width: 1400px;
+    min-height: 600px;
+    .W_Grid {
+      & > div {
+        border-radius: 30px;
+      }
+  
+      .O_Offtop {
+        border-radius: 30px;
+        .A_OfftopLink {
+          padding: 24px;
+        }
+      }
+      .O_Happiness {
+        padding: 24px;
+      }
+      .O_Connect {
+        .A_ConnectText {
+          padding: 24px;
+          padding-right: 70%;
+        }
+      }
+      .O_Hse {
+        padding: 24px;
+      }
+  
+      .O_CV {
+        padding: 0px;
+        .A_CV {
+          .Q_CV {
+            .Q_CV {
+              font-size: 120px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .S_Work {
+    width: 1400px;
+    .W_WorkCases {
+      .C_WorkCasesGrid {
+        .M_WorkCase {
+          padding: 20px;
+        }
+      }
+    }
+  }
+  .S_Case,
+  .S_Caps,
+  .S_Happiness {
+    width: 1400px;
+  }
+  .S_Offtop {
+    width: 1400px;
+    .M_OfftopTouch {
+      height: 150px;
+    }
+  }
+  
+  @media only screen and (max-width: 1439px) {
+    .O_Hse {
+      grid-row: 4 / 6 !important;
+    }
+  
+    .S_Work {
+      width: auto !important;
+      .W_WorkInfo {
+        padding: 0 20px;
+      }
+    }
+
+    .S_Offtop {
+      width: auto !important;
+      .C_Offtops,
+      .C_AnotherOfftops {
+        padding: 0 10px;
+      }
+      .C_AnotherOfftops {
+        justify-content: center;
+      }
+    }
+  }
+  
+  @media only screen and (max-width: 1190px) {
+    .S_Work {
+      .W_WorkCases .C_WorkCasesGrid {
+        .M_WorkCase.WorkCaseRasklad,
+        .M_WorkCase.WorkCaseLutok,
+        .M_WorkCase.WorkCasehackathon {
+          grid-column: 2 / 12;
+        }
+        .M_WorkCase.WorkCaseSberAI,
+        .M_WorkCase.WorkCaseTinder {
+          grid-column: 2 / 7;
+        }
+        .M_WorkCase.WorkCasePortfolio {
+          grid-column: 7 / 12;
+          .A_portfoliopreview {
+            bottom: 25%;
+            right: -45%;
+          }
+          &:hover .A_portfoliopreview {
+            bottom: 20%;
+            right: -40%;
+          }
+        }
+        .M_WorkCase.WorkCaseZine {
+          grid-column: 2 / 5;
+        }
+        .M_WorkCase.WorkCaseGotbit {
+          grid-column: 5 / 8;
+        }
+        .M_WorkCase.WorkCaseKandinsky {
+          grid-column: 8 / 12;
+        }
+      }
+    }
+
+    .S_Offtop {
+      .C_Offtops, .C_AnotherOfftops {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  }
+  
+  @media only screen and (max-width: 767px) {
+    .O_Menubar .M_MenuLinks {
+      
+    }
+
+    .S_Work {
+      .W_WorkCases .C_WorkCasesGrid {
+        grid-template-rows: repeat(18, 1fr);
+        padding: 0 10px;
+
+        > * {
+          grid-column: 1 / 13 !important;
+          grid-row: span 2 !important;
+        }
+      }
+    }
+  }
+  
