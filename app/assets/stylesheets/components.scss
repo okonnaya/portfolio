@@ -1430,6 +1430,7 @@
   .A_Text,
   .A_Heading {
     max-width: 50%;
+    text-align: center;
   }
   .C_CapsBlocks {
     margin-top: 60px;
@@ -1441,6 +1442,7 @@
     gap: 20px;
     .O_CapBlock {
       width: calc(20% - 20px);
+      min-width: 220px;
       height: 300px;
       box-sizing: border-box;
       border-radius: 30px;
