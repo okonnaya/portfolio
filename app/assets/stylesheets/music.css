@@ -223,7 +223,6 @@
 }
 
 :root {
-    --white: #fff;
     --smoke-white: #f2f2f2;
     --space-grey: #908f8f;
     --light-yellow: #ffdb4d;
@@ -249,8 +248,6 @@
     --black-half-transparent: rgba(0, 0, 0, .5);
     --link-yellow: #ffdd60;
     --dark-page-background: #0f0f0f;
-    --black: #000;
-    --blue: #505add;
     --light-blue: #0858f4;
     --light-grayish-blue: #edeffc;
     --plus-rainbow: linear-gradient(90deg, #ff5c4d, #eb469f 30%, #8341ef 75%, #3f68f9);
