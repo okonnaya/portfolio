@@ -1,9 +1,9 @@
-console.log('ьлктмщукт');
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('turbo:load', () => {
   var checkbox = document.getElementById('e');
   var graphicElements = document.querySelectorAll('.W_WorkPicsGraphic');
   var webElements = document.querySelectorAll('.W_WorkPicsWeb');
+
+  if (!checkbox) return;
 
   function updateDisplay() {
     if (checkbox.checked) {

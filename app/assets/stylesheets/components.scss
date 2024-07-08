@@ -29,29 +29,43 @@
   flex-direction: row;
   align-items: end;
   gap: 10px;
+  * {
+    transition: all 0.2s ease-in;
+  }
   .A_Arrow {
     display: block;
     padding: 12px;
-    height: fit-content;
+    height: 45px;
+    width: 45px;
+    text-align: center;
     background-color: var(--white);
     border-radius: 100px;
-    box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
-      0px 5px 8px 0px rgba(0, 0, 0, 0.02);
+    box-shadow: 0px 0px 20px 0px rgba(108, 111, 121, 0.07), 
+      0px 0px 8px 0px rgba(0, 0, 0, 0.02);
+    user-select: none;
+    &.Collapsed {
+      transform: rotate(180deg);
+    }
   }
   .M_MenuLinks {
     background-color: var(--white);
     display: flex;
     gap: 30px;
-    justify-content: center;
-    align-items: left;
+    justify-content: flex-start;
     padding: 12px 30px;
     flex-direction: column;
     border-radius: 20px;
     height: auto;
+    max-height: 200px;
     box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
       0px 5px 8px 0px rgba(0, 0, 0, 0.02);
+    overflow-y: hidden;
+    &.Collapsed {
+      max-height: 45px;
+    }
     .A_MenuLink {
       color: var(--grey);
+      height: 22px;
       &.Current {
         color: var(--black);
       }

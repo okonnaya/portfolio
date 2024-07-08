@@ -1,6 +1,4 @@
-console.log('music');
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('turbo:load', () => {
     const audio = document.querySelector('#audio');
     const playButton = document.querySelector('.button_iframe-play__fuM1Z');
     const likeButton = document.querySelector('.button_iframe-like__ZF7ks');
@@ -9,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseIcon = document.querySelector('.pauseIcon');
 
     let isPlaying = false;
+
+    if (!audio) return;
 
     playButton.addEventListener('click', () => {
         console.log('♫');

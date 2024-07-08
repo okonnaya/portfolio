@@ -1,5 +1,6 @@
-console.log('таймер');
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('turbo:load', function () {
+  var timer = document.getElementById('timer');
+  if (!timer) return;
   var deadline = Date.UTC(2019, 4, 31, 4, 24) + (3 * 60 * 60 * 1000); 
   var x = setInterval(function () {
     var now = new Date().getTime();
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
       (distance % (1000 * 60 * 60)) / (1000 * 60)
     );
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    document.getElementById('timer').innerHTML =
+    timer.innerHTML =
       days +
       ' дней ' +
       hours +
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
       ' сек';
     if (distance < 0) {
       clearInterval(x);
-      document.getElementById('timer').innerHTML = '0d 0h 0m 0s';
+      timer.innerHTML = '0d 0h 0m 0s';
     }
   }, 1000);
 });
