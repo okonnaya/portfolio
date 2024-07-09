@@ -2,7 +2,7 @@
 .h3,
 .W_WorkPics .A_WorkToggle {
   font-size: 24px;
-  letter-spacing: -0.5px;
+  color: var(--black);
   &.beige {
     color: var(--base);
   }
@@ -10,13 +10,15 @@
 .h2 {
   font-size: 55px;
   letter-spacing: -1.5px;
+  color: var(--black);
 }
 .p {
   font-size: 18px;
-  letter-spacing: -0.3px;
+  color: var(--black);
 }
 .A_UnderlinedLink {
   text-decoration: underline;
+  color: var(--black);
 }
 
 //хед фут
@@ -1231,22 +1233,47 @@
       flex-direction: column;
       justify-content: flex-start;
       .S_RaskladBody {
-        padding-top: 60px;
+        padding-top: 40px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        gap: 10px;
-        margin-bottom: 40px;
+        gap: 5px;
+        margin-bottom: 200px;
+
+        .C_List {
+          margin-top: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          height: auto;
+          .A_List {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: top;
+            .Q_Line {
+              margin-top: 5px;
+              height: 1px;
+              width: 200px;
+              background-color: var(--grey);
+            }
+          }
+        }
 
         .h2.Grey {
           color: var(--grey);
+          margin-top: 20px;
         }
         .h3 {
-          margin-bottom: 30px;
+          // margin-bottom: 30px;
         }
         .A_CaseImages {
           width: 100%;
           height: auto;
+          margin-top: 20px;
+          margin-bottom: 100px;
+          border-radius: 20px;
         }
 
         .C_ColumnsRaskladBody {
