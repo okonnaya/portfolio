@@ -237,53 +237,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 36px;
-      }
-    }
-    .O_Happiness {
-      position: relative;
-      grid-column: 1/5;
-      grid-row: 4/6;
-      display: flex;
-      flex-direction: row;
-      padding: 36px;
-      gap: 2vh;
-      justify-content: space-between;
-      .A_HappinessLink {
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 10;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        cursor: image-url('pointer.svg'), auto;
-      }
-      .W_HappinessTexts {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        .HappinessDate,
-        .HappinessText {
-          color: var(--grey);
-        }
-        .W_HappinessTexts2 {
-          display: flex;
-          flex-direction: column;
-          gap: 1vh;
-        }
-      }
-      img {
-        border-radius: 18px;
-        position: relative;
-        height: 100%;
-        width: auto;
-
-        // top: 50%;
-        // left: 50%;
-        // transform: translate(-50%, -50%);
+        padding: 30px;
       }
     }
     .O_TgChannel {
@@ -298,7 +252,7 @@
     .O_CV {
       grid-column: 7/9;
       grid-row: 1/4;
-      padding: 36px;
+      padding: 30px;
 
       .A_CV {
         display: flex;
@@ -318,7 +272,7 @@
       .A_ConnectText {
         z-index: 2;
         color: var(--base);
-        padding: 36px;
+        padding: 30px;
         padding-right: 70%;
       }
 
@@ -351,7 +305,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 36px;
+      padding: 30px;
       position: relative;
 
       a {
@@ -381,7 +335,7 @@
     .O_Timer {
       grid-column: 1/4;
       grid-row: 1/4;
-      padding: 36px;
+      padding: 30px;
       display: flex;
       justify-content: center;
       align-items: left;
@@ -499,7 +453,7 @@
       justify-content: center;
       align-items: center;
       .A_WorkToggle {
-        width: 200px;
+        width: 240px;
         z-index: 100;
         @mixin can-toggle-branding(
           $can-toggle-off-color: white,
@@ -733,7 +687,7 @@
           // Or re-brand the toggle for different applications
           &.demo-rebrand-2 {
             @include can-toggle-appearance(
-              200px,
+              240px,
               // Toggle width
               50px,
               // Toggle height
@@ -892,6 +846,13 @@
     img {
       position: absolute;
     }
+    .A_ImageVtoroe {
+      width: 120%;
+      min-width: 100%;
+      height: auto;
+      z-index: -1;
+      top: 200px;
+    }
     .A_ImageRasklad1 {
       max-width: 45%;
       height: auto;
@@ -950,6 +911,7 @@
         justify-content: flex-start;
         gap: 20px;
         margin-bottom: 200px;
+
         .S_Etc {
           display: flex;
           gap: 20px;
@@ -972,6 +934,7 @@
             flex-direction: row;
             justify-content: flex-start;
             align-items: top;
+            width: 80%;
             .Q_Line {
               margin-top: 5px;
               height: 1px;
@@ -987,6 +950,7 @@
         }
         .h3 {
           // margin-bottom: 30px;
+          width: 80%;
         }
         .A_CaseImages {
           width: 100%;
@@ -1321,13 +1285,10 @@
       height: 200px;
       box-sizing: border-box;
       border-radius: 24px;
-      border-radius: 24px;
       background: #fff;
       box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
-      padding: 20px;
       display: flex;
       flex-direction: row;
-      padding: 36px;
       gap: 2vh;
       justify-content: space-between;
       .W_HappinessTexts {
@@ -1341,6 +1302,9 @@
           display: flex;
           flex-direction: column;
           gap: 1vh;
+          .HappinessText {
+            color: var(--black);
+          }
         }
       }
       img {
@@ -1646,5 +1610,51 @@
       var(--white) 4px,
       var(--white) 16px
     );
+  }
+}
+.O_Happiness {
+  position: relative;
+  grid-column: 1/5;
+  grid-row: 4/6;
+  display: flex;
+  flex-direction: row;
+  padding: 30px;
+  gap: 2vh;
+  justify-content: space-between;
+  .A_HappinessLink {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    cursor: image-url('pointer.svg'), auto;
+  }
+  .W_HappinessTexts {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .HappinessDate,
+    .HappinessText {
+      color: var(--grey);
+    }
+    .W_HappinessTexts2 {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+  }
+  img {
+    border-radius: 18px;
+    position: relative;
+    height: 100%;
+    width: auto;
+
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
   }
 }

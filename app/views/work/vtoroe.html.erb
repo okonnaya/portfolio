@@ -3,15 +3,15 @@
             <div class="A_Heading h2"> <%= link_to "кейсы /", work_path %> второе дыхание</div>
             <div class="A_Text h3"><%= raw "дизайн-концепция в&nbsp;рамках хакатона для сайта фонда Второе дыхание, крупнейшей НКО в&nbsp;России, занимающаяся сбором и&nbsp;переработкой одежды"%></div>
             <div class="A_Heading p Grey">время чтения: 6 мин</div>
+            <%= image_tag 'vtoroe/1.jpg', class: 'A_ImageVtoroe' %>
     </div>
     <div class = "O_RaskladBody">
         <div class = "M_RaskladMenu">
             <a  class="h3" onClick="document.getElementById('section1').scrollIntoView({ behavior: 'smooth' });">1. общее</a>
-            <a class="h3" onClick="document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });">2. исследование</a>
-            <a class="h3" onClick="document.getElementById('section3').scrollIntoView({ behavior: 'smooth' });">3. айдентика</a>
-            <a class="h3" onClick="document.getElementById('section4').scrollIntoView({ behavior: 'smooth' });">4. дизайн-система</a>
-            <a class="h3" onClick="document.getElementById('section5').scrollIntoView({ behavior: 'smooth' });">5. интерфейсы</a>
-            <a class="h3" onClick="document.getElementById('section6').scrollIntoView({ behavior: 'smooth' });">6. SEO</a>
+            <a class="h3" onClick="document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });">2. задача</a>
+            <a class="h3" onClick="document.getElementById('section3').scrollIntoView({ behavior: 'smooth' });">3. варфреймы</a>
+            <a class="h3" onClick="document.getElementById('section4').scrollIntoView({ behavior: 'smooth' });">4. решение</a>
+            <a class="h3" onClick="document.getElementById('section5').scrollIntoView({ behavior: 'smooth' });">5. дизайн-система</a>
         </div>
         <div class = "M_RaskladBody">
             <div class = "S_RaskladBody" id="section1">
@@ -38,27 +38,116 @@
                             ссылки
                         </div>
                         <div class="A_Column2RaskladBody h3">
-                            <a class = "A_UnderlinedLink" href="https://www.behance.net/gallery/185556215/redizajn-sajta-dlja-fonda-vtoroe-dyhanie" target="_blank">беханс</a>
-                    
+                            <a class = "A_UnderlinedLink" href="https://www.behance.net/gallery/185556215/redizajn-sajta-dlja-fonda-vtoroe-dyhanie#:~:text=%D0%A0%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82-,%D0%9F%D1%80%D0%BE%D1%82%D0%BE%D1%82%D0%B8%D0%BF%C2%A0%D0%B4%D0%B5%D1%81%D0%BA%D1%82%D0%BE%D0%BF,-121" target="_blank">варфреймы</a>
+                            </br><a class = "A_UnderlinedLink" href="https://www.behance.net/gallery/185556215/redizajn-sajta-dlja-fonda-vtoroe-dyhanie" target="_blank">беханс</a>
+                            
                         </div>
                     </div>
                 </div>
+                <%= image_tag 'vtoroe/7.jpg', class: 'A_CaseImages' %>
             </div>
             <div class = "S_RaskladBody" id="section2">
-                <div class="h2">исследование</div>
+                <div class="h2">задача</div>
+                <div class="A_Text h3"><%= raw "Сделать дизайн-концепцию нового сайта фонда Второе Дыхание, которая побудит больше людей помогать фонду, а&nbsp;также сделает его ближе к&nbsp;людям."%></div>
+                <div class="h2 Grey"><i>(</i>аудитория<i>)</i></div>
+                <%= image_tag 'vtoroe/2.jpg', class: 'A_CaseImages' %>
             </div>
             <div class = "S_RaskladBody" id="section3">
-                <div class="h2">айдентика</div>
+                <div class="h2">варфреймы</div>
+                <%= image_tag 'vtoroe/3.jpg', class: 'A_CaseImages' %>
+                
             </div>
             <div class = "S_RaskladBody" id="section4">
-                <div class="h2">дизайн-система</div>
+            
+            <div class="h2">решение</div>
+            <div class="A_Text h3"><%= raw "Есть 2&nbsp;основных сценария пользовательского опыта: сдать одежду или сделать пожертвование. Мы&nbsp;акцентируем внимание на&nbsp;этом несколько раз, показывая, что помогать можно по‑разному. На&nbsp;этом строим кольцевую композицию главной страницы и&nbsp;футера&nbsp;&mdash; рифма."%></div>
+                
+            <%= image_tag 'vtoroe/4.jpg', class: 'A_CaseImages' %>
+            <%= image_tag 'vtoroe/5.jpg', class: 'A_CaseImages' %>
+
+
+            <div class="A_VideoVimeo">
+            <iframe  src="https://www.youtube.com/embed/dNJGABfWTXs?si=AOIQ08lJJzpW-kBK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="h2 Grey"><i>(</i>форма для пожертвований<i>)</i></div>
+            <div class="A_Text h3"><%= raw "Для ее&nbsp;разработки я&nbsp;пообщалась с&nbsp;парой людей, связанных с&nbsp;благотворительными фондами. Важно было не&nbsp;просто побудить сделать единоразовое пожертвование, но&nbsp;и&nbsp;подписаться на&nbsp;них. Кроме того, во&nbsp;&laquo;Втором дыхании&raquo; можно выбрать спецпроект, которому ты&nbsp;можешь помочь. </br> </br> Мы&nbsp;учли все это и&nbsp;добавили интерактивный элемент&nbsp;&mdash; &laquo;Я-сообщение&raquo;, которое меняется в&nbsp;зависимости от&nbsp;выбранных настроек, создающее эмоциональную связь с&nbsp;пользователем"%></div>
+                
+            <%= image_tag 'vtoroe/6.jpg', class: 'A_CaseImages' %>
+
+
+
+
             </div>
             <div class = "S_RaskladBody" id="section5">
-                <div class="h2">интерфейсы</div>
+                <div class="h2">дизайн-система</div>
+                <%= image_tag 'vtoroe/8.jpg', class: 'A_CaseImages' %>
             </div>
-            <div class = "S_RaskladBody" id="section6">
-                <div class="h2">SEO</div>
+
+
+
+            <div class = "S_RaskladBody">
+            <div class="h2">далее</div>
+                 <div class = "S_Etc">
+                        <div class = "M_WorkCase WorkCaseLutok">
+                        <%= link_to " ", work_lutok_path, class: "A_WorkLink h3" %>
+                            <div class = "A_WorkCaseHeading h3">луток</div>
+                            <div class = "C_WorkCaseTags">
+                                <div class = "A_WorkCaseTag p">UX/UI</div>
+                                <div class = "A_WorkCaseTag p">fullstack</div>
+                            </div>
+
+                            <div class = W_WorkCaseBackground>
+                                <%= image_tag 'workpreview/lutokpreview3.png', class: 'A_lutokpreview3' %>
+                                <%= image_tag 'workpreview/lutokpreview4.png', class: 'A_lutokpreview4' %>
+                                <%= image_tag 'workpreview/lutokpreview5.png', class: 'A_lutokpreview5' %>
+                                <%= image_tag 'workpreview/lutokpreview1.png', class: 'A_lutokpreview1' %>
+                                <%= image_tag 'workpreview/lutokpreview2.png', class: 'A_lutokpreview2' %>
+                            </div>
+                        </div>
+
+
+                        <div class = "M_WorkCase WorkCaseRasklad">
+                        <%= link_to " ", work_rasklad_path, class: "A_WorkLink h3" %>
+                            <div class = "A_WorkCaseHeading h3">расклад</div>
+                            <div class = "C_WorkCaseTags">
+                                <div class = "A_WorkCaseTag p">UX/UI</div>
+                                <div class = "A_WorkCaseTag p">frontend</div>
+                            </div>
+            
+                            <div class = W_WorkCaseBackground>
+                                <%= image_tag 'workpreview/raskladpreview3.png', class: 'A_raskladpreview3' %>
+                                 <%= image_tag 'workpreview/raskladpreview2.png', class: 'A_raskladpreview2' %>
+                                 <%= image_tag 'workpreview/raskladpreview4.png', class: 'A_raskladpreview4' %>
+                                 <%= image_tag 'workpreview/raskladpreview5.png', class: 'A_raskladpreview5' %>
+                                 <%= image_tag 'workpreview/raskladpreview1.png', class: 'A_raskladpreview1' %>
+                            </div>
+            
+            
+            
+            
+            
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+                     </div>
+
             </div>
+
+
+
+
+
+
+        </div>
         </div>
     </div>
 
