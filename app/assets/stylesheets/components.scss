@@ -173,7 +173,8 @@
       height: 100%;
     }
     & > * {
-      border-radius: 30px;
+      border-radius: 24px;
+      border-radius: 24px;
       background-color: var(--white);
       box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
         0px 5px 8px 0px rgba(0, 0, 0, 0.02);
@@ -197,7 +198,8 @@
       // grid-column: 2/4;
       // grid-row: 4;
 
-      border-radius: 30px;
+      border-radius: 24px;
+      border-radius: 24px;
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -469,7 +471,7 @@
       display: grid;
       align-items: stretch;
       width: 100%;
-      min-height: 1200px;
+      min-height: 1300px;
       grid-template-columns: repeat(12, 1fr);
       grid-template-rows: repeat(9, 1fr);
       grid-gap: 12px;
@@ -953,7 +955,6 @@
           gap: 20px;
           flex-direction: row;
           .M_WorkCase {
-            padding: 20px;
             width: 48%;
             height: 200px;
           }
@@ -1074,7 +1075,8 @@
       display: flex;
       width: 100%;
       max-width: 400px;
-      border-radius: 30px;
+      border-radius: 24px;
+      border-radius: 24px;
       box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
       padding: 20px;
       align-items: flex-start;
@@ -1145,7 +1147,8 @@
         width: 100%;
         min-height: 100px;
         height: 400px;
-        border-radius: 30px;
+        border-radius: 24px;
+        border-radius: 24px;
         background-color: var(--white);
         box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
         position: relative;
@@ -1264,7 +1267,8 @@
       min-width: 220px;
       height: 300px;
       box-sizing: border-box;
-      border-radius: 30px;
+      border-radius: 24px;
+      border-radius: 24px;
       background: #fff;
       box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
       padding: 20px;
@@ -1316,7 +1320,8 @@
       width: calc(33% - 20px);
       height: 200px;
       box-sizing: border-box;
-      border-radius: 30px;
+      border-radius: 24px;
+      border-radius: 24px;
       background: #fff;
       box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
       padding: 20px;
@@ -1357,8 +1362,8 @@
   flex-direction: column;
   justify-content: space-between;
   background-color: var(--white);
-  border-radius: 30px;
-  padding: 36px;
+  border-radius: 24px;
+  padding: 20px;
   overflow: hidden;
   position: relative;
   cursor: image-url('pointer.svg'), auto;
@@ -1403,7 +1408,7 @@
       background-color: var(--grey);
       color: var(--white);
       border-radius: 100px;
-      padding: 8px 16px;
+      padding: 4px 16px;
     }
   }
   &.WorkCaseRasklad {
@@ -1529,14 +1534,14 @@
     .A_tinderpreview {
       width: auto;
       height: 100%;
-      bottom: -5%;
-      right: -2%;
+      bottom: -20%;
+      right: 10%;
     }
 
     &:hover {
       .A_tinderpreview {
-        bottom: -3%;
-        right: 2%;
+        bottom: -17%;
+        right: 7%;
         transform: rotate(-2deg);
       }
     }
@@ -1548,13 +1553,13 @@
     .A_portfoliopreview {
       width: 120%;
       height: auto;
-      bottom: 15%;
+      bottom: 5%;
       right: -30%;
     }
 
     &:hover {
       .A_portfoliopreview {
-        bottom: 16%;
+        bottom: 2%;
         right: -27%;
         transform: rotate(2deg);
       }

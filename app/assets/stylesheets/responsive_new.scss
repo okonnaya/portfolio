@@ -66,7 +66,7 @@
     .W_WorkCases {
       .C_WorkCasesGrid {
         .M_WorkCase {
-          padding: 20px;
+          padding: 16px;
         }
       }
     }
@@ -123,6 +123,39 @@
       }
     }
   }
+  .S_Work {
+    .W_WorkCases .C_WorkCasesGrid {
+      .M_WorkCase.WorkCaseRasklad,
+      .M_WorkCase.WorkCaseLutok,
+      .M_WorkCase.WorkCasevtoroe {
+        grid-column: 3 / 11;
+      }
+      .M_WorkCase.WorkCaseSberAI,
+      .M_WorkCase.WorkCaseTinder {
+        grid-column: 3 / 7;
+      }
+      .M_WorkCase.WorkCasePortfolio {
+        grid-column: 7 / 11;
+        .A_portfoliopreview {
+          bottom: 25%;
+          right: -45%;
+        }
+        &:hover .A_portfoliopreview {
+          bottom: 20%;
+          right: -40%;
+        }
+      }
+      .M_WorkCase.WorkCaseZine {
+        grid-column: 3 / 5;
+      }
+      .M_WorkCase.WorkCaseGotbit {
+        grid-column: 5 / 8;
+      }
+      .M_WorkCase.WorkCaseKandinsky {
+        grid-column: 8 / 11;
+      }
+    }
+  }
 
   .S_Caps {
     width: auto;
@@ -130,6 +163,13 @@
 }
 
 @media only screen and (max-width: 1190px) {
+  .S_Offtop {
+    .C_Offtops,
+    .C_AnotherOfftops {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
   .S_Work {
     .W_WorkCases .C_WorkCasesGrid {
       .M_WorkCase.WorkCaseRasklad,
@@ -161,14 +201,6 @@
       .M_WorkCase.WorkCaseKandinsky {
         grid-column: 8 / 12;
       }
-    }
-  }
-
-  .S_Offtop {
-    .C_Offtops,
-    .C_AnotherOfftops {
-      flex-wrap: wrap;
-      justify-content: center;
     }
   }
 }
