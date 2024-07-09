@@ -1216,7 +1216,12 @@
       padding-top: 60px;
       top: 0;
       line-height: 180%;
-      text-decoration: underline;
+      gap: 10px;
+      display: flex;
+      flex-direction: column;
+      *:hover {
+        color: var(--pink);
+      }
     }
     .M_RaskladBody {
       flex: 3;

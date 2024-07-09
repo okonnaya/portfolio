@@ -1,19 +1,17 @@
 <div class="S_Case">
     <div class = "W_RaskladHead">
             <div class="A_Heading h2"> <%= link_to "кейсы /", work_path %> второе дыхание</div>
-            <div class="A_Text h3"><%= raw "дизайн-концепция в&nbsp;рамках закатана для сайта фонда Второе дыхание, крупнейшей НКО в&nbsp;России, занимающаяся сбором и&nbsp;переработкой одежды"%></div>
+            <div class="A_Text h3"><%= raw "дизайн-концепция в&nbsp;рамках хакатона для сайта фонда Второе дыхание, крупнейшей НКО в&nbsp;России, занимающаяся сбором и&nbsp;переработкой одежды"%></div>
             <div class="A_Heading p Grey">время чтения: 6 мин</div>
     </div>
     <div class = "O_RaskladBody">
         <div class = "M_RaskladMenu">
-            <ol>
-                <li ><a  class="h3" href="#section1">общее</a></li>
-                <li><a class="h3" href="#section2">исследование</a></li>
-                <li><a class="h3" href="#section3">айдентика</a></li>
-                <li><a class="h3" href="#section4">дизайн-система</a></li>
-                <li><a class="h3" href="#section5">интерфейсы</a></li>
-                <li><a class="h3" href="#section6">SEO</a></li>
-            </ol>
+            <a  class="h3" onClick="document.getElementById('section1').scrollIntoView({ behavior: 'smooth' });">1. общее</a>
+            <a class="h3" onClick="document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });">2. исследование</a>
+            <a class="h3" onClick="document.getElementById('section3').scrollIntoView({ behavior: 'smooth' });">3. айдентика</a>
+            <a class="h3" onClick="document.getElementById('section4').scrollIntoView({ behavior: 'smooth' });">4. дизайн-система</a>
+            <a class="h3" onClick="document.getElementById('section5').scrollIntoView({ behavior: 'smooth' });">5. интерфейсы</a>
+            <a class="h3" onClick="document.getElementById('section6').scrollIntoView({ behavior: 'smooth' });">6. SEO</a>
         </div>
         <div class = "M_RaskladBody">
             <div class = "S_RaskladBody" id="section1">
