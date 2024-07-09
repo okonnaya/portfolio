@@ -190,6 +190,43 @@
   .O_MenubarMobile {
     display: flex;
   }
+  body {
+    padding-top: 0px;
+  }
+  .A_VideoBack {
+    height: 97vh;
+  }
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_Moment,
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_teremok,
+  .S_Offtop .C_AnotherOfftops .C_OfftopColumn .M_AnotherOfftop.M_Cat,
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_OfftopTouch {
+    height: 30px;
+    min-height: 110px;
+  }
+  .S_Offtop .C_AnotherOfftops .C_OfftopColumn .M_AnotherOfftop.M_b22,
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_OfftopFont,
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_OfftopNitka,
+  .S_Offtop
+    .C_AnotherOfftops
+    .C_OfftopColumn
+    .M_AnotherOfftop.M_Sister {
+    height: 250px;
+  }
 
   .S_Work {
     .W_WorkCases .C_WorkCasesGrid {
