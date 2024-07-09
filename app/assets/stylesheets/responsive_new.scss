@@ -84,6 +84,11 @@
     .M_OfftopTouch {
       height: 150px;
     }
+    .C_AnotherOfftops {
+      .C_OfftopColumn {
+        width: 330px;
+      }
+    }
   }
 }
 
@@ -116,6 +121,9 @@
     }
     .C_AnotherOfftops {
       justify-content: center;
+      .C_OfftopColumn {
+        width: 46%;
+      }
     }
   }
 
@@ -129,7 +137,7 @@
     .W_WorkCases .C_WorkCasesGrid {
       .M_WorkCase.WorkCaseRasklad,
       .M_WorkCase.WorkCaseLutok,
-      .M_WorkCase.WorkCasehackathon {
+      .M_WorkCase.WorkCasevtoroe {
         grid-column: 2 / 12;
       }
       .M_WorkCase.WorkCaseSberAI,

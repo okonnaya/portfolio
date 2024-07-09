@@ -23,14 +23,15 @@
 .O_MenubarMobile {
   display: none;
   position: fixed;
-  left: 16px;
-  bottom: 30px;
+  padding: 16px;
+  bottom: 14px;
+  width: 100%;
   z-index: 10000;
   flex-direction: row;
   align-items: end;
   gap: 10px;
   * {
-    transition: all 0.2s ease-in;
+    transition: all 0.3s cubic-bezier(0.87, 0.22, 0.79, 0.6);
   }
   .A_Arrow {
     display: block;
@@ -40,11 +41,11 @@
     text-align: center;
     background-color: var(--white);
     border-radius: 100px;
-    box-shadow: 0px 0px 20px 0px rgba(108, 111, 121, 0.07), 
+    box-shadow: 0px 0px 20px 0px rgba(108, 111, 121, 0.07),
       0px 0px 8px 0px rgba(0, 0, 0, 0.02);
     user-select: none;
     &.Collapsed {
-      transform: rotate(180deg);
+      transform: rotate(-180deg);
     }
   }
   .M_MenuLinks {
@@ -56,6 +57,7 @@
     flex-direction: column;
     border-radius: 20px;
     height: auto;
+    flex: 1;
     max-height: 200px;
     box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
       0px 5px 8px 0px rgba(0, 0, 0, 0.02);
@@ -66,6 +68,7 @@
     .A_MenuLink {
       color: var(--grey);
       height: 22px;
+      text-align: center;
       &.Current {
         color: var(--black);
       }
@@ -674,24 +677,24 @@
             }
           }
         }
-        &.WorkCasehackathon {
+        &.WorkCasevtoroe {
           grid-column: 4/10;
           grid-row: 7/9;
-          .A_hackathonpreview1 {
+          .A_vtoroepreview1 {
             height: 110%;
             width: auto;
             transform: rotate(20deg);
             top: 1%;
             right: -3%;
           }
-          .A_hackathonpreview2 {
+          .A_vtoroepreview2 {
             object-fit: contain;
             width: 20%;
             height: auto;
             top: 30%;
             right: 50%;
           }
-          .A_hackathonpreview3 {
+          .A_vtoroepreview3 {
             object-fit: contain;
             height: 120%;
             width: auto;
@@ -700,16 +703,16 @@
           }
 
           &:hover {
-            .A_hackathonpreview1 {
+            .A_vtoroepreview1 {
               transform: rotate(15deg);
 
               top: -3%;
             }
-            .A_hackathonpreview2 {
+            .A_vtoroepreview2 {
               transform: rotate(5deg);
               top: 25%;
             }
-            .A_hackathonpreview3 {
+            .A_vtoroepreview3 {
               transform: rotate(5deg);
               top: 25%;
             }
@@ -1101,13 +1104,13 @@
         right: 0%;
         height: auto;
       }
-      .A_hackathon1 {
+      .A_vtoroe1 {
         width: 25%;
         top: 1700px;
         left: 30%;
         height: auto;
       }
-      .A_hackathon2 {
+      .A_vtoroe2 {
         width: 20%;
         top: 1900px;
         left: 12%;
@@ -1272,8 +1275,9 @@
 ////приколы
 .A_VideoBack {
   width: 100vw;
-  height: auto;
+  height: 80vh;
   position: relative;
+  background-image: url('offtop/offtop.gif');
   margin-top: -180px;
   top: 0;
   left: 0;
@@ -1365,12 +1369,15 @@
     .C_OfftopColumn {
       display: flex;
       flex-direction: column;
-      width: 292px;
+      width: 400px;
       gap: 20px;
       justify-content: flex-start;
       .M_AnotherOfftop {
+        background-size: cover;
+        background-position: center;
         width: 100%;
         min-height: 100px;
+        height: 400px;
         border-radius: 30px;
         background-color: var(--white);
         box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
@@ -1393,75 +1400,68 @@
         }
         &.M_OfftopTouch {
           background-image: url('offtop/touch.jpg');
-          background-size: cover;
           height: 200px;
-          background-position: center;
         }
         &.M_OfftopNitka {
           background-image: url('offtop/nitka.jpg');
-          background-size: cover;
-          height: 400px;
-          background-position: center;
         }
         &.M_OfftopFont {
           background-image: url('offtop/font.jpg');
-          background-size: cover;
           height: 500px;
-          background-position: center;
-        }
-        &.M_ElioDance {
-          background-image: url('offtop/elio.gif');
-          background-size: cover;
-          height: 500px;
-          background-position: center;
         }
         &.M_Museum {
           background-image: url('offtop/museum.png');
-          background-size: cover;
           height: 200px;
-          background-position: center;
+        }
+        &.M_b22 {
+          background-image: url('offtop/b22.png');
+          height: 300px;
+          background-position: top;
+        }
+        &.M_Motion {
+          background-image: url('offtop/motion.gif');
+          height: 300px;
+        }
+        &.M_b21 {
+          background-image: url('offtop/b21.png');
+          height: 200px;
+          background-position: top;
+        }
+        &.M_b211 {
+          background-image: url('offtop/b211.png');
+        }
+        &.M_teremok {
+          background-image: url('offtop/teremok.png');
+          background-position: top;
+          height: 200px;
+        }
+        &.M_table {
+          background-image: url('offtop/table.jpg');
+          height: 200px;
         }
         &.M_Sister {
           background-image: url('offtop/sister.jpg');
-          background-size: cover;
-          height: 400px;
-          background-position: center;
         }
         &.M_Moment {
           background-image: url('offtop/moment.jpg');
-          background-size: cover;
           height: 200px;
-          background-position: center;
         }
         &.M_Essay {
           background-image: url('offtop/essay.jpeg');
-          background-size: cover;
           height: 200px;
           background-position: top;
         }
         &.M_Stone {
           background-image: url('offtop/stone.gif');
-          background-size: cover;
           height: 200px;
-          background-position: center;
-        }
-        &.M_Shrek {
-          background-image: url('offtop/shrek.gif');
-          background-size: cover;
-          height: 500px;
-          background-position: center;
         }
         &.M_Subway {
           background-image: url('offtop/subway.jpeg');
-          background-size: cover;
           height: 500px;
-          background-position: center;
         }
         &.M_Cat {
           background-image: url('offtop/cat.jpeg');
-          background-size: cover;
           height: 300px;
-          background-position: center;
         }
       }
     }

@@ -16,6 +16,6 @@ Rails.application.routes.draw do
   get 'work/rasklad', to: 'work#rasklad'
   get 'work/lutok', to: 'work#lutok'
   get 'work/tinder', to: 'work#tinder'
-  get 'work/hackathon', to: 'work#hackathon'
+  get 'work/vtoroe', to: 'work#vtoroe'
   get 'work/portfolio', to: 'work#portfolio'
 end

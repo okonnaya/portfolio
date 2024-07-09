@@ -9,6 +9,6 @@ class WorkController < ApplicationController
   end
   def tinder
   end
-  def hackathon
+  def vtoroe
   end
 end
