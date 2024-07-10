@@ -885,12 +885,14 @@
     gap: 20px;
     position: relative;
     min-height: 100vh;
+    margin-top: 340px;
     .M_RaskladMenu {
       flex: 1;
       height: 300px;
       position: sticky;
       padding-top: 60px;
       top: 0;
+      left: 20px;
       line-height: 180%;
       gap: 10px;
       display: flex;

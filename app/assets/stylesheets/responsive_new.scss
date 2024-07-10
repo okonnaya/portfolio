@@ -104,7 +104,8 @@
   .S_Work,
   .S_Caps,
   .S_Offtop,
-  .S_Happiness {
+  .S_Happiness,
+  .S_Case {
     width: auto;
   }
 
@@ -202,6 +203,20 @@
       }
     }
   }
+  .S_Case {
+    .O_RaskladBody {
+      flex-direction: column;
+      padding: 0 20px;
+      .M_RaskladMenu {
+        position: relative;
+        left: 0;
+        padding: 0;
+      }
+      .S_RaskladBody {
+        margin-bottom: 80px !important;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 767px) {
@@ -275,6 +290,13 @@
       > * {
         grid-column: 1 / 13 !important;
         grid-row: span 2 !important;
+      }
+    }
+  }
+  .S_Case {
+    .O_RaskladBody {
+      .C_ColumnsRaskladBody {
+        flex-direction: column !important;
       }
     }
   }
