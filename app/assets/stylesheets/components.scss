@@ -1514,6 +1514,13 @@
   &.WorkCasePortfolio {
     grid-column: 8/10;
     grid-row: 5/7;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--base),
+      var(--base) 4px,
+      var(--white) 4px,
+      var(--white) 16px
+    );
     .A_portfoliopreview {
       width: 120%;
       height: auto;
