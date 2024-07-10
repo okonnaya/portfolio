@@ -1270,6 +1270,7 @@
   .A_Text,
   .A_Heading {
     max-width: 50%;
+    text-align: center;
   }
   .C_HappinessBlocks {
     margin-top: 60px;
@@ -1282,6 +1283,7 @@
 
     .O_Happiness {
       width: calc(33% - 20px);
+      min-width: 420px;
       height: 200px;
       box-sizing: border-box;
       border-radius: 24px;
@@ -1652,6 +1654,8 @@
     position: relative;
     height: 100%;
     width: auto;
+    max-width: 180px;
+    object-fit: cover;
 
     // top: 50%;
     // left: 50%;
