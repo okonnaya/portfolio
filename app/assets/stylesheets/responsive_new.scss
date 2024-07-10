@@ -100,6 +100,33 @@
   .p {
     font-size: 16px;
   }
+  body {
+    padding-top: 0px;
+  }
+  .S_Main .W_Grid .O_CV .A_CV .Q_CV {
+    font-size: 130px;
+  }
+  .S_Main {
+    width: auto;
+    max-height: 100vh;
+    max-width: 100vw;
+    height: 85vh;
+
+    padding: 16px;
+    padding-top: 100px;
+
+    .W_Grid {
+      max-height: 100vh;
+      height: auto;
+      min-height: 100px;
+      & > div {
+        // border-radius: 24px;
+      }
+    }
+  }
+  .O_Footer {
+    padding: 16px;
+  }
 
   .S_Work,
   .S_Caps,
@@ -170,6 +197,9 @@
       justify-content: center;
     }
   }
+  .S_Main .W_Grid .O_CV .A_CV .Q_CV {
+    font-size: 100px;
+  }
   .S_Work {
     .W_WorkCases .C_WorkCasesGrid {
       .M_WorkCase.WorkCaseRasklad,
@@ -239,10 +269,10 @@
   .O_MenubarMobile {
     display: flex;
   }
-  .O_Happiness {
-    min-width: initial !important;
-    width: 100% !important;
-    height: 250px !important;
+  .S_Main .W_Grid .O_Happiness {
+    min-width: initial;
+    width: 100%;
+    height: 250px;
   }
   body {
     padding-top: 20px;
@@ -299,5 +329,118 @@
         flex-direction: column !important;
       }
     }
+  }
+}
+@media only screen and (orientation: portrait) {
+  .S_Main {
+    height: 90vh;
+    .W_Grid {
+      height: 90vh;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      grid-gap: 8px;
+      & > div {
+        // padding: 10px;
+      }
+
+      .O_Music {
+        display: none;
+      }
+      .O_Offtop {
+        grid-column: 1 / 3;
+        grid-row: 4;
+      }
+      .O_MyCaps {
+        grid-column: 1;
+        grid-row: 3;
+      }
+      .O_Happiness {
+        grid-column: 3/ 5;
+        grid-row: 1 / 4;
+        flex-direction: column;
+        overflow: hidden;
+        justify-content: space-between;
+        height: auto;
+        img {
+          height: auto;
+          height: 130px;
+          width: 100%;
+          max-width: 100vw;
+          object-fit: cover;
+        }
+      }
+      .O_Connect {
+        grid-column: 1 / 5;
+        grid-row: 6 / 9;
+      }
+      .O_CV {
+        grid-column: 3/ 5;
+        grid-row: 4/ 6;
+      }
+      .O_TgChannel {
+        grid-column: 2;
+        grid-row: 3;
+      }
+      .O_Timer {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+      }
+      .O_Hse {
+        grid-column: 1 / 3;
+        grid-row: 5;
+        flex-direction: row;
+        .A_HseImg {
+          width: 100px;
+          max-width: none;
+        }
+      }
+    }
+  }
+}
+@media only screen and (orientation: portrait) and (max-width: 767px) {
+  .S_Main {
+    padding-top: 16px;
+    height: 95vh;
+    .W_Grid {
+      height: 95vh;
+      .O_Happiness,
+      .O_Timer,
+      .O_Hse {
+        padding: 16px;
+      }
+      .O_Happiness {
+        .HappinessDate {
+          display: none;
+        }
+        img {
+          height: 100px;
+        }
+      }
+      .O_Connect {
+        a svg {
+          width: 140%;
+          top: -150px;
+          right: -200px;
+          transition: all 0.5s;
+          animation: rotate 60s linear infinite;
+        }
+      }
+      @keyframes rotate {
+        from {
+          transform: rotate(360deg);
+        }
+      }
+      .O_Hse {
+        img {
+          display: none;
+        }
+      }
+      .h3 {
+        font-size: 14px;
+      }
+    }
+  }
+  .S_Main ~ .O_Footer {
+    display: none;
   }
 }
