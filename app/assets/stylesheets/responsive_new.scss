@@ -90,7 +90,7 @@
 }
 
 @media only screen and (max-width: 1439px) {
-  .h3,
+  // .h3, // w  ты уверена? стало странно с этим.. (в кепках и радостях например)
   .W_WorkPics .A_WorkToggle {
     font-size: 20px;
   }
@@ -101,17 +101,21 @@
     font-size: 16px;
   }
 
-  ///
+  .S_Work,
+  .S_Caps,
+  .S_Offtop,
+  .S_Happiness,
+  .S_Case {
+    width: auto;
+  }
 
   .S_Work {
-    width: auto;
     .W_WorkInfo {
       padding: 0 20px;
     }
   }
 
   .S_Offtop {
-    width: auto;
     .C_Offtops,
     .C_AnotherOfftops {
       padding: 0 10px;
@@ -156,10 +160,6 @@
       }
     }
   }
-
-  .S_Caps {
-    width: auto;
-  }
 }
 
 @media only screen and (max-width: 1190px) {
@@ -203,6 +203,20 @@
       }
     }
   }
+  .S_Case {
+    .O_RaskladBody {
+      flex-direction: column;
+      padding: 0 20px;
+      .M_RaskladMenu {
+        position: relative;
+        left: 0;
+        padding: 0;
+      }
+      .S_RaskladBody {
+        margin-bottom: 80px !important;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 767px) {
@@ -216,14 +230,22 @@
   .p {
     font-size: 14px;
   }
+  .O_Footer {
+    padding-bottom: 100px;
+  }
   .O_Menubar {
     display: none;
   }
   .O_MenubarMobile {
     display: flex;
   }
+  .O_Happiness {
+    min-width: initial !important;
+    width: 100% !important;
+    height: 250px !important;
+  }
   body {
-    padding-top: 0px;
+    padding-top: 20px;
   }
   .A_VideoBack {
     height: 97vh;
@@ -268,6 +290,13 @@
       > * {
         grid-column: 1 / 13 !important;
         grid-row: span 2 !important;
+      }
+    }
+  }
+  .S_Case {
+    .O_RaskladBody {
+      .C_ColumnsRaskladBody {
+        flex-direction: column !important;
       }
     }
   }
