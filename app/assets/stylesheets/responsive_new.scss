@@ -134,6 +134,7 @@
   .S_Happiness,
   .S_Case {
     width: auto;
+    overflow-x: hidden;
   }
 
   .S_Work {
@@ -396,13 +397,27 @@
       }
     }
   }
+  .S_Case .O_RaskladBody .M_RaskladBody .S_RaskladBody .S_Etc {
+    flex-direction: column;
+    .M_WorkCase {
+      width: 100%;
+    }
+  }
 }
 @media only screen and (orientation: portrait) and (max-width: 767px) {
   .S_Main {
     padding-top: 16px;
+    padding-bottom: 60px;
     height: 95vh;
     .W_Grid {
       height: 95vh;
+      & > div {
+        border-radius: 16px;
+      }
+      .O_Offtop {
+        border-radius: 16px;
+      }
+
       .O_Happiness,
       .O_Timer,
       .O_Hse {
@@ -413,7 +428,7 @@
           display: none;
         }
         img {
-          height: 100px;
+          height: 80px;
         }
       }
       .O_Connect {
