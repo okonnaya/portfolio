@@ -26,7 +26,7 @@
   display: none;
   position: fixed;
   padding: 16px;
-  bottom: 14px;
+  bottom: 0px;
   width: 100%;
   z-index: 10000;
   flex-direction: row;
@@ -124,7 +124,7 @@
 }
 .O_Footer {
   position: relative;
-  font-size: 17px;
+  font-size: 20px;
   color: var(--grey);
   align-items: center;
   text-align: center;
@@ -431,6 +431,7 @@
       grid-gap: 12px;
     }
   }
+
   .W_WorkPics {
     margin-top: 16vh;
     width: 100%;
@@ -438,14 +439,7 @@
     flex-direction: column;
     gap: 2vh;
     align-items: center;
-    .A_BackButton {
-      background-color: var(--black);
-      color: var(--white);
-      border-radius: 100px;
-      padding: 16px 24px;
-      box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
-        0px 5px 8px 0px rgba(0, 0, 0, 0.02);
-    }
+
     .W_WorkToggle {
       width: 100%;
       display: flex;
@@ -1207,7 +1201,6 @@
 ///кепки
 .S_Caps {
   width: 1820px;
-  min-height: 80vh;
   margin: 0 auto;
   position: relative;
   gap: 2vh;
@@ -1231,7 +1224,7 @@
     .O_CapBlock {
       width: calc(20% - 20px);
       min-width: 220px;
-      height: 300px;
+      height: 400px;
       box-sizing: border-box;
       border-radius: 24px;
       border-radius: 24px;
@@ -1286,13 +1279,13 @@
     .O_Happiness {
       width: calc(33% - 20px);
       min-width: 420px;
-      height: 200px;
+      height: auto;
       box-sizing: border-box;
       border-radius: 24px;
       background: #fff;
       box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 2vh;
       justify-content: space-between;
       .W_HappinessTexts {
@@ -1314,8 +1307,9 @@
       img {
         border-radius: 18px;
         position: relative;
-        height: 100%;
-        width: auto;
+        height: auto;
+        width: 100%;
+        min-width: 100%;
 
         // top: 50%;
         // left: 50%;
@@ -1670,4 +1664,12 @@
     // left: 50%;
     // transform: translate(-50%, -50%);
   }
+}
+.A_BackButton {
+  background-color: var(--black);
+  color: var(--white);
+  border-radius: 100px;
+  padding: 16px 24px;
+  box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
+    0px 5px 8px 0px rgba(0, 0, 0, 0.02);
 }

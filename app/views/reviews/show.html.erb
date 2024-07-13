@@ -3,14 +3,15 @@
     </div>
     <div class="A_Text p">ревью на меня
     </div>
+    <a class="A_WorkCaseTag h3 A_BackButton" href="https://forms.gle/2TB7rbRJKHuqPBwXA">оставить отзыв</a>
 
     <div class="C_CapsBlocks">
-    <% if @reviews_samples.present? %>
-      <% @reviews_samples.each do |review| %>
+    <% if @review_samples.present? %>
+      <% @review_samples.each do |review| %>
         <div class="O_CapBlock">
-          <div class="A_CapHeading h3"><%= review.author.html_safe %></div>
-          <div class="A_CapText p"><%= review.text.html_safe %></div>
-          <div class="A_CapDate p"><%= review.date.html_safe %></div>
+          <div class="A_CapHeading"><%= review.author.html_safe %></div>
+          <div class="A_CapText"><%= review.text.html_safe %></div>
+          <div class="A_CapDate"><%= review.date %></div>
         </div>
       <% end %>
     <% end %>
