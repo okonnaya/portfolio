@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   get 'happinesses', to: 'happinesses#show'
   get 'work', to: 'work#index'
   get 'work/rasklad', to: 'work#rasklad'
-  get 'work/lutok', to: 'work#lutok'
+  get 'work/lootok', to: 'work#lootok'
   get 'work/tinder', to: 'work#tinder'
   get 'work/vtoroe', to: 'work#vtoroe'
   get 'work/portfolio', to: 'work#portfolio'

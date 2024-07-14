@@ -3,7 +3,7 @@ class WorkController < ApplicationController
   end
   def rasklad
   end
-  def lutok
+  def lootok
   end
   def portfolio
   end
