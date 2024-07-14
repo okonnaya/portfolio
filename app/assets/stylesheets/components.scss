@@ -731,7 +731,7 @@
         left: 12%;
         height: auto;
       }
-      .A_lutokmobile {
+      .A_lootokmobile {
         width: 18%;
         top: 750px;
         left: 0%;
@@ -749,13 +749,13 @@
         right: 0%;
         height: auto;
       }
-      .A_lutokmain {
+      .A_lootokmain {
         width: 50%;
         top: 1000px;
         left: 20%;
         height: auto;
       }
-      .A_lutokblock {
+      .A_lootokblock {
         width: 28%;
         top: 1400px;
         left: 0%;
@@ -847,6 +847,13 @@
       z-index: -1;
       top: 200px;
     }
+    .A_ImageLootok {
+      width: 100vw;
+      min-width: 100vw;
+      height: auto;
+      z-index: -1;
+      top: 300px;
+    }
     .A_ImageRasklad1 {
       max-width: 45%;
       height: auto;
@@ -881,6 +888,7 @@
     min-height: 100vh;
     margin-top: 340px;
     .M_RaskladMenu {
+      z-index: 10000;
       flex: 1;
       height: 300px;
       position: sticky;
@@ -930,7 +938,7 @@
             flex-direction: row;
             justify-content: flex-start;
             align-items: top;
-            width: 80%;
+            width: 100%;
             .Q_Line {
               margin-top: 5px;
               height: 1px;
@@ -946,7 +954,7 @@
         }
         .h3 {
           // margin-bottom: 30px;
-          width: 80%;
+          width: 100%;
         }
         .A_CaseImages {
           width: 100%;
@@ -1424,53 +1432,53 @@
     }
   }
 
-  &.WorkCaseLutok {
+  &.WorkCaselootok {
     grid-column: 4/10;
     grid-row: 3/5;
-    .A_lutokpreview1 {
+    .A_lootokpreview1 {
       width: 30%;
       height: auto;
       bottom: 30%;
       right: 50%;
     }
-    .A_lutokpreview4 {
+    .A_lootokpreview4 {
       width: 30%;
       height: auto;
       top: 20%;
       right: -2%;
     }
-    .A_lutokpreview5 {
+    .A_lootokpreview5 {
       width: 30%;
       height: auto;
       bottom: 2%;
       right: 10%;
     }
-    .A_lutokpreview2 {
+    .A_lootokpreview2 {
       width: 30%;
       height: auto;
       bottom: 10%;
       right: 30%;
     }
-    .A_lutokpreview3 {
+    .A_lootokpreview3 {
       width: 30%;
       height: auto;
       top: 5%;
       right: 20%;
     }
     &:hover {
-      .A_lutokpreview1 {
+      .A_lootokpreview1 {
         bottom: 40%;
         transform: rotate(-5deg);
       }
-      .A_lutokpreview2 {
+      .A_lootokpreview2 {
         bottom: 13%;
         transform: rotate(5deg);
       }
-      .A_lutokpreview3 {
+      .A_lootokpreview3 {
         top: 2%;
         transform: rotate(10deg);
       }
-      .A_lutokpreview4 {
+      .A_lootokpreview4 {
         top: 22%;
         transform: rotate(-2deg);
       }
