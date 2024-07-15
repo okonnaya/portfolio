@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   
   get 'caps', to: 'caps#show'
   get 'offtop', to: 'offtop#index'
+  get 'offtop/links', to: 'offtop#links'
   get 'reviews', to: 'reviews#show'
   get 'happinesses', to: 'happinesses#show'
   get 'work', to: 'work#index'
