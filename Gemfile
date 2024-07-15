@@ -68,6 +68,7 @@ group :development do
 
   gem 'image_optim'
   gem 'image_optim_pack'
+  gem 'rmagick'
 end
 
 group :test do
