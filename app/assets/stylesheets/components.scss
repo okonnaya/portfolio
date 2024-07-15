@@ -1020,6 +1020,61 @@
   border-radius: 0px 0px 30px 30px;
   box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
 }
+.M_OfftopBlock {
+  position: relative;
+  background-color: var(--white);
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 24px;
+  border-radius: 24px;
+  box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  align-items: flex-start;
+  gap: 12px;
+  &:hover {
+    filter: brightness(0.95);
+  }
+  .A_LinkOfftop {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    cursor: image-url('pointer.svg'), auto;
+  }
+  .A_ImageOfftopBlock {
+    width: 100px;
+    flex-shrink: 0;
+    height: 100px;
+    border-radius: 18px;
+    background-image: url('offtop/1.jpg');
+    background-size: cover;
+    &.A_ImageOfftopBlock2 {
+      background-image: url('offtop/2.jpg');
+    }
+    &.A_ImageOfftopBlock3 {
+      background-image: url('offtop/3.jpg');
+    }
+    &.A_ImageOfftopBlock4 {
+      background-image: url('offtop/4.jpg');
+    }
+  }
+  .W_TextOfftopBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    .p {
+      color: var(--grey);
+    }
+  }
+}
 .S_Offtop {
   width: 1820px;
   min-height: 80vh;
@@ -1037,61 +1092,6 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 20px;
-    .M_OfftopBlock {
-      position: relative;
-      background-color: var(--white);
-      display: flex;
-      width: 100%;
-      max-width: 400px;
-      border-radius: 24px;
-      border-radius: 24px;
-      box-shadow: 0px 4px 25.3px 0px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      align-items: flex-start;
-      gap: 12px;
-      &:hover {
-        filter: brightness(0.95);
-      }
-      .A_LinkOfftop {
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 10;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        cursor: image-url('pointer.svg'), auto;
-      }
-      .A_ImageOfftopBlock {
-        width: 100px;
-        flex-shrink: 0;
-        height: 100px;
-        border-radius: 18px;
-        background-image: url('offtop/1.jpg');
-        background-size: cover;
-        &.A_ImageOfftopBlock2 {
-          background-image: url('offtop/2.jpg');
-        }
-        &.A_ImageOfftopBlock3 {
-          background-image: url('offtop/3.jpg');
-        }
-        &.A_ImageOfftopBlock4 {
-          background-image: url('offtop/4.jpg');
-        }
-      }
-      .W_TextOfftopBlock {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        .p {
-          color: var(--grey);
-        }
-      }
-    }
   }
   .A_Heading {
     margin-top: 60px;
@@ -1216,6 +1216,29 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  &.S_Links {
+    .C_Links {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      .M_OfftopBlock {
+        width: calc(25% - 60px);
+        align-items: center;
+        .A_ImageOfftopBlock {
+          width: 40px;
+          height: 40px;
+          background-color: aqua;
+          border-radius: 10px;
+          background-image: none;
+        }
+      }
+    }
+  }
+
   .A_Text,
   .A_Heading {
     max-width: 50%;
