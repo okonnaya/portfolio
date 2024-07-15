@@ -65,6 +65,9 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+
+  gem 'image_optim'
+  gem 'image_optim_pack'
 end
 
 group :test do
