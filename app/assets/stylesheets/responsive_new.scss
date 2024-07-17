@@ -2,6 +2,7 @@
   body {
     padding-top: 120px;
   }
+
   .h3,
   .W_WorkPics .A_WorkToggle {
     font-size: 20px;
@@ -75,6 +76,13 @@
   .S_Caps,
   .S_Happiness {
     width: 1400px;
+    &.S_Links {
+      .C_Links {
+        .M_OfftopBlock {
+          width: calc(33% - 60px);
+        }
+      }
+    }
   }
   .S_Offtop {
     width: 1400px;
@@ -198,6 +206,15 @@
       justify-content: center;
     }
   }
+  .S_Caps {
+    &.S_Links {
+      .C_Links {
+        .M_OfftopBlock {
+          width: calc(50% - 40px);
+        }
+      }
+    }
+  }
   .S_Main .W_Grid .O_CV .A_CV .Q_CV {
     font-size: 100px;
   }
@@ -254,6 +271,16 @@
   .h3,
   .W_WorkPics .A_WorkToggle {
     font-size: 18px;
+  }
+  .S_Caps {
+    padding: 16px;
+    &.S_Links {
+      .C_Links {
+        .M_OfftopBlock {
+          width: 100%;
+        }
+      }
+    }
   }
   .h2 {
     font-size: 32px;
