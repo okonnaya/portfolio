@@ -143,6 +143,7 @@
   .S_Case {
     width: auto;
     overflow-x: hidden;
+    padding: 16px;
   }
 
   .S_Work {
@@ -432,6 +433,15 @@
   }
 }
 @media only screen and (orientation: portrait) and (max-width: 767px) {
+  .S_Happiness .C_HappinessBlocks .O_Happiness {
+    width: calc(100% - 32px);
+    min-width: 1px;
+  }
+  .S_Caps .C_CapsBlocks .O_CapBlock {
+    width: calc(100% - 32px);
+    min-width: 1px;
+    height: auto;
+  }
   .S_Main {
     padding-top: 16px;
     padding-bottom: 60px;

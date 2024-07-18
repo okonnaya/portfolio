@@ -7,7 +7,7 @@
 
     <div class="C_CapsBlocks">
     <% if @review_samples.present? %>
-      <% @review_samples.each do |review| %>
+      <% @review_samples.reverse_each do |review| %>
         <div class="O_CapBlock">
           <div class="A_CapHeading"><%= review.author.html_safe %></div>
           <div class="A_CapText"><%= review.text.html_safe %></div>
