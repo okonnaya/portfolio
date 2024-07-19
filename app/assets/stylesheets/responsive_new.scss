@@ -397,6 +397,11 @@
       }
     }
   }
+
+  .S_Case .O_RaskladBody {
+    padding: 0 0px;
+  }
+
   .S_Work .W_WorkPics .W_WorkPicsGraphic {
     display: flex;
     position: relative;
@@ -405,6 +410,48 @@
     gap: 10px;
     flex-direction: column;
     margin-bottom: 100px;
+  }
+  .S_Case .W_RaskladHead .A_Text {
+    max-width: 90%;
+    text-align: center;
+  }
+  .S_Case .W_RaskladHead .A_ImageRasklad1 {
+    max-width: 90%;
+    height: auto;
+    left: -10%;
+    top: 250px;
+  }
+  .S_Case .W_RaskladHead .A_ImageRasklad2 {
+    max-width: 90%;
+    height: auto;
+    right: -20%;
+    top: 460px;
+  }
+  .S_Case .W_RaskladHead .A_ImageRasklad3 {
+    max-width: 50%;
+    height: auto;
+    right: 50%;
+    top: 600px;
+  }
+  .S_Case .W_RaskladHead .A_ImageVtoroe {
+    width: 550%;
+    min-width: 100%;
+    height: auto;
+    z-index: -1;
+    top: 400px;
+  }
+  .S_Case .W_RaskladHead .A_ImageRasklad4 {
+    max-width: 55%;
+    height: auto;
+    right: 25%;
+    top: 800px;
+  }
+  .S_Case .W_RaskladHead .A_ImageLootok {
+    width: 550vw;
+    min-width: 100vw;
+    height: auto;
+    z-index: -1;
+    top: 200px;
   }
   .S_Work .W_WorkPics .W_WorkPicsGraphic .C_WorkPicsGraphic {
     display: flex;
