@@ -14,15 +14,7 @@ document.addEventListener('turbo:load', function () {
       (distance % (1000 * 60 * 60)) / (1000 * 60)
     );
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    timer.innerHTML =
-      days +
-      ' дней ' +
-      hours +
-      ' часов ' +
-      minutes +
-      ' мин ' +
-      seconds +
-      ' сек';
+    timer.innerHTML = `${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
     if (distance < 0) {
       clearInterval(x);
       timer.innerHTML = '0d 0h 0m 0s';
