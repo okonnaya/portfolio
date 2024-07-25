@@ -5,7 +5,7 @@
 
   .h3,
   .W_WorkPics .A_WorkToggle {
-    font-size: 20px;
+    font-size: 18px;
   }
   .h2 {
     font-size: 45px;
@@ -554,6 +554,9 @@
       grid-gap: 8px;
       & > div {
         // padding: 10px;
+      }
+      .O_Arena {
+        display: none;
       }
 
       .O_Music {
