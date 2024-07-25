@@ -1309,8 +1309,8 @@
     gap: 20px;
     .O_CapBlock {
       width: calc(20% - 20px);
-      min-width: 250px;
-      height: 600px;
+      min-width: 220px;
+      height: auto;
       box-sizing: border-box;
       border-radius: 24px;
       border-radius: 24px;
@@ -1323,13 +1323,12 @@
       align-items: center;
       gap: 6px;
       img {
-        height: 65%;
+        height: 50%;
         width: auto;
         margin-bottom: 10px;
       }
       .A_CapHeading {
         text-align: center;
-        margin-top: 8px;
       }
       .A_CapText {
         text-align: center;

@@ -109,7 +109,7 @@
     font-size: 18px;
   }
   body {
-    padding-top: 100px;
+    padding-top: 0px;
   }
   .S_Main .W_Grid .O_CV .A_CV .Q_CV {
     font-size: 130px;
@@ -200,9 +200,6 @@
 }
 
 @media only screen and (max-width: 1190px) {
-  .h3 {
-    font-size: 15px;
-  }
   .S_Work .W_WorkPics {
     .W_WorkPicsWeb {
       .A_rasklad0 {
@@ -605,11 +602,9 @@
         grid-column: 1 / 3;
         grid-row: 5;
         flex-direction: row;
-        align-items: flex-end;
         .A_HseImg {
           width: 100px;
           max-width: none;
-          height: fit-content;
         }
       }
     }
