@@ -8,7 +8,7 @@ namespace :assets do
 
     max_width, max_height = 1920, 1080  # Specifies the max dimensions we want. Adjust accordingly.
 
-    Dir.glob(Rails.root.join('app', 'assets', 'images', '**', '*.{png,jpg,jpeg,gif}')) do |img_path|
+    Dir.glob(Rails.root.join('app', 'assets', 'images', '**', '*.{png,jpg,jpeg}')) do |img_path|
       img = MiniMagick::Image.open(img_path)
 
       puts "Optimizing: #{img_path}"
