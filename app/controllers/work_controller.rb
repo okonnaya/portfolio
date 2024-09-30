@@ -5,8 +5,6 @@ class WorkController < ApplicationController
   end
   def lootok
   end
-  def portfolio
-  end
   def tinder
   end
   def vtoroe

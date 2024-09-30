@@ -18,5 +18,4 @@ Rails.application.routes.draw do
   get 'work/lootok', to: 'work#lootok'
   get 'work/tinder', to: 'work#tinder'
   get 'work/vtoroe', to: 'work#vtoroe'
-  get 'work/portfolio', to: 'work#portfolio'
 end

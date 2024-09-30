@@ -3,18 +3,20 @@
 .W_WorkPics .A_WorkToggle {
   font-size: 24px;
   color: var(--black);
+  font-weight: 300;
   &.beige {
     color: var(--base);
   }
 }
 .h2 {
   font-size: 55px;
-  letter-spacing: -1.5px;
+  letter-spacing: -1px;
   color: var(--black);
 }
 .p {
   font-size: 18px;
   color: var(--black);
+  font-weight: 300;
 }
 .A_UnderlinedLink {
   text-decoration: underline;
@@ -426,27 +428,65 @@
     margin-top: 60px; //hee hee hee hee OwO
     width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: top;
-    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 8vh;
     .A_Heading {
-      text-align: center;
+      text-align: left;
       max-width: 60%;
     }
+    .C_CV {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      .O_CV {
+        padding: 30px;
+        border-radius: 24px;
+        background-color: var(--white);
+        box-shadow: 0px 15px 20px 0px rgba(108, 111, 121, 0.07),
+          0px 5px 8px 0px rgba(0, 0, 0, 0.02);
+        transition: all 0.2s;
+
+        &:hover {
+          filter: brightness(0.95);
+        }
+
+        .A_CV {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: end;
+          .Q_CV {
+            font-size: 80px;
+          }
+        }
+      }
+    }
   }
-  .W_WorkInfo {
+  .С_WorkInfo {
     margin-top: 16vh;
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
-    .A_WorkInfo {
-      color: var(--grey);
-      text-align: center;
-      width: 180px;
+
+    .W_WorkInfo {
+      display: flex;
+      flex-direction: column;
+      width: 25%;
+      div:first-child {
+        color: var(--black);
+        font-weight: 400;
+      }
+      .A_WorkInfo {
+        color: var(--grey);
+        text-align: left;
+        width: 100%;
+        font-weight: 300;
+      }
     }
   }
+
   .W_WorkCases {
     margin-top: 16vh;
     .A_Heading {
