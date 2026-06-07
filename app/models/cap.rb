@@ -1,2 +1,0 @@
-class Cap < ApplicationRecord
-end

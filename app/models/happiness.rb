@@ -1,2 +1,0 @@
-class Happiness < ApplicationRecord
-end

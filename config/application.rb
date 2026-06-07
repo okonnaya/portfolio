@@ -11,6 +11,10 @@ module Portfolio
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
+    # API-only: фронтенд живёт отдельно в client/ (Vite + React).
+    # Rails отдаёт только JSON, без вьюх и пайплайна ассетов.
+    config.api_only = true
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
