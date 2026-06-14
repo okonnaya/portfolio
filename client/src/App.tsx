@@ -1,67 +1,67 @@
-import { useMemo } from "react";
-import { Canvas } from "./components/Canvas";
-import { createField } from "./sketches/field";
-import { createBigGlow } from "./sketches/bigGlow";
+import { useEffect, useState } from "react";
+
+const COUNT = 10;
+const SIZE = 30; // диаметр кружка, px
+const COLORS = ["#FFE100", "#FF4DA2", "#00D9FF", "#FF2640"];
+
+type Circle = { x: number; y: number; color: string };
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function generate(width: number, height: number): Circle[] {
+  // равномерно по цветам: по 25 каждого, затем перемешиваем
+  const palette = shuffle(
+    Array.from({ length: COUNT }, (_, i) => COLORS[i % COLORS.length])
+  );
+
+  // сетка 10x10 на весь экран — соседи не дальше ~1 ячейки друг от друга
+  const cols = Math.ceil(Math.sqrt(COUNT));
+  const rows = Math.ceil(COUNT / cols);
+  const cellW = width / cols;
+  const cellH = height / rows;
+
+  return Array.from({ length: COUNT }, (_, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    // случайное положение в пределах всей ячейки: крайние кружки
+    // могут залезать за верх / лево / право экрана
+    const x = col * cellW + Math.random() * cellW - SIZE / 2;
+    let y = row * cellH + Math.random() * cellH - SIZE / 2;
+    // низ не пересекаем
+    if (y + SIZE > height) y = height - SIZE;
+    return { x, y, color: palette[i] };
+  });
+}
 
 function App() {
-  const sketch = useMemo(() => createField(), []);
-  const glow = useMemo(() => createBigGlow(), []);
+  const [circles, setCircles] = useState<Circle[]>([]);
+
+  useEffect(() => {
+    setCircles(generate(window.innerWidth, window.innerHeight));
+  }, []);
 
   return (
-    <main
-      style={{
-        position: "relative",
-        minHeight: "100%",
-        display: "grid",
-        placeItems: "center",
-        padding: "2rem",
-      }}
-    >
-      <Canvas
-        sketch={sketch}
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: -1,
-        }}
-      />
-
-      {/* блюр сверху: сильный у кромки, плавно сходит вниз через маску */}
-      <div
-        aria-hidden
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "100vh",
-          pointerEvents: "none",
-          zIndex: 0,
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          // maskImage:
-          //   "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
-          // WebkitMaskImage:
-          //   "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
-        }}
-      />
-
-      {/* крупное свечение #FEAAFF поверх блюра, со своим отдельным размытием */}
-      <Canvas
-        sketch={glow}
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: 1,
-          pointerEvents: "none",
-          // высветляет и нижние слои (а не только перекрытия внутри свечения)
-          mixBlendMode: "plus-lighter",
-        }}
-      />
+    <main>
+      {circles.map((c, i) => (
+        <span
+          key={i}
+          className="circle"
+          style={{
+            left: c.x,
+            top: c.y,
+            width: SIZE,
+            height: SIZE,
+            background: c.color,
+          }}
+        />
+      ))}
     </main>
   );
 }
