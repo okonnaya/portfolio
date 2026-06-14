@@ -1,56 +1,67 @@
-import { useEffect, useState } from "react";
-import { apiGet } from "./api/client";
-
-type Health = { status: string; time: string };
-
-type State =
-  | { kind: "loading" }
-  | { kind: "ok"; data: Health }
-  | { kind: "error"; message: string };
+import { useMemo } from "react";
+import { Canvas } from "./components/Canvas";
+import { createField } from "./sketches/field";
+import { createBigGlow } from "./sketches/bigGlow";
 
 function App() {
-  const [state, setState] = useState<State>({ kind: "loading" });
-
-  useEffect(() => {
-    apiGet<Health>("/health")
-      .then((data) => setState({ kind: "ok", data }))
-      .catch((err: unknown) =>
-        setState({
-          kind: "error",
-          message: err instanceof Error ? err.message : "unknown error",
-        }),
-      );
-  }, []);
+  const sketch = useMemo(() => createField(), []);
+  const glow = useMemo(() => createBigGlow(), []);
 
   return (
     <main
       style={{
+        position: "relative",
         minHeight: "100%",
         display: "grid",
         placeItems: "center",
         padding: "2rem",
       }}
     >
-      <div style={{ textAlign: "center" }}>
-        <h1>портфолио — каркас</h1>
-        <p style={{ opacity: 0.6, marginTop: ".5rem" }}>
-          Vite + React + TypeScript · Rails API
-        </p>
+      <Canvas
+        sketch={sketch}
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: -1,
+        }}
+      />
 
-        <p style={{ marginTop: "2rem" }}>
-          {state.kind === "loading" && "проверяю связь с API…"}
-          {state.kind === "ok" && (
-            <span style={{ color: "#7dd87d" }}>
-              ✓ API на связи: {state.data.status} ({state.data.time})
-            </span>
-          )}
-          {state.kind === "error" && (
-            <span style={{ color: "#e57373" }}>
-              ✗ API недоступен: {state.message}
-            </span>
-          )}
-        </p>
-      </div>
+      {/* блюр сверху: сильный у кромки, плавно сходит вниз через маску */}
+      <div
+        aria-hidden
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "100vh",
+          pointerEvents: "none",
+          zIndex: 0,
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          // maskImage:
+          //   "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
+          // WebkitMaskImage:
+          //   "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
+        }}
+      />
+
+      {/* крупное свечение #FEAAFF поверх блюра, со своим отдельным размытием */}
+      <Canvas
+        sketch={glow}
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1,
+          pointerEvents: "none",
+          // высветляет и нижние слои (а не только перекрытия внутри свечения)
+          mixBlendMode: "plus-lighter",
+        }}
+      />
     </main>
   );
 }

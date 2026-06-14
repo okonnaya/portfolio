@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Запускает Rails-бэкенд и Vite-фронтенд одновременно.
+# Ctrl+C гасит оба процесса.
+
+set -e
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+pids=()
+
+cleanup() {
+  trap '' INT TERM
+  echo ""
+  echo "Останавливаю..."
+  for pid in "${pids[@]}"; do
+    kill "$pid" 2>/dev/null || true
+  done
+  wait 2>/dev/null || true
+}
+trap cleanup INT TERM EXIT
+
+echo "==> Backend:  http://localhost:${PORT:-3000}"
+bin/rails server &
+pids+=($!)
+
+echo "==> Frontend: Vite (client/)"
+( cd client && npm run dev ) &
+pids+=($!)
+
+wait
