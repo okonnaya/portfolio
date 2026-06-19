@@ -13,8 +13,10 @@
   --color-bg: #ffffff;
   --color-fg: #0e0e0e;
   --color-accent: #5a8193;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+  --font-sans: -apple-system, Helvetica, "Inter", "Segoe UI", Roboto,
     Arial, sans-serif;
+  /* шрифт макета; пока не подключён — падает на системный sans */
+  --font-display: "PP Neue Montreal", var(--font-sans);
 
   color-scheme: light;
 }
@@ -23,6 +25,13 @@ html,
 body,
 #root {
   height: 100%;
+}
+
+/* фоновые канвасы — position: fixed; при эластичном overscroll у верхней кромки
+   контент hero оттягивается, а фон остаётся, и сверху оголяется «сырое» розовое
+   свечение. отключаем резиновый отскок документа, чтобы кромка не оголялась */
+html {
+  overscroll-behavior-y: none;
 }
 
 body {

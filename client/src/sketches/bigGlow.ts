@@ -32,6 +32,28 @@ export function createBigGlow(): Sketch {
   let dots: Dot[] = [];
   let motion: Motion[] = []; // параметры дрейфа на каждый кластер
   let radius = 0;
+  // спрайт свечения, отрисованный один раз (радиальный градиент дорого считать
+  // попиксельно каждый кадр на каждую частицу — кешируем и блитим drawImage)
+  let sprite: HTMLCanvasElement | null = null;
+  let spriteR = 0; // логический радиус, под который отрендерен спрайт
+
+  // отрисовать мягкое пятно (градиент с запечённой alpha) в офскрин-канвас под DPR
+  const buildSprite = () => {
+    const dpr = window.devicePixelRatio || 1;
+    spriteR = radius * GLOW_SOFT * (1 + SIZE_VARY); // под самую крупную частицу
+    const px = Math.max(1, Math.ceil(spriteR * 2 * dpr));
+    const c = document.createElement("canvas");
+    c.width = px;
+    c.height = px;
+    const s = c.getContext("2d")!;
+    s.scale(dpr, dpr);
+    const g = s.createRadialGradient(spriteR, spriteR, 0, spriteR, spriteR, spriteR);
+    g.addColorStop(0, `rgba(${COLOR_RGB}, ${GLOW_ALPHA})`);
+    g.addColorStop(1, `rgba(${COLOR_RGB}, 0)`);
+    s.fillStyle = g;
+    s.fillRect(0, 0, spriteR * 2, spriteR * 2);
+    sprite = c;
+  };
 
   const generate = (W: number, H: number) => {
     const size = SIZE_VH * window.innerHeight;
@@ -149,9 +171,19 @@ export function createBigGlow(): Sketch {
       }
       count++;
     }
+
+    buildSprite();
   };
 
+  // дрейф медленный — рендерим вполовину частоты (между кадрами держим прошлый),
+  // экономя заливку/композитинг полноэкранного plus-lighter слоя
+  let lastDraw = -Infinity;
+  const FRAME_MS = 1000 / 30;
+
   const draw = ({ ctx, width, height, time }: SketchContext) => {
+    if (time - lastDraw < FRAME_MS) return; // кадр не перерисовываем — висит прошлый
+    lastDraw = time;
+
     ctx.clearRect(0, 0, width, height); // прозрачный фон — слой ложится поверх
     ctx.globalCompositeOperation = "plus-lighter" as GlobalCompositeOperation;
 
@@ -164,19 +196,16 @@ export function createBigGlow(): Sketch {
       oy[c] = m.ay * Math.sin(time * m.sy + m.py);
     }
 
-    // мягкое свечение радиальным градиентом вместо CSS-блюра (намного дешевле)
+    // мягкое свечение: блитим закешированный спрайт, масштабируя под диаметр
+    // частицы (профиль градиента 0→край сохраняется при любом масштабе)
     const baseR = radius * GLOW_SOFT;
-    for (const d of dots) {
-      const x = d.x + ox[d.cluster];
-      const y = d.y + oy[d.cluster];
-      const R = baseR * d.s; // у каждой частицы свой диаметр
-      const g = ctx.createRadialGradient(x, y, 0, x, y, R);
-      g.addColorStop(0, `rgba(${COLOR_RGB}, ${GLOW_ALPHA})`);
-      g.addColorStop(1, `rgba(${COLOR_RGB}, 0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, R, 0, Math.PI * 2);
-      ctx.fill();
+    if (sprite) {
+      for (const d of dots) {
+        const x = d.x + ox[d.cluster];
+        const y = d.y + oy[d.cluster];
+        const R = baseR * d.s; // у каждой частицы свой диаметр
+        ctx.drawImage(sprite, x - R, y - R, R * 2, R * 2);
+      }
     }
     ctx.globalCompositeOperation = "source-over";
   };

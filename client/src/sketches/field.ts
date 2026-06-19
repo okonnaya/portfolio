@@ -42,6 +42,12 @@ const REPEL = 2.2; // сила отталкивания
 const FRICTION = 0.85; // затухание скорости
 const SPRING = 0.06; // возврат к «домашней» позиции
 
+// проявление/исчезновение: поле включается извне (setActive) и собирается/тает
+// не разом, а вразнобой — у каждой частицы своя задержка старта фейда
+const SPREAD_IN = 700; // мс — разброс задержек проявления
+const SPREAD_OUT = 450; // мс — разброс задержек ухода
+const FADE = 320; // мс — длительность фейда одной частицы
+
 type Dot = {
   x: number;
   y: number; // текущая позиция
@@ -51,6 +57,9 @@ type Dot = {
   vy: number; // скорость
   r: number;
   color: string;
+  delayIn: number; // мс от начала показа до старта проявления
+  delayOut: number; // мс от снятия показа до старта ухода
+  alpha: number; // текущая прозрачность (анимируется к цели 0/1)
 };
 
 // один шаг физики ховера для частицы (импульс от курсора + пружина + трение)
@@ -72,12 +81,43 @@ function applyPhysics(dot: Dot, mx: number, my: number) {
   dot.y += dot.vy;
 }
 
-export function createField(): Sketch {
+export type Field = {
+  sketch: Sketch;
+  /** включить/выключить поле — оно проявится/растает вразнобой */
+  setActive: (v: boolean) => void;
+};
+
+export function createField(): Field {
   let dots: Dot[] = [];
+  let active = false;
+  // спрайт-кружок на каждый цвет, отрисованный один раз: drawImage заметно
+  // дешевле, чем beginPath+arc+fill на каждую из тысяч частиц каждый кадр
+  let sprites: Record<string, HTMLCanvasElement> = {};
+
+  // отрисовать сплошной кружок радиуса r в офскрин-канвас под DPR (резкие края)
+  const buildSprite = (color: string, r: number) => {
+    const dpr = window.devicePixelRatio || 1;
+    const px = Math.max(1, Math.ceil(r * 2 * dpr));
+    const c = document.createElement("canvas");
+    c.width = px;
+    c.height = px;
+    const s = c.getContext("2d")!;
+    s.scale(dpr, dpr);
+    s.fillStyle = color;
+    s.beginPath();
+    s.arc(r, r, r, 0, Math.PI * 2);
+    s.fill();
+    return c;
+  };
 
   const generate = (W: number, H: number) => {
     const size = SIZE_VH * window.innerHeight;
     const r = size / 2;
+    sprites = {
+      [COLOR]: buildSprite(COLOR, r),
+      [COLOR2]: buildSprite(COLOR2, r),
+      [COLOR3]: buildSprite(COLOR3, r),
+    };
     const cell = size * SPACING; // шаг сетки; <диаметра → точки плотнее налезают
     const cols = Math.floor(W / cell);
     const rows = Math.floor(H / cell);
@@ -127,7 +167,19 @@ export function createField(): Sketch {
       const ry = (i - cx) / cols;
       const x = cx * cell + cell / 2 + (Math.random() - 0.5) * cell * JITTER;
       const y = ry * cell + cell / 2 + (Math.random() - 0.5) * cell * JITTER;
-      dots.push({ x, y, hx: x, hy: y, vx: 0, vy: 0, r, color });
+      dots.push({
+      x,
+      y,
+      hx: x,
+      hy: y,
+      vx: 0,
+      vy: 0,
+      r,
+      color,
+      delayIn: Math.random() * SPREAD_IN,
+      delayOut: Math.random() * SPREAD_OUT,
+      alpha: 0,
+    });
       pushNeighbor(cx - 1, ry, fr);
       pushNeighbor(cx + 1, ry, fr);
       pushNeighbor(cx, ry - 1, fr);
@@ -302,23 +354,43 @@ export function createField(): Sketch {
 
   const setup = ({ width, height }: SketchContext) => generate(width, height);
 
-  // оптимизация: пока курсор не двигается и частицы успокоились — не перерисовываем
-  // (иначе backdrop-filter над полем пересчитывается каждый кадр впустую)
+  // оптимизация: пока курсор не двигается, частицы успокоились и фейд завершён —
+  // не перерисовываем (иначе backdrop-filter над полем пересчитывается впустую)
   let lastMx = NaN;
   let lastMy = NaN;
-  let asleep = false;
+  let asleep = true; // на старте поле выключено и прозрачно → спим
+  let stateChange = 0; // время последней смены active — от него идут задержки
+  let prevActive = false;
 
-  const draw = ({ ctx, width, height, mouse }: SketchContext) => {
+  const draw = ({ ctx, width, height, mouse, time, dt }: SketchContext) => {
+    if (active !== prevActive) {
+      stateChange = time;
+      prevActive = active;
+      asleep = false; // проснуться, чтобы проиграть проявление/уход
+    }
     if (mouse.x !== lastMx || mouse.y !== lastMy) asleep = false;
     lastMx = mouse.x;
     lastMy = mouse.y;
     if (asleep) return; // пиксели не меняются → нет лишнего перекомпозита
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height); // прозрачный фон — поля может не быть вовсе
 
+    const elapsed = time - stateChange;
+    const target = active ? 1 : 0;
+    const aStep = dt / FADE;
     let maxE = 0; // максимальное «движение» по полю за кадр
+    let allAtTarget = true; // все ли частицы достигли целевой прозрачности
     for (const dot of dots) {
+      // прозрачность ползёт к цели, но только после собственной задержки
+      const delay = active ? dot.delayIn : dot.delayOut;
+      if (elapsed >= delay) {
+        if (dot.alpha < target) dot.alpha = Math.min(target, dot.alpha + aStep);
+        else if (dot.alpha > target)
+          dot.alpha = Math.max(target, dot.alpha - aStep);
+      }
+      if (dot.alpha !== target) allAtTarget = false;
+      if (dot.alpha <= 0.001) continue; // невидима — ни физики, ни отрисовки
+
       applyPhysics(dot, mouse.x, mouse.y);
       const e =
         Math.abs(dot.vx) +
@@ -326,13 +398,25 @@ export function createField(): Sketch {
         Math.abs(dot.x - dot.hx) +
         Math.abs(dot.y - dot.hy);
       if (e > maxE) maxE = e;
-      ctx.fillStyle = dot.color;
-      ctx.beginPath();
-      ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalAlpha = dot.alpha;
+      ctx.drawImage(
+        sprites[dot.color],
+        dot.x - dot.r,
+        dot.y - dot.r,
+        dot.r * 2,
+        dot.r * 2,
+      );
     }
-    if (maxE < 0.1) asleep = true; // всё на месте → засыпаем до движения курсора
+    ctx.globalAlpha = 1;
+
+    // фейд доигран и поле на месте → засыпаем до движения курсора/смены active
+    if (allAtTarget && maxE < 0.1) asleep = true;
   };
 
-  return { setup, draw };
+  return {
+    sketch: { setup, draw },
+    setActive: (v: boolean) => {
+      active = v;
+    },
+  };
 }

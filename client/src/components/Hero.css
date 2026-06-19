@@ -1,0 +1,394 @@
+/* Главный экран: ряд «фреймов», выровненных по верху и отцентрованных по высоте
+   во весь вьюпорт (100vw × 100vh). Лежит поверх фоновой анимации (z-index: 2).
+
+   Шрифт макета — PP Neue Montreal (Medium). В проект он пока не подключён:
+   --font-display падает на системный sans. Чтобы получить 1:1, положите
+   файл шрифта и добавьте @font-face для "PP Neue Montreal". */
+
+/* первый экран: ряд «фреймов» отцентрован по высоте во весь вьюпорт.
+   больше не fixed — экран уезжает вверх при скролле ко второму блоку. */
+.hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center; /* центрируем ряд по высоте */
+  pointer-events: none;
+  /* направляющие/полосы намеренно вылезают за вьюпорт (left:-100vw, top:-100vh)
+     и гаснут под маской. в потоке (не fixed) этот «вынос» раздувал бы документ
+     и давал горизонтальный скролл — обрезаем по горизонтали. clip (а не hidden)
+     не создаёт скролл-контейнер, поэтому sticky у меты продолжает работать */
+  overflow-x: clip;
+}
+
+/* единый флекс-ряд: левая мета · центральная сетка · правая мета.
+   едины padding left/right (24px), метаданные прижаты к верху ряда */
+.hero__inner {
+  width: 100%;
+  /* во всю высоту первого экрана: containing block для sticky-меты, навбар
+     залипает на протяжении всего hero. grid 1fr | сетка | 1fr: позиция
+     центральной колонки НЕ зависит от боковых — поэтому когда меты уходят в
+     fixed (залипание), текст НЕ прыгает по горизонтали (раньше на flex сетка
+     теряла «распорки» и перецентровывалась). align-items: center — мета на
+     уровне центрального текста, при скролле залипает навбаром сверху */
+  min-height: 100vh;
+  display: grid;
+  /* 1fr | сетка | 1fr: центральная колонка фиксируется через grid-column: 2 на
+     самой сетке (см. .hero__grid). боковые 1fr держат её по центру вьюпорта, и
+     когда меты уходят в fixed при залипании — текст не прыгает по горизонтали */
+  grid-template-columns: 1fr minmax(0, 889px) 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+  /* mix-blend-mode НЕ здесь: предок с blend заставляет браузер рендерить
+     поддерево отдельной группой и обрезает position:fixed-потомка (мету) по
+     своим границам → навбар пропадал при скролле. blend вешаем на детей по
+     отдельности (.hero__grid и .hero__meta) — они не перекрываются, вид тот же */
+  /* filter: brightness(0.7) contrast(1.2); */
+}
+
+/* центральная композиция: 2 колонки × 2 ряда, ряды выровнены по верху.
+   flex-basis = желаемая ширина, но сетка ужимается, чтобы не залезать
+   на мета-строки — её ширина не превышает gap между ними */
+.hero__grid {
+  flex: 0 1 889px;
+  min-width: 0;
+  /* явно держим центральную колонку. без этого при залипании меты уходят в
+     position: fixed и выпадают из авто-размещения грида — тогда единственный
+     авто-элемент (.hero__grid) уезжает в первую свободную колонку (левую 1fr)
+     и текст прыгает влево. grid-column: 2 фиксирует его по центру всегда */
+  grid-column: 2;
+  position: relative; /* база для направляющих и полос-мер */
+  mix-blend-mode: overlay; /* перенесено с .hero__inner (см. там) */
+  margin-right: var(--opt-comp); /* оптическая компенсация — 20px справа от блока */
+  --col-gap: 20px;
+  --opt-comp: 20px;
+  --guide: #ff3d8b; /* розовый цвет направляющих */
+  /* маска проявления: радиальный градиент от центра — плавный непрерывный
+     спад без плато, поэтому и фронт проявления мягкий, и в покое линии
+     ярко горят по центру и плавно гаснут к краям вьюпорта.
+     размер маски гоним от 0 (скрыто) до конечного (видно) */
+  --guide-mask: radial-gradient(circle at center, #000 0%, transparent 75%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--col-gap);
+  align-items: start; /* фреймы выравниваются по верху */
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.hero__cell {
+  margin: 0;
+  position: relative;
+}
+
+/* направляющие появляются при ховере/клике на «…в яндексе».
+   это не контуры блоков, а сквозные линии (как guides в фигме):
+   вертикали — во всю высоту сетки, горизонтали — во всю ширину. */
+
+/* левая вертикаль — по левому краю блока «продуктовый дизайнер». триггеры теперь
+   hug по ширине, поэтому линия жмётся к самому тексту, а не к краю колонки.
+   правую вертикаль рисует левая граница полосы «оптической компенсации»,
+   внутренние — границы полосы gap. линия тянется во всю высоту вьюпорта */
+.hero__cell--left.hero__cell--trigger::after {
+  content: "";
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  left: 0;
+  width: 1px;
+  background: var(--guide);
+  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+.hero__grid.is-guides .hero__cell--left.hero__cell--trigger::after {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* горизонталь по верху каждого текст-ряда: якорится к верху ячейки (он совпадает
+   с верхом ряда — align-items: start), а в стороны уезжает во всю ширину вьюпорта */
+.hero__cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  right: -100vw;
+  height: 1px;
+  background: var(--guide);
+  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+.hero__grid.is-guides .hero__cell::before {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* розовые полосы-меры (gap между колонками и оптическая компенсация).
+   общая база: во всю высоту вьюпорта, та же радиальная маска проявления */
+.hero__band {
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 61, 139, 0.12);
+  border-inline: 1px solid var(--guide);
+  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+
+.hero__grid.is-guides .hero__band {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* gap column-gap — по центру сетки, подпись по центру полосы */
+.hero__gap {
+  left: 50%;
+  width: var(--col-gap);
+  transform: translateX(-50%);
+  justify-content: center;
+}
+
+/* оптическая компенсация — 20px-поле справа от блока (его margin-right).
+   подпись прижата к левому краю полосы и уезжает вправо, мимо текста */
+.hero__opt {
+  left: 100%;
+  width: var(--opt-comp);
+  justify-content: flex-start;
+}
+
+.hero__band span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1;
+  color: #fff;
+  background: var(--guide);
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap; /* подпись шире полосы — пусть аккуратно выходит за края */
+}
+
+/* триггер — интерактивная ячейка: ховер проявляет, клик закрепляет.
+   width: fit-content — бокс ужимается по тексту, чтобы зона ховера не
+   растягивалась на всю колонку. justify-self прижимает бокс к нужному краю
+   колонки, поэтому сам текст остаётся на месте */
+.hero__cell--trigger {
+  pointer-events: auto;
+  cursor: pointer;
+  width: fit-content;
+}
+.hero__cell--left.hero__cell--trigger {
+  justify-self: end; /* левая колонка — текст у правого края */
+}
+.hero__cell--accent.hero__cell--trigger {
+  justify-self: start; /* правая колонка — текст у левого края */
+}
+
+/* строка «с любовью к красивому» скрыта, проявляется при ховере на триггер */
+.hero__cell--reveal {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.hero__cell--reveal.is-active {
+  opacity: var(--bg-fade, 1); /* гаснут вместе с эффектами по скроллу */
+  transform: translateY(0);
+}
+
+/* левая колонка — выключка вправо, приглушённый цвет */
+.hero__cell--left {
+  text-align: right;
+  color: rgba(0, 0, 0, 1);
+}
+
+/* акцентная ячейка (чёрная) */
+.hero__cell--accent {
+  color: rgba(0, 0, 0, 0.4);
+}
+.hero__cell--left.hero__cell--reveal{
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.hero__cell--muted {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.size-42 {
+  font-size: clamp(32px, 2vw, 64px);
+}
+
+/* второй экран: во весь вьюпорт, контент по центру. лежит поверх фоновых
+   слоёв (z-index: 2), как и первый экран */
+.section-2 {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  mix-blend-mode: overlay;
+}
+
+.section-2__inner {
+  width: 100%;
+  max-width: 889px;
+}
+
+.section-2__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: rgba(0, 0, 0, 1);
+}
+
+
+/* мета-строки по краям. равный flex слева/справа держит центральную сетку
+   строго по центру вьюпорта. в покое мета стоит по верхнему краю центрального
+   текста: align-self: flex-start + margin-top = --meta-top (смещение верха
+   сетки, замеряется в Hero.tsx). inner растянут на 100vh, поэтому при скролле
+   sticky-мета залипает в 20px от верха и держится навбаром весь первый экран —
+   отлипает у нижней кромки hero. */
+.hero__meta {
+  flex: 1 0 0;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  margin-top: var(--meta-top, 0);
+  z-index: 3; /* поверх композиции, когда залипла */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  color: #000;
+  pointer-events: auto;
+  mix-blend-mode: overlay; /* перенесено с .hero__inner, чтобы fixed не обрезался */
+}
+
+/* bounce в момент залипания: класс is-stuck вешается из Hero.tsx при переходе
+   меты в прилипшее состояние, анимация одноразовая (проигрывается при навешивании
+   класса). transform по окончании сбрасывается — sticky-позиция не страдает */
+@keyframes navbar-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(7px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+  80% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* залипание: мета становится fixed и держится навбаром на всём сайте (sticky
+   жил бы только в пределах hero). top:20px = линия залипания, margin-top
+   сбрасываем (он был нужен только для покоя на уровне текста). одновременно
+   проигрываем одноразовый bounce. класс is-stuck вешается на inner из Hero.tsx */
+.hero__inner.is-stuck .hero__meta {
+  position: fixed;
+  top: 20px;
+  margin-top: 0;
+  animation: navbar-bounce 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero__inner.is-stuck .hero__meta--left {
+  left: 24px;
+}
+.hero__inner.is-stuck .hero__meta--right {
+  right: 24px;
+}
+/* сетку центрировать вручную не нужно: grid-колонка 1fr|сетка|1fr держит центр
+   даже когда меты ушли из потока в fixed */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__inner.is-stuck .hero__meta {
+    animation: none;
+  }
+}
+
+.hero__meta--left {
+  justify-content: flex-start;
+}
+
+.hero__meta--right {
+  justify-content: flex-end;
+}
+
+.hero__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.hero__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.hero__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* на узких экранах мета-строки уезжают — прячем, чтобы не наезжали на текст.
+   без них сетку центрируем в ряду */
+@media (max-width: 760px) {
+  .hero__meta {
+    display: none;
+  }
+  /* без мет — сетка в одну колонку на всю ширину */
+  .hero__inner {
+    grid-template-columns: 1fr;
+  }
+  .hero__grid {
+    grid-column: 1; /* одна колонка — возвращаем блок в неё */
+    margin-right: 0; /* опт-компенсация не нужна на узких */
+  }
+}

@@ -25,9 +25,12 @@ type Props = {
   sketch: Sketch;
   className?: string;
   style?: React.CSSProperties;
+  /** множитель к DPR для бэкинг-стора: <1 — рендер в пониженном разрешении
+      (дешевле заливка/композитинг). Годится для размытых/мягких слоёв. */
+  resolution?: number;
 };
 
-export function Canvas({ sketch, className, style }: Props) {
+export function Canvas({ sketch, className, style, resolution = 1 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // держим актуальный скетч в ref, чтобы не пересоздавать RAF-цикл на каждый рендер
   const sketchRef = useRef(sketch);
@@ -44,7 +47,7 @@ export function Canvas({ sketch, className, style }: Props) {
     let height = 0;
 
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = (window.devicePixelRatio || 1) * resolution;
       const rect = canvas.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
