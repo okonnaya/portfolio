@@ -63,7 +63,7 @@
   margin-right: var(--opt-comp); /* оптическая компенсация — 20px справа от блока */
   --col-gap: 20px;
   --opt-comp: 20px;
-  --guide: #ff3d8b; /* розовый цвет направляющих */
+  --guide: #FF69B4; /* розовый цвет направляющих */
   /* маска проявления: радиальный градиент от центра — плавный непрерывный
      спад без плато, поэтому и фронт проявления мягкий, и в покое линии
      ярко горят по центру и плавно гаснут к краям вьюпорта.
@@ -100,7 +100,6 @@
   left: 0;
   width: 1px;
   background: var(--guide);
-  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
   -webkit-mask-image: var(--guide-mask);
   mask-image: var(--guide-mask);
   -webkit-mask-repeat: no-repeat;
@@ -127,7 +126,6 @@
   right: -100vw;
   height: 1px;
   background: var(--guide);
-  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
   -webkit-mask-image: var(--guide-mask);
   mask-image: var(--guide-mask);
   -webkit-mask-repeat: no-repeat;
@@ -154,7 +152,6 @@
   align-items: center;
   background: rgba(255, 61, 139, 0.12);
   border-inline: 1px solid var(--guide);
-  opacity: var(--bg-fade, 1); /* гаснет по величине скролла */
   -webkit-mask-image: var(--guide-mask);
   mask-image: var(--guide-mask);
   -webkit-mask-repeat: no-repeat;
@@ -224,7 +221,7 @@
 }
 
 .hero__cell--reveal.is-active {
-  opacity: var(--bg-fade, 1); /* гаснут вместе с эффектами по скроллу */
+  opacity: 1; /* появляются/уходят своим transition (как и вся механика is-active) */
   transform: translateY(0);
 }
 
@@ -302,36 +299,17 @@
   mix-blend-mode: overlay; /* перенесено с .hero__inner, чтобы fixed не обрезался */
 }
 
-/* bounce в момент залипания: класс is-stuck вешается из Hero.tsx при переходе
-   меты в прилипшее состояние, анимация одноразовая (проигрывается при навешивании
-   класса). transform по окончании сбрасывается — sticky-позиция не страдает */
-@keyframes navbar-bounce {
-  0% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(7px);
-  }
-  60% {
-    transform: translateY(-2px);
-  }
-  80% {
-    transform: translateY(1px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
 /* залипание: мета становится fixed и держится навбаром на всём сайте (sticky
    жил бы только в пределах hero). top:20px = линия залипания, margin-top
-   сбрасываем (он был нужен только для покоя на уровне текста). одновременно
-   проигрываем одноразовый bounce. класс is-stuck вешается на inner из Hero.tsx */
+   сбрасываем (он был нужен только для покоя на уровне текста). bounce при
+   залипании — пружина на rAF из Hero.tsx, она пишет смещение в --bounce-y,
+   которое мы вешаем на transform (в покое 0 — sticky-позиция не страдает).
+   класс is-stuck вешается на inner из Hero.tsx */
 .hero__inner.is-stuck .hero__meta {
   position: fixed;
   top: 20px;
   margin-top: 0;
-  animation: navbar-bounce 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(var(--bounce-y, 0px));
 }
 .hero__inner.is-stuck .hero__meta--left {
   left: 24px;
@@ -340,13 +318,8 @@
   right: 24px;
 }
 /* сетку центрировать вручную не нужно: grid-колонка 1fr|сетка|1fr держит центр
-   даже когда меты ушли из потока в fixed */
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__inner.is-stuck .hero__meta {
-    animation: none;
-  }
-}
+   даже когда меты ушли из потока в fixed. баунс при reduced-motion отключается
+   в Hero.tsx (пружина просто не запускается), отдельного CSS-правила не нужно */
 
 .hero__meta--left {
   justify-content: flex-start;

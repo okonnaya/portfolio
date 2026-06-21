@@ -11,9 +11,10 @@ import type { Sketch, SketchContext } from "../components/Canvas";
    скоростью, поэтому пятна двигаются независимо и недалеко от «дома». */
 
 const COLOR_RGB = "254, 170, 255"; // #FEAAFF в rgb для градиента
-const GLOW_SOFT = 10; // мягкий радиус свечения = radius × GLOW_SOFT
-const GLOW_ALPHA = 0.2; // прозрачность пятна: 0 — невидимо, 1 — плотно
-const SIZE_VH = 0.03; // крупные (основное поле ~2.5vh)
+const GLOW_SOFT = 10; // РАЗМЕР свечения = radius × GLOW_SOFT (не мягкость!)
+const GLOW_CORE = 0.15; // доля радиуса с яркой сердцевиной; МЕНЬШЕ → мягче (длиннее хвост)
+const GLOW_ALPHA = 0.4; // прозрачность пятна: 0 — невидимо, 1 — плотно
+const SIZE_VH = 0.13; // крупные (основное поле ~2.5vh)
 const SIZE_VARY = 0.4; // разброс диаметра: множитель в [1−SIZE_VARY, 1+SIZE_VARY]
 const COVERAGE = 0.05; // их немного
 const PAD = 30; // px у края, где частиц нет
@@ -48,7 +49,11 @@ export function createBigGlow(): Sketch {
     const s = c.getContext("2d")!;
     s.scale(dpr, dpr);
     const g = s.createRadialGradient(spriteR, spriteR, 0, spriteR, spriteR, spriteR);
+    // яркая сердцевина (GLOW_CORE) → длинный плавный хвост. Промежуточные стопы
+    // делают спад нелинейным (гауссо-образным), поэтому край мягкий, а не резкий.
     g.addColorStop(0, `rgba(${COLOR_RGB}, ${GLOW_ALPHA})`);
+    g.addColorStop(GLOW_CORE, `rgba(${COLOR_RGB}, ${GLOW_ALPHA * 0.5})`);
+    g.addColorStop(GLOW_CORE + (1 - GLOW_CORE) * 0.45, `rgba(${COLOR_RGB}, ${GLOW_ALPHA * 0.12})`);
     g.addColorStop(1, `rgba(${COLOR_RGB}, 0)`);
     s.fillStyle = g;
     s.fillRect(0, 0, spriteR * 2, spriteR * 2);

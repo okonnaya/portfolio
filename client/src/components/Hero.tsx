@@ -8,10 +8,8 @@ import {
 import "./Hero.css";
 
 type Props = {
-  /** включить/выключить фоновое поле частиц */
+  /** включить/выключить фоновые круги */
   onActiveChange: (v: boolean) => void;
-  /** «перезарядить» фоновые эффекты (сбросить накопленное гашение по скроллу) */
-  onRearm: () => void;
 };
 
 /**
@@ -24,7 +22,7 @@ type Props = {
  * поле — оно остаётся после ухода курсора. Повторный клик или уход
  * курсора (если поле не закреплено) убирает его.
  */
-export function Hero({ onActiveChange, onRearm }: Props) {
+export function Hero({ onActiveChange }: Props) {
   const [active, setActive] = useState(false);
   const pinned = useRef(false); // закреплено кликом — не гаснет на mouseleave
 
@@ -33,22 +31,22 @@ export function Hero({ onActiveChange, onRearm }: Props) {
   const guidesPinned = useRef(false);
 
   // когда скролл всё погасил — состояние сбрасывается в исходное (открепляем,
-  // выключаем поле/направляющие/нижние тексты), и наверх оно само не возвращается.
-  // оживить можно только новым ховером/кликом (он же дёргает onRearm). dismissed —
-  // одноразовый флаг на проход «вниз за кромку гашения», сбрасывается при перезарядке
+  // выключаем круги/направляющие/нижние тексты), и наверх оно само не возвращается.
+  // оживить можно только новым ховером/кликом. dismissed — одноразовый флаг на
+  // проход «вниз за кромку гашения», сбрасывается при перезарядке
   const dismissed = useRef(false);
 
-  // ховер/клик снова проявляют эффекты «как при загрузке»: перезаряжаем фактор
-  // гашения и снимаем флаг сброса (чтобы следующий скролл вниз снова всё погасил)
+  // ховер/клик снова проявляют эффекты «как при загрузке»: снимаем флаг сброса
+  // (чтобы следующий скролл вниз снова всё погасил)
   const rearm = () => {
     dismissed.current = false;
-    onRearm();
   };
 
   useEffect(() => {
     const onScroll = () => {
-      // кромка полного гашения совпадает с App: 0.6 экрана вниз
-      if (window.scrollY >= window.innerHeight * 0.6 && !dismissed.current) {
+      // чуть ушли вниз (десятая экрана) — гасим эффекты (каждый своим способом:
+      // круги — стаггер-задержками, линии — градиентной маской)
+      if (window.scrollY >= window.innerHeight * 0.1 && !dismissed.current) {
         dismissed.current = true;
         pinned.current = false;
         guidesPinned.current = false;
@@ -93,21 +91,76 @@ export function Hero({ onActiveChange, onRearm }: Props) {
   // лёгкий bounce в момент, когда мета долетает до верха и залипает навбаром.
   // момент залипания ловим переходом в «прилипшее» состояние: скролл прошёл
   // естественную позицию меты (metaTop) минус её top:20px. класс is-stuck
-  // вешается на этом переходе и одноразово проигрывает CSS-анимацию (см. Hero.css)
+  // вешается на этом переходе и одноразово проигрывает CSS-анимацию (см. Hero.css).
+  // амплитуду/длительность баунса гоним от скорости скролла в момент залипания —
+  // быстрый скролл «впечатывает» навбар сильнее, медленный едва качает (натуральнее).
   const [stuck, setStuck] = useState(false);
   const stuckRef = useRef(false);
+  const lastY = useRef(0); // прошлый scrollY — для оценки скорости
+  const lastT = useRef(0); // время прошлого скролл-события (мс)
+  const springRaf = useRef(0); // id rAF-цикла пружины
 
   useEffect(() => {
+    const inner = innerRef.current;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // Пружина вместо CSS-кейфрейма: навбар «впечатывается» в верх с начальной
+    // скоростью v0 (px/s, по ходу движения) и затухающе колеблется к нулю —
+    // недодемпфированный гармонический осциллятор (F = −kx − cv). Поэтому есть
+    // живой перелёт и пара затухающих качаний, а не линейный горб. Смещение
+    // кладём в --bounce-y, его читает transform залипшей меты (см. Hero.css).
+    const SPRING_K = 200; // жёсткость
+    const SPRING_C = 9; // демпфирование (zeta≈0.32 → заметный, но недолгий перелёт)
+    const startSpring = (v0: number) => {
+      cancelAnimationFrame(springRaf.current);
+      let x = 0; // смещение по Y, px
+      let v = v0; // скорость, px/s
+      let last = performance.now();
+      const step = (now: number) => {
+        let dt = (now - last) / 1000; // в секундах
+        last = now;
+        if (dt > 0.05) dt = 0.05; // клампим скачок (смена вкладки и т.п.)
+        const a = -SPRING_K * x - SPRING_C * v;
+        v += a * dt;
+        x += v * dt;
+        inner?.style.setProperty("--bounce-y", `${x.toFixed(2)}px`);
+        if (Math.abs(x) > 0.05 || Math.abs(v) > 0.5) {
+          springRaf.current = requestAnimationFrame(step);
+        } else {
+          inner?.style.setProperty("--bounce-y", "0px"); // дотягиваем ровно в ноль
+        }
+      };
+      springRaf.current = requestAnimationFrame(step);
+    };
+
     const onScroll = () => {
-      const isStuck = window.scrollY >= metaTop - 20;
+      const now = performance.now();
+      const y = window.scrollY;
+      const dt = now - lastT.current;
+      const speed = dt > 0 ? Math.abs(y - lastY.current) / dt : 0; // px/ms
+      lastY.current = y;
+      lastT.current = now;
+
+      const isStuck = y >= metaTop - 20;
       if (isStuck !== stuckRef.current) {
         stuckRef.current = isStuck;
+        // баунс только при залипании и только если скролл был достаточно резким:
+        // на медленном плавном скролле навбар просто встаёт, без качания
+        if (isStuck && !reduced && speed > 0.4) {
+          // импульс вверх (по ходу движения) ∝ скорости; потолок держит перелёт ~15px
+          startSpring(-Math.min(300, speed * 90));
+        }
         setStuck(isStuck);
       }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(springRaf.current);
+    };
   }, [metaTop]);
 
   // единая точка переключения: и текст-ревил, и фоновое поле
