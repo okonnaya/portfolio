@@ -1,0 +1,241 @@
+/* Страница кейса. Геометрия — как на первом экране/в блоках кейсов:
+   центральная колонка --content (= 60vw, как средняя колонка hero) и та же
+   двухколоночная сетка 1fr | 1fr с общим col-gap. Слева выключка вправо
+   (заголовки/названия секций, чёрные), справа выключка влево (описания,
+   приглушённые). Навбар и подвал — общие (SiteHeader / SiteFooter). */
+
+.case-page {
+  position: relative;
+  min-height: 100vh;
+  --content: 60vw; /* = средняя колонка .hero__inner / .cases */
+  --col-gap: 32px; /* = column-gap блоков кейсов */
+  padding: 20px 0 16px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #000;
+}
+
+/* центральная колонка контента, центрирована как .cases */
+.case {
+  max-width: var(--content);
+  margin: 0 auto;
+  padding: 72px 24px 0;
+}
+
+/* кнопка «назад» — фикс. слева, в том же гаттере, что и хедер (24px),
+   по вертикали центр вьюпорта */
+.case__back {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  font-size: var(--fs-md);
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+.case__back:hover {
+  color: #000;
+}
+
+/* оглавление — фикс. справа, зеркально кнопке «назад» (тот же гаттер 24px,
+   центр вьюпорта). пункты выключены вправо, приглушённые; активный — чёрный */
+.case__toc {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 15vw;
+  text-align: right;
+}
+.case__toc-link {
+  font-size: var(--fs-md);
+  line-height: 1.2;
+  color: rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.case__toc-link:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+.case__toc-link.is-active {
+  color: #000;
+}
+
+/* якорные блоки не должны прятаться под sticky-хедером при переходе */
+.case__row[id],
+.case__steps[id] {
+  scroll-margin-top: 96px;
+}
+
+/* вертикальный ритм крупных блоков */
+.case__content {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+/* ряд секции: две колонки, выключка к центру */
+.case__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--col-gap);
+  align-items: start;
+}
+.case__label {
+  margin: 0;
+  text-align: right;
+  color: #000;
+  font-size: var(--fs-xl);
+  line-height: 1.1;
+}
+/* заголовок кейса — крупнее (как «продуктовые кейсы») */
+.case__label--lead {
+  font-size: var(--fs-2xl);
+  line-height: 1.05;
+}
+.case__body {
+  min-width: 0;
+}
+.case__text {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+
+/* буллиты: точка + текст, приглушённый цвет */
+.case__bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.case__bullet {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  column-gap: 12px;
+  align-items: start;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+.case__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  margin-top: 0.5em; /* к первой строке текста */
+}
+
+/* процесс: ряды идут теснее, чем крупные блоки */
+.case__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* группа медиа: картинки идут подряд с меньшим гэпом, чем между крупными
+   блоками (.case__content gap: 80px) */
+.case__group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* плейсхолдер под медиа во всю ширину колонки + подпись */
+.case__media {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.case__ph {
+  width: 100%;
+  height: 240px;
+  border-radius: 32px;
+  background: #ff69b4;
+}
+.case__ph--tall {
+  height: 500px;
+}
+/* картинка на месте плейсхолдера: та же ширина/скругление, высота по контенту */
+.case__img {
+  width: 100%;
+  border-radius: 32px;
+  display: block;
+}
+/* подпись под медиа: ширина в половину колонки, выключена к центру —
+   как любой текст на странице. --left: левая половина, текст вправо;
+   --right: правая половина, текст влево (= вторая колонка .case__row) */
+.case__caption {
+  margin: 0;
+  width: calc(50% - var(--col-gap) / 2);
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+}
+.case__caption--left {
+  text-align: right;
+}
+.case__caption--right {
+  margin-left: auto;
+  text-align: left;
+}
+
+/* оглавление скрываем там, где боковые гаттеры сжимаются и оно налезло бы
+   на контент (--content = 60vw, значит по бокам ~20vw) */
+@media (max-width: 1024px) {
+  .case__toc {
+    display: none;
+  }
+}
+
+/* узкие экраны: колонки в одну, выключка влево — как в hero-меди */
+@media (max-width: 760px) {
+  .case-page {
+    --content: 100%;
+  }
+  .case {
+    padding: 56px 20px 0;
+  }
+  .case__content {
+    gap: 56px;
+  }
+  .case__steps {
+    gap: 24px;
+  }
+  .case__group {
+    gap: 12px;
+  }
+  .case__row {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+  .case__label,
+  .case__label--lead {
+    text-align: left;
+  }
+  .case__caption {
+    width: 100%;
+  }
+  .case__caption--left,
+  .case__caption--right {
+    margin-left: 0;
+    text-align: left;
+  }
+  .case__ph {
+    height: 200px;
+    border-radius: 24px;
+  }
+  .case__ph--tall {
+    height: 320px;
+  }
+}

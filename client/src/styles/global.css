@@ -16,7 +16,16 @@
   --font-sans: -apple-system, Helvetica, "Inter", "Segoe UI", Roboto,
     Arial, sans-serif;
   /* шрифт макета; пока не подключён — падает на системный sans */
-  --font-display: "PP Neue Montreal", var(--font-sans);
+  --font-display: "PP Neue Montreal Variable", var(--font-sans);
+
+  /* типографическая шкала — единственный источник размеров текста.
+     fluid-значения (clamp) для заголовков, фиксированные px для UI/тела.
+     от крупного к мелкому: */
+  --fs-3xl: clamp(32px, 3vw, 64px); /* hero-заголовок */
+  --fs-2xl: clamp(28px, 3.6vw, 42px); /* заголовки секций, lead кейса */
+  --fs-xl: clamp(18px, 2.1vw, 24px); /* ряды/названия/описания кейсов, thanks */
+  --fs-md: 16px; /* тело, навбар, подписи, оглавление, адаптив шапки */
+  --fs-xs: 11px; /* микротекст на канвасе hero */
 
   color-scheme: light;
 }

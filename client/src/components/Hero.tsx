@@ -106,6 +106,13 @@ export function Hero({ onActiveChange }: Props) {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    // возврат «назад» из кейса открывает главную с якорем (/#case-…): браузер
+    // мгновенно проматывает к блоку кейса, и этот скачок выглядит как резкий
+    // скролл в точку залипания → впустую играется пружина. в первые мс после
+    // такой навигации баунс подавляем: навбар просто сразу залипший.
+    const mountedAt = performance.now();
+    const landedWithHash = window.location.hash !== "";
+
     // Пружина вместо CSS-кейфрейма: навбар «впечатывается» в верх с начальной
     // скоростью v0 (px/s, по ходу движения) и затухающе колеблется к нулю —
     // недодемпфированный гармонический осциллятор (F = −kx − cv). Поэтому есть
@@ -147,8 +154,11 @@ export function Hero({ onActiveChange }: Props) {
       if (isStuck !== stuckRef.current) {
         stuckRef.current = isStuck;
         // баунс только при залипании и только если скролл был достаточно резким:
-        // на медленном плавном скролле навбар просто встаёт, без качания
-        if (isStuck && !reduced && speed > 0.4) {
+        // на медленном плавном скролле навбар просто встаёт, без качания.
+        // restoring — программный доскролл к якорю кейса при возврате «назад»:
+        // тогда баунс не играем (см. mountedAt/landedWithHash выше)
+        const restoring = landedWithHash && performance.now() - mountedAt < 800;
+        if (isStuck && !reduced && speed > 0.4 && !restoring) {
           // импульс вверх (по ходу движения) ∝ скорости; потолок держит перелёт ~15px
           startSpring(-Math.min(300, speed * 90));
         }
@@ -233,42 +243,58 @@ export function Hero({ onActiveChange }: Props) {
           {/* центральная композиция */}
           <div className={`hero__grid${guides ? " is-guides" : ""}`} ref={gridRef}>
           <p
-            className="hero__cell hero__cell--left hero__cell--trigger size-42"
+            className="hero__cell hero__cell--left hero__cell--trigger hero__cell--display"
             onMouseEnter={handleEnter}
             onMouseLeave={handleLeave}
             onClick={handleClick}
           >
-            продуктовый
-            <br />
-            дизайнер
+            {/* только текст обёрнут в hero__text: на нём mix-blend-mode: difference.
+               направляющие (::before/::after) и полосы остаются на <p> — не блендятся */}
+            <span className="hero__text">
+              продуктовый
+              <br />
+              дизайнер
+            </span>
           </p>
           <p
-            className="hero__cell hero__cell--accent hero__cell--trigger size-42"
+            className="hero__cell hero__cell--accent hero__cell--trigger hero__cell--display"
             onMouseEnter={handleGuidesEnter}
             onMouseLeave={handleGuidesLeave}
             onClick={handleGuidesClick}
           >
-            двигаю компоненты<br />смотрю за&nbsp;метриками
-            {/* поле «оптической компенсации» — 20px справа от блока текста.
-               его левая граница = правая вертикаль композиции */}
-            <span className="hero__band hero__opt" aria-hidden="true">
-              <span>оптическая компенсация</span>
+            <span className="hero__text">
+              двигаю&nbsp;компоненты,<br />смотрю&nbsp;метрики;
+            </span>
+            {/* поле «оптической компенсации» — 40px справа от блока текста,
+               его левая граница = правая вертикаль композиции. подпись —
+               ОТДЕЛЬНЫМ узлом, не внутри полосы: радиальная маска-проявление
+               полосы ярка только в центре и гаснет к краям, а длинная подпись
+               уезжает в прозрачную зону маски и срезается. поэтому полосу
+               оставляем под маской (вайп как у прочих гайдов), а подпись
+               выносим наружу и проявляем непрозрачностью — её ничто не режет */}
+            <span className="hero__band hero__opt" aria-hidden="true" />
+            <span className="hero__opt-label" aria-hidden="true">
+              20 px • оптическая компенсация
             </span>
           </p>
 
           <p
-            className={`hero__cell hero__cell--left hero__cell--reveal size-42${
+            className={`hero__cell hero__cell--left hero__cell--reveal hero__cell--display${
               active ? " is-active" : ""
             }`}
           >
-            с&nbsp;любовью<br />к&nbsp;красивому
+            <span className="hero__text">
+              с&nbsp;любовью<br />к&nbsp;красивому
+            </span>
           </p>
           <p
-            className={`hero__cell hero__cell--muted hero__cell--reveal size-42${
+            className={`hero__cell hero__cell--muted hero__cell--reveal hero__cell--display${
               guides ? " is-active" : ""
             }`}
           >
-             сейчас исследую<br />в&nbsp;инфре яндекса
+            <span className="hero__text">
+              сейчас&nbsp;исследую<br />в&nbsp;инфре яндекса
+            </span>
           </p>
 
             {/* полоса-мера column-gap по центру сетки */}
@@ -279,15 +305,10 @@ export function Hero({ onActiveChange }: Props) {
 
           {/* правая мета — так же залипает сверху при скролле */}
           <div className="hero__meta hero__meta--right">
-            <span> &gt; приветик</span>
+             <a href="https://t.me/okonnaya">
+              &gt; приветик
+            </a>
           </div>
-        </div>
-      </section>
-
-      {/* второй экран — уезжает под мету при скролле */}
-      <section className="section-2" aria-label="Второй экран">
-        <div className="section-2__inner">
-          <p className="section-2__title size-42">второй экран</p>
         </div>
       </section>
     </>

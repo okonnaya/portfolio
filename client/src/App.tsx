@@ -1,37 +1,39 @@
-import { useMemo } from "react";
-import { Canvas } from "./components/Canvas";
-import { Hero } from "./components/Hero";
-import { createCircles } from "./sketches/circles";
+import { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { CasePage } from "./components/CasePage";
+import { Home } from "./components/Home";
 
+/** Сброс скролла при смене маршрута. Если в url есть якорь (#case-<slug>) —
+    это возврат «назад» из кейса: скроллим к соответствующему блоку на главной,
+    иначе новая страница открывалась бы на прежней позиции. Без якоря — наверх. */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) {
+      // элемент может ещё не быть в dom на момент эффекта — ждём кадр
+      const id = hash.slice(1);
+      requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ block: "start" });
+        else window.scrollTo(0, 0);
+      });
+      return;
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
+  return null;
+}
+
+/** Роутинг: главная и страница отдельного кейса (открывается по клику на медиа). */
 function App() {
-  const circles = useMemo(() => createCircles(), []);
-
   return (
-    <main
-      style={{
-        position: "relative",
-        minHeight: "100%",
-      }}
-    >
-      {/* большие круги ~10vh: появляются/пропадают на ховер/клик вразнобой,
-          по скроллу уходят тем же стаггером (Hero дёргает setActive(false)) */}
-      <Canvas
-        sketch={circles.sketch}
-        style={{
-          position: "fixed",
-          inset: 0,
-          // canvas — replaced-элемент: inset:0 его НЕ растягивает, нужен явный
-          // размер, иначе он падает на интринсик 300×150 в углу. 100% (а не
-          // 100vw) — чтобы не ловить гор. скролл от вертикального скроллбара
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-          pointerEvents: "none",
-        }}
-      />
-
-      <Hero onActiveChange={circles.setActive} />
-    </main>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/case/:slug" element={<CasePage />} />
+      </Routes>
+    </>
   );
 }
 

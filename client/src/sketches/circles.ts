@@ -6,22 +6,54 @@ import type { Sketch, SketchContext } from "../components/Canvas";
    прозрачностью). По скроллу Hero дёргает setActive(false) — круги уходят тем же
    стаггером, что и на появлении (отдельного opacity-гашения слоя нет).
 
-   Количество кругов случайно (COUNT_MIN..COUNT_MAX) и фиксируется при setup,
-   позиции и размеры тоже случайны. Кругов немного — рисуем их обычным arc+fill
-   каждый кадр (спрайт-кеш как у поля не нужен). */
+   Комбинация (число кругов COUNT_MIN..COUNT_MAX, позиции, цвета, задержки)
+   случайна и генерится заново на каждом включении слоя (переход в active), а не
+   один раз при setup — так каждое появление уникально. Кругов немного — рисуем
+   их обычным arc+fill каждый кадр (спрайт-кеш как у поля не нужен). */
 
-const SIZE_VH = 0.1; // диаметр круга в долях высоты вьюпорта (~10vh), у всех один
+const SIZE_VH = 0.2; // диаметр круга в долях высоты вьюпорта (~10vh), у всех один
 const COUNT_MIN = 5; // случайное число кругов в [MIN, MAX]
 const COUNT_MAX = 11;
 const PAD_VH = 0.06; // отступ центра круга от края (доли высоты)
+// на сколько (доля диаметра) круги могут налезать друг на друга. 0.2 = не больше
+// чем на 20% → мин. расстояние между центрами = 2r·(1 − 0.2) = 1.6r
+const MAX_OVERLAP = 0.2;
+const PLACE_TRIES = 40; // попыток подобрать непересекающуюся позицию для круга
 const COLORS = [
   "#FF1F8E",
   "#FF4DA2",
   "#FF69B4",
-  "#FE8AD0",
-  "#FEAAFF",
-  "#FFC2F0",
+  "#FFE032",
+  "#FD2121",
+  "#32D3FF",
 ];
+
+// Картинки, которыми могут заливаться круги (вместо цвета). Сюда добавляй ссылки
+// (из /public — "/foo.png" — или внешние). Пусто → круги только цветные.
+const IMAGES: string[] = [
+  "hero1.png",
+  "hero2.png",
+  "hero3.svg",
+  "hero4.png",
+];
+
+// вероятность, что круг зальётся картинкой (а не цветом), если картинки есть/остались
+const IMAGE_CHANCE = 0.5;
+// сколько раз одна картинка может встретиться за одну генерацию. 1 = не более чем
+// в одном кружочке за раз.
+const IMAGE_MAX_USES = 1;
+// сколько раз один цвет может встретиться за одну генерацию. 2 = не более чем в
+// двух кружочках за раз.
+const COLOR_MAX_USES = 2;
+
+// грузим картинки один раз при загрузке модуля — к моменту показа успеют
+const loadedImages: HTMLImageElement[] = IMAGES.map((src) => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+
+const isReady = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0;
 
 // появление/исчезновение вразнобой — у каждого круга своя задержка (без фейда)
 const SPREAD_IN = 280; // мс — разброс задержек появления
@@ -32,6 +64,7 @@ type Circle = {
   y: number;
   r: number;
   color: string;
+  img: HTMLImageElement | null; // если задана — круг заливается картинкой, не цветом
   delayIn: number; // мс от начала показа до момента появления
   delayOut: number; // мс от снятия показа до момента ухода
   shown: boolean; // виден ли круг сейчас (включается/выключается целиком)
@@ -52,13 +85,68 @@ export function createCircles(): Circles {
     const pad = PAD_VH * window.innerHeight;
     const count =
       COUNT_MIN + Math.floor(Math.random() * (COUNT_MAX - COUNT_MIN + 1));
+
+    // пул картинок на эту генерацию: каждая готовая картинка добавляется
+    // IMAGE_MAX_USES раз (может повториться один раз), затем перемешиваем и
+    // выдаём по одной — так одна картинка не встретится чаще положенного
+    const imagePool: HTMLImageElement[] = [];
+    for (const img of loadedImages) {
+      if (!isReady(img)) continue;
+      for (let k = 0; k < IMAGE_MAX_USES; k++) imagePool.push(img);
+    }
+    for (let i = imagePool.length - 1; i > 0; i--) {
+      const j = (Math.random() * (i + 1)) | 0;
+      [imagePool[i], imagePool[j]] = [imagePool[j], imagePool[i]];
+    }
+
+    // пул цветов на эту генерацию: каждый цвет добавляется COLOR_MAX_USES раз,
+    // перемешиваем и выдаём по одному — так один цвет не встретится чаще нормы
+    const colorPool: string[] = [];
+    for (const color of COLORS)
+      for (let k = 0; k < COLOR_MAX_USES; k++) colorPool.push(color);
+    for (let i = colorPool.length - 1; i > 0; i--) {
+      const j = (Math.random() * (i + 1)) | 0;
+      [colorPool[i], colorPool[j]] = [colorPool[j], colorPool[i]];
+    }
+
+    // мин. расстояние между центрами: круги налезают не больше чем на MAX_OVERLAP
+    const minDist = 2 * r * (1 - MAX_OVERLAP);
+    const minDistSq = minDist * minDist;
+
     circles = [];
     for (let i = 0; i < count; i++) {
+      // подбираем позицию, не налезающую на уже поставленные круги сильнее нормы;
+      // если за PLACE_TRIES попыток не нашли — ставим последнюю (лучше круг, чем дыра)
+      let x = 0;
+      let y = 0;
+      for (let t = 0; t < PLACE_TRIES; t++) {
+        x = pad + Math.random() * (W - pad * 2);
+        y = pad + Math.random() * (H - pad * 2);
+        let ok = true;
+        for (const c of circles) {
+          const dx = c.x - x;
+          const dy = c.y - y;
+          if (dx * dx + dy * dy < minDistSq) {
+            ok = false;
+            break;
+          }
+        }
+        if (ok) break;
+      }
+
+      // если в пуле ещё есть картинки — с вероятностью IMAGE_CHANCE берём картинку,
+      // иначе цвет (цвета повторяются свободно)
+      const img =
+        imagePool.length > 0 && Math.random() < IMAGE_CHANCE
+          ? imagePool.pop()!
+          : null;
       circles.push({
-        x: pad + Math.random() * (W - pad * 2),
-        y: pad + Math.random() * (H - pad * 2),
+        x,
+        y,
         r,
-        color: COLORS[(Math.random() * COLORS.length) | 0],
+        // цвет из пула (не чаще COLOR_MAX_USES); если пул опустел — любой цвет
+        color: colorPool.pop() ?? COLORS[(Math.random() * COLORS.length) | 0],
+        img,
         delayIn: Math.random() * SPREAD_IN,
         delayOut: Math.random() * SPREAD_OUT,
         shown: false,
@@ -78,6 +166,10 @@ export function createCircles(): Circles {
       stateChange = time;
       prevActive = active;
       asleep = false; // проснуться, чтобы отыграть появление/уход
+      // каждое включение слоя — новая случайная комбинация (число/позиции/цвета/
+      // задержки), а не только при перезагрузке. регенерим на переходе в active,
+      // все круги стартуют скрытыми и проявляются своим стаггером
+      if (active) generate(width, height);
     }
     if (asleep) return;
 
@@ -92,10 +184,24 @@ export function createCircles(): Circles {
       if (c.shown !== active) allAtTarget = false;
       if (!c.shown) continue; // не виден — не рисуем
 
-      ctx.fillStyle = c.color;
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-      ctx.fill();
+      if (c.img && isReady(c.img)) {
+        // заливка картинкой: клипуем по кругу и рисуем cover-fit в квадрат 2r×2r
+        const d = c.r * 2;
+        const scale = Math.max(d / c.img.naturalWidth, d / c.img.naturalHeight);
+        const w = c.img.naturalWidth * scale;
+        const h = c.img.naturalHeight * scale;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(c.img, c.x - w / 2, c.y - h / 2, w, h);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     if (allAtTarget) asleep = true; // все переключились → засыпаем до смены active

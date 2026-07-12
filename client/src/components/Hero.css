@@ -9,7 +9,12 @@
    больше не fixed — экран уезжает вверх при скролле ко второму блоку. */
 .hero {
   position: relative;
-  z-index: 2;
+  /* НЕ ставим z-index: он делает .hero отдельным стекинг-контекстом, а тот
+     изолирует mix-blend-mode потомков (hero-текст с difference переставал
+     смешиваться с реальным фоном — кругами/страницей — и «пропадал» на белом).
+     навбар держится поверх кейсов собственным z-index:3 у .hero__meta: без
+     контекста .hero он считается в корне (3 > 2 у .cases-page), поэтому мета
+     по-прежнему выше контента кейсов и ловит курсор/клик */
   min-height: 100vh;
   display: flex;
   align-items: center; /* центрируем ряд по высоте */
@@ -33,10 +38,11 @@
      уровне центрального текста, при скролле залипает навбаром сверху */
   min-height: 100vh;
   display: grid;
-  /* 1fr | сетка | 1fr: центральная колонка фиксируется через grid-column: 2 на
-     самой сетке (см. .hero__grid). боковые 1fr держат её по центру вьюпорта, и
-     когда меты уходят в fixed при залипании — текст не прыгает по горизонтали */
-  grid-template-columns: 1fr minmax(0, 889px) 1fr;
+  /* 1fr | сетка | 1fr: центральная колонка всегда 60vw, боковые 1fr держат её
+     по центру вьюпорта. позиция колонки фиксируется через grid-column: 2 на
+     самой сетке (см. .hero__grid), поэтому когда меты уходят в fixed при
+     залипании — текст не прыгает по горизонтали */
+  grid-template-columns: 1fr 60vw 1fr;
   align-items: center;
   gap: 24px;
   padding: 0 24px;
@@ -59,10 +65,14 @@
      и текст прыгает влево. grid-column: 2 фиксирует его по центру всегда */
   grid-column: 2;
   position: relative; /* база для направляющих и полос-мер */
-  mix-blend-mode: overlay; /* перенесено с .hero__inner (см. там) */
-  margin-right: var(--opt-comp); /* оптическая компенсация — 20px справа от блока */
-  --col-gap: 20px;
-  --opt-comp: 20px;
+  /* блендинг НЕ здесь: mix-blend-mode сделал бы .hero__grid стекинг-контекстом,
+     а он изолирует блендинг потомков от фона. difference вешаем точечно на
+     .hero__text (только глифы текста) — см. ниже */
+  /* опт-компенсация НЕ здесь: margin-right на всей сетке двигал обе строки
+     (и главный блок, и ряд-ревил). компенсацию вешаем только на первый ряд —
+     см. .hero__cell--trigger ниже */
+  --col-gap: 32px;
+  --opt-comp: 40px;
   --guide: #FF69B4; /* розовый цвет направляющих */
   /* маска проявления: радиальный градиент от центра — плавный непрерывный
      спад без плато, поэтому и фронт проявления мягкий, и в покое линии
@@ -70,18 +80,34 @@
      размер маски гоним от 0 (скрыто) до конечного (видно) */
   --guide-mask: radial-gradient(circle at center, #000 0%, transparent 75%);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, 1fr): без нижней границы min-content треки остаются строго
+     равными, даже когда правый текст склеен nbsp в широкий токен. иначе
+     правая колонка распухает, гэп уезжает влево от центра сетки, а полоса-мера
+     (.hero__gap на left:50%) остаётся по центру → залезает на правый текст */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: var(--col-gap);
   align-items: start; /* фреймы выравниваются по верху */
   font-family: var(--font-display);
   font-weight: 500;
-  line-height: 1.15;
+  line-height: 0.85;
   letter-spacing: -0.01em;
 }
 
 .hero__cell {
   margin: 0;
   position: relative;
+}
+
+/* обёртка глифов текста: единственный носитель блендинга. difference инвертирует
+   текст поверх реального фона (кругов + белой страницы). direction эффекта держим
+   строго на тексте — направляющие/полосы лежат на <p> вне этого спана и не блендятся.
+   inline-block — чтобы принимать transform (reveal-сдвиг ниже); цвет наследуется
+   от ячейки. reveal-анимация (opacity/translateY) вешается тоже сюда: собственные
+   opacity/transform элемента изолируют лишь его потомков, а его блендинг всё равно
+   считается против фона родителя, поэтому эффект не глохнет */
+.hero__text {
+  display: inline-block;
+  mix-blend-mode: difference;
 }
 
 /* направляющие появляются при ховере/клике на «…в яндексе».
@@ -173,22 +199,50 @@
 .hero__gap {
   left: 50%;
   width: var(--col-gap);
-  transform: translateX(-50%);
+  /* держим полосу в гэпе первого блока: он сдвинут влево на --opt-comp/2,
+     поэтому и центр полосы уводим на столько же (сверх обычного -50%) */
+  transform: translateX(calc(-50% - var(--opt-comp) / 2));
   justify-content: center;
 }
 
-/* оптическая компенсация — 20px-поле справа от блока (его margin-right).
-   подпись прижата к левому краю полосы и уезжает вправо, мимо текста */
+/* оптическая компенсация — 40px-поле справа от блока (его margin-right) */
 .hero__opt {
   left: 100%;
   width: var(--opt-comp);
-  justify-content: flex-start;
+}
+
+/* подпись поля — отдельным узлом рядом с полосой (см. Hero.tsx). полоса —
+   вертикальная лента во всю высоту, а текст композиции занимает только её
+   середину; справа впритык мета «приветик», а длинная подпись упиралась бы в
+   неё и в край вьюпорта. поэтому кладём подпись НАД композицией по центру
+   полосы — там чисто на любой ширине. НЕ под радиальной маской полосы (та
+   гасит длинную подпись к краям) — проявляется непрозрачностью, не срезается */
+.hero__opt-label {
+  position: absolute;
+  left: calc(100% + 10px); /* левый край подписи — на правой вертикали (у линии) */
+  top: 0; /* верх акцентной ячейки = верх композиции (это верхний ряд) */
+  transform: translateY(calc(-100% - 10px)); /* целиком над текстом, без гориз. сдвига */
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  color: #fff;
+  background: var(--guide);
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.hero__grid.is-guides .hero__opt-label {
+  opacity: 1;
 }
 
 .hero__band span {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1;
   color: #fff;
   background: var(--guide);
@@ -205,75 +259,71 @@
   pointer-events: auto;
   cursor: pointer;
   width: fit-content;
+  /* оптическая компенсация — сдвиг влево на пол-поля (--opt-comp/2 = 20px).
+     раньше делали transform'ом, но transform сделал бы ячейку стекинг-контекстом
+     и заглушил бы difference на вложенном .hero__text. поэтому сдвигаем margin'ом
+     (не изолирует блендинг) — сдвигается и текст, и направляющие/полоса вместе.
+     направление зависит от выключки: у правого края тянем margin-right, у левого —
+     отрицательный margin-left, обе ячейки уезжают влево на одинаковые 20px */
 }
 .hero__cell--left.hero__cell--trigger {
   justify-self: end; /* левая колонка — текст у правого края */
+  margin-right: calc(var(--opt-comp) / 2);
 }
 .hero__cell--accent.hero__cell--trigger {
   justify-self: start; /* правая колонка — текст у левого края */
+  margin-left: calc(var(--opt-comp) / -2);
 }
 
-/* строка «с любовью к красивому» скрыта, проявляется при ховере на триггер */
+/* строка «с любовью к красивому» скрыта, проявляется при ховере на триггер.
+   тот же сдвиг опт-компенсации (--opt-comp/2 влево), что и у триггер-ряда выше.
+   ячейка растянута на колонку — двигаем парой margin'ов (левый отрицательный,
+   правый положительный): ширина сохраняется, бокс уезжает влево на 20px, без
+   transform'а (который изолировал бы блендинг .hero__text) */
 .hero__cell--reveal {
+  margin-left: calc(var(--opt-comp) / -2);
+  margin-right: calc(var(--opt-comp) / 2);
+}
+
+/* саму reveal-анимацию (проявление + подъезд) вешаем на .hero__text, а не на <p>:
+   у него mix-blend-mode, и собственные opacity/transform элемента изолируют лишь
+   его потомков — а его блендинг против фона родителя продолжает работать. будь
+   opacity/transform на <p>, спан внутри оказался бы в изолированной группе и
+   difference заглох бы */
+.hero__cell--reveal .hero__text {
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-.hero__cell--reveal.is-active {
+.hero__cell--reveal.is-active .hero__text {
   opacity: 1; /* появляются/уходят своим transition (как и вся механика is-active) */
   transform: translateY(0);
 }
 
-/* левая колонка — выключка вправо, приглушённый цвет */
+/* цвета белые: текст блендится через difference (см. .hero__text), прозрачность
+   сохранена от прежних чёрных значений. выключка левой колонки — вправо */
 .hero__cell--left {
   text-align: right;
-  color: rgba(0, 0, 0, 1);
+  color: rgba(255, 255, 255, 1);
 }
 
-/* акцентная ячейка (чёрная) */
+/* акцентная ячейка (приглушённая) */
 .hero__cell--accent {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 .hero__cell--left.hero__cell--reveal{
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .hero__cell--muted {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 
-.size-42 {
-  font-size: clamp(32px, 2vw, 64px);
+/* крупный hero-заголовок */
+.hero__cell--display {
+  font-size: var(--fs-3xl);
 }
-
-/* второй экран: во весь вьюпорт, контент по центру. лежит поверх фоновых
-   слоёв (z-index: 2), как и первый экран */
-.section-2 {
-  position: relative;
-  z-index: 2;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
-  mix-blend-mode: overlay;
-}
-
-.section-2__inner {
-  width: 100%;
-  max-width: 889px;
-}
-
-.section-2__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  color: rgba(0, 0, 0, 1);
-}
-
 
 /* мета-строки по краям. равный flex слева/справа держит центральную сетку
    строго по центру вьюпорта. в покое мета стоит по верхнему краю центрального
@@ -293,10 +343,18 @@
   gap: 12px;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: #000;
   pointer-events: auto;
-  mix-blend-mode: overlay; /* перенесено с .hero__inner, чтобы fixed не обрезался */
+  /* блендинг навбара — normal: раньше стоял overlay, но он был фактически no-op
+     (мета изолировалась внутри стекинг-контекста .hero → смешивалась с пустотой).
+     теперь .hero не изолирован, и overlay начал бы реально блендить мету по фону —
+     оставляем сплошной чёрный, как и было визуально */
+  mix-blend-mode: normal;
+  a{
+    color: #000;
+    text-decoration: none;
+  }
 }
 
 /* залипание: мета становится fixed и держится навбаром на всём сайте (sticky
@@ -350,6 +408,14 @@
   text-decoration: none;
 }
 
+/* ссылки меты (cv, > приветик) — тот же ховер, что у .chrome-link:
+   курсор-палец и лёгкое затухание */
+.hero__meta a:hover,
+.hero__link:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
 /* на узких экранах мета-строки уезжают — прячем, чтобы не наезжали на текст.
    без них сетку центрируем в ряду */
 @media (max-width: 760px) {
@@ -362,6 +428,13 @@
   }
   .hero__grid {
     grid-column: 1; /* одна колонка — возвращаем блок в неё */
-    margin-right: 0; /* опт-компенсация не нужна на узких */
   }
+  .hero__cell--left.hero__cell--trigger,
+  .hero__cell--accent.hero__cell--trigger,
+  .hero__cell--reveal {
+    margin-left: 0; /* опт-компенсация не нужна на узких */
+    margin-right: 0;
+  }
+  /* вертикальный подъезд reveal живёт на .hero__text (см. выше) — тут менять
+     нечего, горизонтального опт-сдвига на узких и так нет */
 }

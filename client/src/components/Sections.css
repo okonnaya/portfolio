@@ -1,0 +1,175 @@
+/* Блоки под первым экраном. Геометрия подстроена под hero: центральная колонка
+   всегда 60vw (как средняя колонка .hero__inner) и центрирована, ряды — та же
+   двухколоночная сетка 1fr | 1fr с колонк-гэпом, что и в hero (--col-gap: 52px).
+   Слева выключка вправо (чёрный), справа — влево (приглушённый), поэтому текст
+   этих блоков встаёт ровно под колонки первого экрана. */
+
+.cases-page {
+  position: relative;
+  z-index: 2; /* поверх фонового канваса, как и hero */
+  --content: 60vw; /* = средняя колонка .hero__inner */
+  --col-gap: 32px; /* = column-gap в .hero__grid */
+  padding: 120px 24px 16px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #000;
+}
+
+/* секция: вертикальный ритм рядов и плейсхолдеров общим gap.
+   между секциями — крупный отступ (как в макете ~112px) */
+.cases {
+  max-width: var(--content);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 144px;
+}
+.cases + .cases {
+  margin-top: 124px;
+}
+
+/* заголовок секции сидит в правой колонке (над описаниями) */
+.cases__head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--col-gap);
+}
+.cases__title {
+  grid-column: 2; /* правая колонка — выравнивание с описаниями */
+  margin: 0;
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  line-height: 1;
+  color: #000;
+  margin-top: 124px;
+      margin-bottom: -100px;
+}
+/* «the end / special thanks» — заголовок на обе колонки.
+   «the end» выравнивается по надписи «продуктовый дизайнер» первого экрана:
+   левая колонка, выключка вправо. «special thanks» — как «двигаю компоненты»:
+   правая колонка, приглушённый цвет (та же прозрачность 0.4). */
+.cases__head--split .cases__title {
+  grid-column: auto;
+}
+.cases__title--end {
+  grid-column: 1;
+  text-align: right;
+}
+.cases__title--muted {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* ряд кейса: две колонки, выключка к центру, как в hero */
+.case_block{
+  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  .cases__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--col-gap);
+    align-items: top;
+  }
+  .cases__label {
+    margin: 0;
+    text-align: right;
+    color: #000;
+    font-size: var(--fs-xl);
+  }
+  .cases__desc {
+    margin: 0;
+    text-align: left;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: var(--fs-xl);
+  }
+}
+
+/* плейсхолдер под картинку/видео кейса — ссылка на страницу кейса.
+   display:block + сброс подчёркивания, лёгкий отклик на ховер/фокус */
+.cases__ph {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2.2 / 1; /* фиксированное соотношение сторон плейсхолдера/картинки */
+  border-radius: 32px;
+  background: #F7F7FA;
+  overflow: hidden; /* обрезаем картинку по скруглению */
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+/* картинка-превью кейса заполняет плейсхолдер (розовый фон виден при загрузке) */
+.cases__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cases__ph:hover {
+  filter: brightness(0.94);
+  transform: translateY(-2px);
+}
+.cases__ph:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 3px;
+}
+
+/* «special thanks»: пары имя · за что, выключены к центру, той же сеткой */
+.cases--thanks .cases__head {
+  margin-bottom: 0;
+}
+.thanks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+.thanks__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--col-gap);
+  align-items: baseline;
+  font-size: var(--fs-xl);
+}
+.thanks__name {
+  text-align: right;
+  color: #000;
+}
+.thanks__note {
+  text-align: left;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* узкие экраны: колонки складываются в одну, выключка влево, как в hero-меди */
+@media (max-width: 760px) {
+  .cases-page {
+    padding: 80px 20px 64px;
+    --content: 100%; /* 60vw слишком узко на телефоне — во всю ширину, как hero */
+  }
+  .cases + .cases {
+    margin-top: 80px;
+  }
+  .cases__head,
+  .cases__row,
+  .thanks__row {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 6px;
+  }
+  .cases__title,
+  .cases__title--end {
+    grid-column: 1;
+  }
+  .cases__label,
+  .cases__desc,
+  .thanks__name,
+  .thanks__note {
+    text-align: left;
+  }
+  .cases__ph {
+    border-radius: 24px;
+  }
+}
