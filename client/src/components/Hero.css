@@ -73,7 +73,7 @@
      см. .hero__cell--trigger ниже */
   --col-gap: 32px;
   --opt-comp: 40px;
-  --guide: #FF69B4; /* розовый цвет направляющих */
+  --guide: #aaaaaa; /* розовый цвет направляющих */
   /* маска проявления: радиальный градиент от центра — плавный непрерывный
      спад без плато, поэтому и фронт проявления мягкий, и в покое линии
      ярко горят по центру и плавно гаснут к краям вьюпорта.
@@ -176,7 +176,7 @@
   bottom: -100vh;
   display: flex;
   align-items: center;
-  background: rgba(255, 61, 139, 0.12);
+  background: rgba(103, 103, 103, 0.12);
   border-inline: 1px solid var(--guide);
   -webkit-mask-image: var(--guide-mask);
   mask-image: var(--guide-mask);

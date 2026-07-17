@@ -306,7 +306,7 @@ export function Hero({ onActiveChange }: Props) {
           {/* правая мета — так же залипает сверху при скролле */}
           <div className="hero__meta hero__meta--right">
              <a href="https://t.me/okonnaya">
-              &gt; приветик
+              &gt; написать
             </a>
           </div>
         </div>

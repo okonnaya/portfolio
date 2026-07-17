@@ -27,7 +27,7 @@ export function SiteHeader() {
         </a>
       </div>
       <div className="chrome-link">
-        <span>&gt; приветик</span>
+        <span>&gt; написать</span>
       </div>
     </header>
   );
