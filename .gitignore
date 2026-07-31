@@ -59,3 +59,6 @@ build-iPhoneSimulator/
 
 .DS_Store
 *.log
+
+# исходники картинок в полном разрешении (в сборку идут сжатые из client/public)
+/assets-src/

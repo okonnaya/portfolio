@@ -1,4 +1,5 @@
 import type { Sketch, SketchContext } from "../components/Canvas";
+import { drawLoveStory } from "./loveStory";
 
 /* Слой больших кругов (~10vh). Слой включается извне (setActive) на ховер/клик,
    и каждый круг появляется/пропадает со своей задержкой — вразнобой. Без фейда:
@@ -30,11 +31,17 @@ const COLORS = [
 
 // Картинки, которыми могут заливаться круги (вместо цвета). Сюда добавляй ссылки
 // (из /public — "/foo.png" — или внешние). Пусто → круги только цветные.
+// hero7 здесь нет намеренно: этот кружок рисуется вживую (см. loveStory) и есть
+// в каждой генерации — картинкой он был бы дублем.
 const IMAGES: string[] = [
-  "hero1.png",
-  "hero2.png",
-  "hero3.svg",
-  "hero4.png",
+  "/hero1.png",
+  "/hero2.png",
+  "/hero3.svg",
+  "/hero4.png",
+   "/hero5.png",
+    "/hero8.png",
+    "/hero9.png",
+     "/hero10.png",
 ];
 
 // вероятность, что круг зальётся картинкой (а не цветом), если картинки есть/остались
@@ -65,6 +72,9 @@ type Circle = {
   r: number;
   color: string;
   img: HTMLImageElement | null; // если задана — круг заливается картинкой, не цветом
+  // «love story» — рисуется вживую (градиент + сердце + счётчик), не цветом и не
+  // картинкой. ровно один такой круг есть в каждой генерации
+  loveStory: boolean;
   delayIn: number; // мс от начала показа до момента появления
   delayOut: number; // мс от снятия показа до момента ухода
   shown: boolean; // виден ли круг сейчас (включается/выключается целиком)
@@ -113,6 +123,10 @@ export function createCircles(): Circles {
     const minDist = 2 * r * (1 - MAX_OVERLAP);
     const minDistSq = minDist * minDist;
 
+    // один из кругов — «love story»: слот выбираем случайно, чтобы он не всегда
+    // оказывался поверх/под остальными и не тяготел к одному месту
+    const loveStoryAt = (Math.random() * count) | 0;
+
     circles = [];
     for (let i = 0; i < count; i++) {
       // подбираем позицию, не налезающую на уже поставленные круги сильнее нормы;
@@ -134,10 +148,12 @@ export function createCircles(): Circles {
         if (ok) break;
       }
 
-      // если в пуле ещё есть картинки — с вероятностью IMAGE_CHANCE берём картинку,
-      // иначе цвет (цвета повторяются свободно)
+      // love-story круг не берёт ни картинку, ни цвет — у него своя отрисовка;
+      // иначе: если в пуле ещё есть картинки — с вероятностью IMAGE_CHANCE берём
+      // картинку, иначе цвет
+      const loveStory = i === loveStoryAt;
       const img =
-        imagePool.length > 0 && Math.random() < IMAGE_CHANCE
+        !loveStory && imagePool.length > 0 && Math.random() < IMAGE_CHANCE
           ? imagePool.pop()!
           : null;
       circles.push({
@@ -147,6 +163,7 @@ export function createCircles(): Circles {
         // цвет из пула (не чаще COLOR_MAX_USES); если пул опустел — любой цвет
         color: colorPool.pop() ?? COLORS[(Math.random() * COLORS.length) | 0],
         img,
+        loveStory,
         delayIn: Math.random() * SPREAD_IN,
         delayOut: Math.random() * SPREAD_OUT,
         shown: false,
@@ -160,6 +177,7 @@ export function createCircles(): Circles {
   let asleep = true;
   let stateChange = 0; // время последней смены active — от него идут задержки
   let prevActive = false;
+  let drawnSecond = -1; // секунда, на которую отрисован счётчик love-story круга
 
   const draw = ({ ctx, width, height, time }: SketchContext) => {
     if (active !== prevActive) {
@@ -171,7 +189,14 @@ export function createCircles(): Circles {
       // все круги стартуют скрытыми и проявляются своим стаггером
       if (active) generate(width, height);
     }
+    // счётчик в love-story круге тикает раз в секунду — на смене секунды будим
+    // слой на один кадр, чтобы перерисовать текст (остальное время слой спит)
+    const second = (Date.now() / 1000) | 0;
+    const tick =
+      second !== drawnSecond && circles.some((c) => c.loveStory && c.shown);
+    if (asleep && tick) asleep = false;
     if (asleep) return;
+    drawnSecond = second;
 
     ctx.clearRect(0, 0, width, height); // прозрачный фон — кругов может не быть вовсе
 
@@ -184,7 +209,9 @@ export function createCircles(): Circles {
       if (c.shown !== active) allAtTarget = false;
       if (!c.shown) continue; // не виден — не рисуем
 
-      if (c.img && isReady(c.img)) {
+      if (c.loveStory) {
+        drawLoveStory(ctx, c.x, c.y, c.r);
+      } else if (c.img && isReady(c.img)) {
         // заливка картинкой: клипуем по кругу и рисуем cover-fit в квадрат 2r×2r
         const d = c.r * 2;
         const scale = Math.max(d / c.img.naturalWidth, d / c.img.naturalHeight);

@@ -1,6 +1,18 @@
 /* Базовый сброс + переменные. Без CSS-фреймворка — он будет выбран позже
    вместе с UI-стеком (Lottie / p5 / анимации). */
 
+/* Шрифт макета лежит в проекте (public/fonts), а не берётся из системы: иначе
+   сайт и cv.pdf выглядели бы по-разному у каждого, кто открывает страницу или
+   собирает билд. Файл вариативный — одна загрузка на все начертания (wght
+   100–900), поэтому отдельных @font-face на вес не нужно. */
+@font-face {
+  font-family: "PP Neue Montreal Variable";
+  src: url("/fonts/PPNeueMontreal-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
@@ -15,7 +27,8 @@
   --color-accent: #5a8193;
   --font-sans: -apple-system, Helvetica, "Inter", "Segoe UI", Roboto,
     Arial, sans-serif;
-  /* шрифт макета; пока не подключён — падает на системный sans */
+  /* шрифт макета (см. @font-face выше); системный sans — фолбэк на время
+     загрузки файла и если он не отдался */
   --font-display: "PP Neue Montreal Variable", var(--font-sans);
 
   /* типографическая шкала — единственный источник размеров текста.
@@ -23,7 +36,7 @@
      от крупного к мелкому: */
   --fs-3xl: clamp(32px, 3vw, 64px); /* hero-заголовок */
   --fs-2xl: clamp(28px, 3.6vw, 42px); /* заголовки секций, lead кейса */
-  --fs-xl: clamp(18px, 2.1vw, 24px); /* ряды/названия/описания кейсов, thanks */
+  --fs-xl: clamp(18px, 1.5vw, 24px); /* ряды/названия/описания кейсов, thanks */
   --fs-md: 16px; /* тело, навбар, подписи, оглавление, адаптив шапки */
   --fs-xs: 11px; /* микротекст на канвасе hero */
 

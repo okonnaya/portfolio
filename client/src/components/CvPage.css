@@ -1,0 +1,330 @@
+/* Страница резюме. Направляющие свои, из макета: колонка контента шире, чем
+   на остальных страницах (--content = 75vw против 60vw), сетка 30% | 1fr,
+   названия разделов слева с выключкой влево, период — второй колонкой у
+   правого края. Размеры типографики — общие токены сайта (--fs-*).
+   Навбара нет: сверху сама шапка резюме. */
+
+.cv-page {
+  position: relative;
+  min-height: 100vh;
+  --content: 75vw; /* = 1077 / 1440 в макете */
+  --label-col: 30%; /* = 322 / 1077 */
+  --period-gap: 32px; /* отбивка периода от текста пункта */
+  padding: 0 0 16px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #000;
+}
+
+.cv {
+  max-width: var(--content);
+  margin: 0 auto;
+  padding: 128px 24px 0; /* верхний отступ как в макете (~154px на 1440) */
+}
+
+/* ── кнопки по краям: повторяют «назад» со страниц кейсов ─────────────── */
+.cv__back,
+.cv__download {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  font-size: var(--fs-md);
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+.cv__back {
+  left: 24px;
+}
+.cv__download {
+  right: 24px;
+}
+.cv__back:hover,
+.cv__download:hover {
+  color: #000;
+}
+
+/* ── вертикальный ритм: между разделами ~124px, как в макете ──────────── */
+.cv__content {
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+}
+/* шапка: две строки сетки теснее, чем разделы между собой */
+.cv__head {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ── ряд: название раздела (лево) · контент (право) ──────────────────── */
+.cv__row {
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  align-items: start;
+}
+.cv__label {
+  margin: 0;
+  padding-right: 24px; /* чтобы длинное название не упиралось в контент */
+  text-align: left;
+  color: #000;
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  line-height: 1.1;
+}
+.cv__body {
+  min-width: 0;
+}
+
+/* аватар и контакты — в левой колонке, по её левому краю */
+.cv__label--avatar {
+  display: flex;
+}
+.cv__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.cv__label--contacts {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+/* имя — как lead-заголовок кейса */
+.cv__name {
+  margin: 0;
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.cv__about {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+
+/* ── пункты раздела ─────────────────────────────────────────────────── */
+.cv__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+/* пункт: текст в первой колонке, период — во второй, выключен вправо
+   к правому краю колонки контента */
+.cv__entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  column-gap: var(--period-gap);
+  align-items: start;
+}
+.cv__entry-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cv__entry-title {
+  margin: 0;
+  color: #000;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.cv__period {
+  margin: 0;
+  text-align: right;
+  color: rgba(0, 0, 0, 0.35);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+.cv__entry-sub {
+  margin: 0;
+  color: #000;
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+
+/* буллиты — как в кейсах: точка + текст, приглушённый цвет */
+.cv__bullets {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cv__bullet {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  column-gap: 12px;
+  align-items: start;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+.cv__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  margin-top: 0.5em;
+}
+
+/* скиллы: абзацы без периодов */
+.cv__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.cv__note {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+
+/* ── адаптив ─────────────────────────────────────────────────────────── */
+/* колонка контента шире, чем на других страницах, поэтому боковые гаттеры
+   сжимаются раньше — фикс-кнопки переносим в обычную строку над резюме */
+@media (max-width: 1280px) {
+  .cv-page {
+    --content: 88vw;
+  }
+  .cv__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--content);
+    margin: 0 auto;
+    padding: 32px 24px 0;
+  }
+  .cv__back,
+  .cv__download {
+    position: static;
+    transform: none;
+  }
+  .cv {
+    padding-top: 64px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cv-page {
+    --content: 100%;
+  }
+  .cv__nav {
+    padding: 28px 20px 0;
+  }
+  .cv {
+    padding: 40px 20px 0;
+  }
+  .cv__content {
+    gap: 56px;
+  }
+  .cv__head {
+    gap: 24px;
+  }
+  .cv__row {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+  .cv__label {
+    padding-right: 0;
+  }
+  .cv__entry {
+    grid-template-columns: 1fr;
+    row-gap: 2px;
+  }
+  .cv__entry-text {
+    order: 2;
+  }
+  .cv__period {
+    text-align: left;
+  }
+}
+
+/* ── печать / экспорт в pdf ──────────────────────────────────────────── */
+/* Этими правилами задаётся внешний вид cv.pdf: файл печатается из этой же
+   страницы headless-chrome'ом на каждой сборке (client/scripts/cv-pdf.mjs),
+   поэтому правки в тексте резюме попадают в файл без ручной работы. Сетка и
+   порядок блоков те же, меняются только масштаб типографики и ритм: экранные
+   120px между разделами растянули бы резюме на три листа. */
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
+
+@media print {
+  .cv-page {
+    /* токены переопределяем локально: экранные clamp(vw) на бумаге дают
+       случайные кегли, тут нужны фиксированные */
+    --fs-2xl: 28px;
+    --fs-xl: 15px;
+    --fs-md: 11px; /* ≈8.3pt — привычный кегль тела для резюме на бумаге */
+    --period-gap: 16px;
+    min-height: 0;
+    padding: 0;
+  }
+  /* навигация и подвал — экранные элементы, на листе их нет */
+  .cv__nav,
+  .cv-page .cases-footer {
+    display: none;
+  }
+  .cv {
+    max-width: none;
+    padding: 0;
+  }
+  /* лист A4 в css-пикселях — это 703px (210mm минус поля), то есть уже
+     мобильного брейкпоинта: возвращаем двухколоночную сетку и порядок */
+  .cv__row {
+    grid-template-columns: var(--label-col) 1fr;
+  }
+  .cv__label {
+    padding-right: 24px;
+  }
+  .cv__entry {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    row-gap: 0;
+  }
+  .cv__entry-text {
+    order: 0;
+  }
+  .cv__period {
+    text-align: right;
+  }
+  .cv__content {
+    gap: 22px;
+  }
+  .cv__head {
+    gap: 14px;
+  }
+  .cv__entries {
+    gap: 14px;
+  }
+  .cv__bullets {
+    margin-top: 4px;
+    gap: 3px;
+  }
+  .cv__notes {
+    gap: 10px;
+  }
+  .cv__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  /* пункт и шапка не разрываются между листами. на .cv__row такое правило
+     не ставим: раздел «опыт работы» целиком выше того, что остаётся на листе,
+     и браузер уносил бы его на следующий, оставляя дырку */
+  .cv__entry,
+  .cv__head {
+    break-inside: avoid;
+  }
+  /* количество листов не подгоняем — сколько выйдет, столько и будет */
+}

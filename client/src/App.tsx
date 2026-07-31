@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { CasePage } from "./components/CasePage";
+import { CvPage } from "./components/CvPage";
 import { Home } from "./components/Home";
 
 /** Сброс скролла при смене маршрута. Если в url есть якорь (#case-<slug>) —
@@ -24,7 +25,7 @@ function ScrollToTop() {
   return null;
 }
 
-/** Роутинг: главная и страница отдельного кейса (открывается по клику на медиа). */
+/** Роутинг: главная, страница отдельного кейса (по клику на медиа) и резюме. */
 function App() {
   return (
     <>
@@ -32,6 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/case/:slug" element={<CasePage />} />
+        <Route path="/cv" element={<CvPage />} />
       </Routes>
     </>
   );

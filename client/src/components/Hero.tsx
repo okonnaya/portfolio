@@ -5,6 +5,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import { Link } from "react-router-dom";
 import "./Hero.css";
 
 type Props = {
@@ -235,9 +236,9 @@ export function Hero({ onActiveChange }: Props) {
             <img className="hero__avatar" src="/avatar.jpg" alt="Карина Р." />
             <span>карина р.</span>
             <span className="hero__dot" aria-hidden="true" />
-            <a className="hero__link" href="#cv">
+            <Link className="hero__link" to="/cv">
               cv
-            </a>
+            </Link>
           </div>
 
           {/* центральная композиция */}

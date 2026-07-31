@@ -1,6 +1,8 @@
-import { Fragment } from "react";
+import { Fragment, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "./SiteChrome";
+import { Gallery, type GallerySlide } from "./Gallery";
+import { typo } from "../lib/typo";
 import "./Sections.css";
 
 /**
@@ -18,6 +20,8 @@ type CaseItem = {
   desc: Line[]; // правая колонка — короткое описание
   image?: string; // картинка-превью в плейсхолдере (путь от корня, напр. /avatar.jpg)
   href?: string; // внешняя ссылка вместо страницы кейса (открывается в новой вкладке)
+  slides?: GallerySlide[]; // если задано — клик открывает галерею-лайтбокс вместо перехода
+  static?: boolean; // плитка без ссылки/ховера/перехода — просто медиа
 };
 
 // «продуктовые кейсы»: каждый кейс сопровождается плейсхолдером под медиа,
@@ -25,42 +29,62 @@ type CaseItem = {
 const PRODUCT_CASES: CaseItem[] = [
   {
     slug: "ai-component",
-    label: ["ии-решение в b2e продуктах"],
+    label: ["ии-решение\nв b2e продуктах"],
     desc: ["масштабируемый компонент для 7+ сервисов в инфре"],
-    image: "case1.svg",
+    image: "/case1.svg",
   },
   {
     slug: "search-button",
-    label: ["кнопка поиска", "в инпуте"],
-    desc: ["прикол, как одна кнопка\nпомогла 2к пользователей"],
-  },
-  {
-    slug: "emotions-space",
-    label: ["пространство", "для сохранения эмоций"],
-    desc: ["дипломик\nв школе дизайна ниу вшэ"],
+    label: ["улучшение", "поиска"],
+    desc: ["+4,19 п.п. к переходам\nодной UX-правкой"],
+    image: "/case3_1.png",
   },
   {
     slug: "ai-research-platform",
     label: ["ai research", "platform"],
     desc: ["платформы для бизнеса\nи ресерчеров"],
+    image: "/case2_1.png",
   },
 ];
 
 // «для души»: личные проекты, тот же ритм ряд-плейсхолдер
 const SOUL_CASES: CaseItem[] = [
+    {
+    slug: "yandex-music-party",
+    label: ["вечеринка в яндекс музыке"],
+    desc: ["шот с концептом"],
+    image: "/yamusic.webm",
+    static: true,
+  },
+    {
+    slug: "emotions-space",
+    label: ["пространство", "для сохранения эмоций"],
+    desc: ["от исследования проблемы до MVP цифрового продукта"],
+     image: "/case4_1.png",
+  },
+  
+  // {
+  //   slug: "typeface",
+  //   label: ["шрифт"],
+  //   desc: ["колючая латиница"],
+  //   image: "/slide1.png", // первый слайд работает обложкой плитки
+  //   slides: [
+  //     { src: "/slide1.png" },
+  //     { src: "/slide2.png", caption: "засечки-шипы и контраст" },
+  //     { src: "/slide3.png", caption: "небольшой наклон оси" },
+  //     { src: "/slide4.png" },
+  //     { src: "/slide5.png", caption: "лигатуры" },
+  //     { src: "/slide6.png" },
+  //   ],
+  // },
   {
     slug: "over-the-rainbow",
     href: "https://youtu.be/dy7JG_fK-gQ?si=qzivTsX3kw403P_R",
     label: ["Israel Kamakawiwo’o —", "over the rainbow"],
     desc: ["стоп-моушен", "цветной бумагой"],
-    image: "motion.webm",
+    image: "/motion.webm",
   },
-  { slug: "typeface", label: ["шрифт"], desc: ["колючая латиница"] },
-  {
-    slug: "yandex-music-party",
-    label: ["вечеринка в яндекс музыке"],
-    desc: ["шот с концептом"],
-  },
+
 ];
 
 // «special thanks»: пары имя · за что, выключены к центру
@@ -70,23 +94,25 @@ const THANKS: [string, string][] = [
   ["вадим булгаков", "дипломный руководитель"],
   ["олег пащенко", "преподаватель в вышке и ии-early-adopter"],
   ["настя тебякина", "вторая кураторка в вышке"],
-  ["ира папичева", "боролась за мои учебные проекты"],
+  ["ира папичева", "преподавательница, боролась за мои учебные проекты"],
   ["маша ванурина", "путеводная звездочка"],
   ["настя малевич", "туз жезлов"],
   ["ксения шенько", "арт-дирка в агентстве"],
   ["ксюша санкович", "мой поддерживающий продакт"],
   ["никита худов", "world’s best boss"],
+  ["айдар насибуллин", "помогал деплоить первую версию портфолио"],
   ["виолетта постнова", "преподавательница в вышке и ориентир"],
   ["александра першеева", "преподавательница по истории искусств в вышке"],
-  ["инна дудникова", "преподавательница и pmm"],
+  ["инна дудникова", "дипломная руководительница, преподавательница и pmm"],
   ["florence + the machine", "dog days are over"],
   ["наруто", "учил никогда не сдаваться"],
 ];
 
 // многострочный текст → строки, разделённые <br>.
-// перенос можно задать и отдельным элементом массива, и \n внутри строки
+// перенос можно задать и отдельным элементом массива, и \n внутри строки.
+// typo расставляет неразрывные пробелы, чтобы предлоги не висели в конце строк
 function multiline(lines: Line[]) {
-  return lines.flatMap((line) => line.split("\n")).map((line, i) => (
+  return lines.flatMap((line) => typo(line).split("\n")).map((line, i) => (
     <Fragment key={i}>
       {i > 0 && <br />}
       {line}
@@ -97,7 +123,17 @@ function multiline(lines: Line[]) {
 // ряд кейса: заголовок (левая колонка) + описание (правая), затем плейсхолдер-
 // медиа, клик по которому открывает страницу кейса
 function CaseRow({ item }: { item: CaseItem }) {
-  const ariaLabel = `Открыть кейс: ${item.label.join(" ")}`;
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const phRef = useRef<HTMLButtonElement>(null);
+  // прямоугольник плитки в момент открытия — из него «вырастает» галерея
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
+  const openGallery = () => {
+    setOriginRect(phRef.current?.getBoundingClientRect() ?? null);
+    setGalleryOpen(true);
+  };
+  const ariaLabel = item.slides
+    ? `Открыть галерею: ${item.label.join(" ")}`
+    : `Открыть кейс: ${item.label.join(" ")}`;
   const isVideo = item.image?.endsWith(".webm") || item.image?.endsWith(".mp4");
   const media =
     item.image &&
@@ -120,7 +156,20 @@ function CaseRow({ item }: { item: CaseItem }) {
         <p className="cases__label">{multiline(item.label)}</p>
         <p className="cases__desc">{multiline(item.desc)}</p>
       </div>
-      {item.href ? (
+      {item.static ? (
+        <div className="cases__ph cases__ph--static">{media}</div>
+      ) : item.slides ? (
+        <button
+          type="button"
+          ref={phRef}
+          className="cases__ph cases__ph--gallery"
+          aria-label={ariaLabel}
+          onClick={openGallery}
+        >
+          {media}
+          
+        </button>
+      ) : item.href ? (
         <a
           href={item.href}
           className="cases__ph"
@@ -136,6 +185,14 @@ function CaseRow({ item }: { item: CaseItem }) {
         </Link>
       )}
       </div>
+      {item.slides && galleryOpen && (
+        <Gallery
+          slides={item.slides}
+          title={item.label.join(" ")}
+          originRect={originRect}
+          onClose={() => setGalleryOpen(false)}
+        />
+      )}
     </>
   );
 }
@@ -177,7 +234,7 @@ export function Sections() {
           {THANKS.map(([name, note], i) => (
             <li className="thanks__row" key={i}>
               <span className="thanks__name">{name}</span>
-              <span className="thanks__note">{note}</span>
+              <span className="thanks__note">{typo(note)}</span>
             </li>
           ))}
         </ul>

@@ -7,7 +7,9 @@ import "./SiteChrome.css";
  * живут в классах .chrome-* и переиспользуются обоими.
  *
  * SiteHeader — sticky-навбар: аватар · карина р. · cv | > приветик.
- * SiteFooter — подвал: клик · чтобы вытянуть карту дня · 2026.
+ * SiteFooter — подвал: для mvp просто «коммит карины р. 2026».
+ * Интерактив «клик · чтобы вытянуть карту дня» пока скрыт — код ниже
+ * закомментирован (KeyRays + разметка), стили остались в SiteChrome.css.
  */
 
 // ── хедер ──────────────────────────────────────────────────────────────
@@ -22,9 +24,9 @@ export function SiteHeader() {
           карина р.
         </Link>
         <span className="chrome-dot" aria-hidden="true" />
-        <a className="chrome-link" href="#cv">
+        <Link className="chrome-link" to="/cv">
           cv
-        </a>
+        </Link>
       </div>
       <div className="chrome-link">
         <span>&gt; написать</span>
@@ -36,33 +38,37 @@ export function SiteHeader() {
 // ── подвал ─────────────────────────────────────────────────────────────
 // три лучика-линии (верхняя вверх, средняя горизонтальная, нижняя вниз),
 // как в макете. geometry из фигмы; на ховер разъезжаются по диагонали.
-function KeyRays({ side }: { side: "left" | "right" }) {
-  return (
-    <svg
-      className={`key-rays key-rays--${side}`}
-      viewBox="0 0 10.342 23.7801"
-      preserveAspectRatio="none"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path className="ray ray--top" d="M0.34202 7.4202L9.73895 4" />
-      <path className="ray ray--mid" d="M0.34202 13.4202H10.342" />
-      <path className="ray ray--bot" d="M0.34202 19.4202L9.73895 22.8404" />
-    </svg>
-  );
-}
+// Понадобится, когда вернём «клик · чтобы вытянуть карту дня».
+// function KeyRays({ side }: { side: "left" | "right" }) {
+//   return (
+//     <svg
+//       className={`key-rays key-rays--${side}`}
+//       viewBox="0 0 10.342 23.7801"
+//       preserveAspectRatio="none"
+//       fill="none"
+//       aria-hidden="true"
+//     >
+//       <path className="ray ray--top" d="M0.34202 7.4202L9.73895 4" />
+//       <path className="ray ray--mid" d="M0.34202 13.4202H10.342" />
+//       <path className="ray ray--bot" d="M0.34202 19.4202L9.73895 22.8404" />
+//     </svg>
+//   );
+// }
 
 export function SiteFooter() {
   return (
     <footer className="cases-footer">
+      {/* пока mvp — одна строка вместо интерактива с картой дня:
       <span className="cases-footer__key" aria-hidden="true">
         <KeyRays side="left" />
         <span className="cases-footer__word">клик</span>
         <KeyRays side="right" />
       </span>
       <span>чтобы вытянуть карту дня</span>
-      <span className="chrome-dot" aria-hidden="true" />
-      <span>2026</span>
+      <span className="chrome-dot" aria-hidden="true" /> */}
+      <span>карина р.</span>
+      <span className="hero__dot" aria-hidden="true" />
+       <span>2026</span>
     </footer>
   );
 }
