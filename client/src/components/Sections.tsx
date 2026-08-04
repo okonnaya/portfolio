@@ -235,15 +235,6 @@ const SOUL_WORKS: SoulWork[] = [
     h: 1182,
     tall: true,
   },
-  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600 },
-  {
-    key: "poster",
-    src: "/soul/poster.webp",
-    alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
-    w: 563,
-    h: 792,
-  },
-  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883 },
   {
     key: "phone2",
     src: "/soul/phone2.webp",
@@ -252,6 +243,15 @@ const SOUL_WORKS: SoulWork[] = [
     h: 1178,
     tall: true,
   },
+  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883 },
+  {
+    key: "poster",
+    src: "/soul/poster.webp",
+    alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
+    w: 563,
+    h: 792,
+  },
+  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600 },
   {
     key: "sticker1",
     src: "/soul/sticker1.webp",

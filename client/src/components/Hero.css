@@ -250,8 +250,9 @@
   font-weight: 600;
   font-size: var(--fs-xs);
   line-height: 1;
-  color: #fff;
-  background: var(--guide);
+  color: #a3a3a3;
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.1);
+  background: #fff;
   padding: 2px 5px;
   border-radius: 4px;
   white-space: nowrap;
@@ -272,6 +273,9 @@
   background: var(--guide);
   padding: 2px 5px;
   border-radius: 4px;
+  color: #a3a3a3;
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.1);
+  background: #fff;
   white-space: nowrap; /* подпись шире полосы — пусть аккуратно выходит за края */
 }
 

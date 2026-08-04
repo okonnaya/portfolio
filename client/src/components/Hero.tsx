@@ -37,7 +37,7 @@ const FACTS = [
     y: "calc(-29.8vh * var(--fact-spread, 1))",
   },
   {
-    img: "/facts/hse.webp",
+    img: "/facts/hse.svg",
     lines: ["красный диплом", "ниу вшэ"],
     x: "var(--fact-x1)",
     y: "calc(24.2vh * var(--fact-spread, 1))",
