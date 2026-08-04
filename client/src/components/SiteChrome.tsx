@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { TELEGRAM_URL, WRITE_LABEL } from "../lib/contacts";
 import "./SiteChrome.css";
 
 /**
@@ -28,9 +29,14 @@ export function SiteHeader() {
           cv
         </Link>
       </div>
-      <div className="chrome-link">
-        <span>&gt; написать</span>
-      </div>
+      <a
+        className="chrome-link"
+        href={TELEGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {WRITE_LABEL}
+      </a>
     </header>
   );
 }
@@ -66,9 +72,11 @@ export function SiteFooter() {
       </span>
       <span>чтобы вытянуть карту дня</span>
       <span className="chrome-dot" aria-hidden="true" /> */}
-      <span>карина р.</span>
-      <span className="hero__dot" aria-hidden="true" />
-       <span>2026</span>
+      {/* в подвале — полное имя: шапка везде сокращает до «карина р.», и
+          фамилия иначе живёт только на странице резюме */}
+      <span>карина рамазанова</span>
+      <span className="chrome-dot" aria-hidden="true" />
+      <span>2026</span>
     </footer>
   );
 }

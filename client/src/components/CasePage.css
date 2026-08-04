@@ -35,7 +35,7 @@
   transform: translateY(-50%);
   z-index: 5;
   font-size: var(--fs-md);
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
   text-decoration: none;
 }
 .case__back:hover {
@@ -60,7 +60,7 @@
 .case__toc-link {
   font-size: var(--fs-md);
   line-height: 1.2;
-  color: rgba(0, 0, 0, 0.35);
+  color: rgba(0, 0, 0, 0.5);
   text-decoration: none;
   transition: color 0.15s ease;
 }
@@ -107,9 +107,26 @@
 .case__body {
   min-width: 0;
 }
+
+/* заголовок кейса + строка «роль · команда · срок» одной ячейкой первой
+   колонки: .case__row — сетка 1fr | 1fr, и отдельным ребёнком строка уехала бы
+   во второй ряд, под название */
+.case__lead {
+  text-align: right;
+}
+.case__meta {
+  margin: 12px 0 0;
+  font-size: var(--fs-md);
+  line-height: 1.35;
+  color: rgba(0, 0, 0, 0.62);
+}
+/* разделитель бледнее самих значений — читаются части, а не точки */
+.case__meta-sep {
+  color: rgba(0, 0, 0, 0.3);
+}
 .case__text {
   margin: 0;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
   font-size: var(--fs-md);
   line-height: 1.35;
 }
@@ -128,7 +145,7 @@
   grid-template-columns: 4px 1fr;
   column-gap: 12px;
   align-items: start;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
   font-size: var(--fs-md);
   line-height: 1.35;
 }
@@ -136,7 +153,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.62);
   margin-top: 0.5em; /* к первой строке текста */
 }
 
@@ -188,7 +205,7 @@
 .case__caption {
   margin: 0;
   width: calc(50% - var(--col-gap) / 2);
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
   font-size: var(--fs-md);
 }
 .case__caption--left {
@@ -197,6 +214,57 @@
 .case__caption--right {
   margin-left: auto;
   text-align: left;
+}
+
+/* ── переход к следующему кейсу ───────────────────────────────────────── */
+/* Сноска про содержимое картинок (НДА): мелким и приглушённым, но не настолько,
+   чтобы читалась как декор — это оговорка, её должно быть видно. Ширину режем
+   по правой колонке: строка длинная, во всю ширину контента она превратилась бы
+   в неудобную для чтения простыню. */
+.case__disclaimer {
+  margin: 72px 0 0 auto;
+  max-width: 46ch;
+  font-size: var(--fs-md);
+  line-height: 1.35;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* В конце кейса читателю логичнее предложить следующий, чем возвращать его на
+   главную скроллом. Блок выключен вправо — по колонке названий секций, чтобы
+   не спорить с сеткой страницы. */
+/* сноска уже отбила кейс от конца страницы — второй раз 96px не нужны */
+.case__disclaimer + .case__next {
+  margin-top: 32px;
+}
+.case__next {
+  display: block;
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: right;
+  text-decoration: none;
+}
+.case__next-label {
+  display: block;
+  font-size: var(--fs-md);
+  color: rgba(0, 0, 0, 0.62);
+}
+.case__next-title {
+  display: block;
+  margin-top: 8px;
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: #000;
+  transition: opacity 0.2s ease;
+}
+.case__next:hover .case__next-title {
+  opacity: 0.6;
+}
+.case__next:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 4px;
 }
 
 /* оглавление скрываем там, где боковые гаттеры сжимаются и оно налезло бы
@@ -213,7 +281,16 @@
     --content: 100%;
   }
   .case {
-    padding: 56px 20px 0;
+    padding: 24px 20px 0;
+  }
+  /* «назад» больше не фикс. по центру левого края: колонка контента здесь во
+     всю ширину, и ссылка висела поверх текста и картинок кейса. на мобильном —
+     обычная строка над заголовком, в том же гаттере (20px) */
+  .case__back {
+    position: static;
+    transform: none;
+    display: inline-block;
+    margin-bottom: 24px;
   }
   .case__content {
     gap: 56px;
@@ -229,8 +306,16 @@
     row-gap: 8px;
   }
   .case__label,
-  .case__label--lead {
+  .case__label--lead,
+  .case__lead,
+  .case__next {
     text-align: left;
+  }
+  .case__meta {
+    margin-top: 8px;
+  }
+  .case__next {
+    margin-top: 56px;
   }
   .case__caption {
     width: 100%;
@@ -246,5 +331,15 @@
   }
   .case__ph--tall {
     height: 320px;
+  }
+  /* скругление в 32px на картинке шириной 350px выглядит непропорционально
+     крупным — держим его тем же, что у плейсхолдера и плиток на главной */
+  .case__img {
+    border-radius: 24px;
+  }
+  /* якоря оглавления: под мобильной шапкой (она ниже и с фоном) запас меньше */
+  .case__row[id],
+  .case__steps[id] {
+    scroll-margin-top: 72px;
   }
 }

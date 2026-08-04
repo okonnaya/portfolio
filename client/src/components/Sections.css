@@ -61,31 +61,35 @@
   color: rgba(0, 0, 0, 0.4);
 }
 
-/* ряд кейса: две колонки, выключка к центру, как в hero */
-.case_block{
+/* ряд кейса: две колонки, выключка к центру, как в hero.
+   селекторы намеренно НЕ вложены в .case_block: вложенность поднимала бы их
+   специфичность до (0,2,0), и одноклассовые правила адаптива ниже (.cases__row
+   и т.п.) её не перебивали бы — ряды кейсов оставались бы двухколоночными на
+   телефоне */
+.case_block {
   gap: 24px;
   display: flex;
   flex-direction: column;
-  .cases__row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--col-gap);
-    align-items: top;
-  }
-  .cases__label {
-    margin: 0;
-    text-align: right;
-    color: #000;
-    font-size: var(--fs-xl);
-    font-weight: 500; /* без прозрачности → 500 */
-  }
-  .cases__desc {
-    margin: 0;
-    text-align: left;
-    color: rgba(0, 0, 0, 0.5);
-    font-size: var(--fs-xl);
-    font-weight: 400; /* приглушённый → 400 */
-  }
+}
+.cases__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--col-gap);
+  align-items: start;
+}
+.cases__label {
+  margin: 0;
+  text-align: right;
+  color: #000;
+  font-size: var(--fs-xl);
+  font-weight: 500; /* без прозрачности → 500 */
+}
+.cases__desc {
+  margin: 0;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.62);
+  font-size: var(--fs-xl);
+  font-weight: 400; /* приглушённый → 400 */
 }
 
 /* плейсхолдер под картинку/видео кейса — ссылка на страницу кейса.
@@ -157,9 +161,249 @@
   outline-offset: 3px;
 }
 
+/* «для души» — коллаж вместо списка кейсов ------------------------------- */
+
+/* у секции нет рядов с подписями, поэтому её собственный ритм (gap 144 и
+   компенсирующий его −100 у заголовка) тут не нужен: между заголовком и
+   коллажем ровно 32px, как в макете */
+.cases--soul {
+  gap: 32px;
+}
+.cases--soul .cases__title {
+  margin-bottom: 0;
+}
+
+/* коробка коллажа: пропорции макета (1200 × 3882.876), внутри — плитки в
+   абсолютных процентных координатах. container-type нужен для --r: скругление
+   задано в cqw, то есть в процентах ширины коллажа, и уезжает вниз вместе с
+   плитками, а не остаётся жирным на узком экране */
+.soul {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1200 / 3882.876;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.soul__tile {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  aspect-ratio: var(--ar);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.soul__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* пара телефонных скринов — в макете один фрейм на две картинки, разведённые
+   по краям. Скругление и обрезка живут на самих картинках: высоты у них
+   отличаются на полтора пикселя, и общий overflow срезал бы нижний край */
+.soul__tile--pair {
+  border-radius: 0;
+  overflow: visible;
+}
+.soul__pair {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 100%;
+}
+.soul__pair .soul__media {
+  width: var(--pw);
+  height: auto;
+  aspect-ratio: var(--par);
+  border-radius: var(--r);
+}
+
+/* единственная кликабельная плитка — стоп-моушен: он лежит на ютубе целиком.
+   Отклик тот же, что у плиток кейсов выше */
+.soul__link {
+  display: block;
+  height: 100%;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.soul__link:hover {
+  filter: brightness(0.94);
+  transform: translateY(-2px);
+}
+.soul__link:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 3px;
+}
+@media (hover: none) {
+  .soul__link:hover {
+    filter: none;
+    transform: none;
+  }
+  .soul__link:active {
+    filter: brightness(0.94);
+    transform: scale(0.99);
+  }
+}
+
+/* «для души», новые раскладки ---------------------------------------------
+   Обе собираются из одних данных (SOUL_WORKS) и одних плиток .soulw —
+   различается только контейнер: .soul-flow (колонки-«пинтерест») и
+   .soul-cells (квантованная сетка). Пропорция плитки приезжает в --ar
+   инлайном, чтобы место под медиа занималось до загрузки файла. */
+
+.soulw {
+  /* сама плитка ничего не рисует: скругление и обрезка живут на .soulw__frame,
+     иначе в колонках нельзя было бы отдельно скруглить широкие анкеры */
+  min-width: 0;
+}
+.soulw__frame {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--soul-r, 24px);
+  background: #f7f7fa; /* видно, пока грузится медиа */
+}
+.soulw--wide .soulw__frame {
+  border-radius: var(--soul-r-wide, 32px);
+}
+.soulw__media {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--ar);
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* наведение на плитку гасит соседей: работа под курсором остаётся в полном
+   цвете, остальные уходят в фон. Считает это :has() на контейнере — так
+   «остальные» описываются одним правилом, без js и без подсветки-оверлея на
+   каждой плитке. Тот же жест ловим и с клавиатуры (:focus-visible у ссылки) */
+.soul-cells:has(.soulw:hover) .soulw:not(:hover),
+.soul-cells:has(.soulw__link:focus-visible)
+  .soulw:not(:has(.soulw__link:focus-visible)) {
+  /* именно brightness, а не opacity: страница белая, и прозрачность гасила бы
+     плитки «в белизну» — они выцветали, а не затемнялись */
+  filter: brightness(0.55);
+}
+.soul-cells .soulw {
+  transition: filter 0.3s ease;
+}
+/* на тачах ховер «залипает» после тапа — там гасить нечего и незачем */
+@media (hover: none) {
+  .soul-cells:has(.soulw:hover) .soulw:not(:hover) {
+    filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .soul-cells .soulw {
+    transition: none;
+  }
+}
+
+/* ховер только у плиток со ссылкой: у остальных он обещал бы переход, которого
+   нет. Внутри рамки чуть наезжает медиа, сама плитка не двигается — ритм сетки
+   не «дышит» при проводке мышью */
+.soulw__link {
+  transition: filter 0.25s ease;
+}
+.soulw__link:hover {
+  filter: brightness(0.96);
+}
+.soulw__link:hover .soulw__media {
+  transform: scale(1.03);
+}
+.soulw__link:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 3px;
+}
+@media (hover: none) {
+  .soulw__link:hover {
+    filter: none;
+  }
+  .soulw__link:hover .soulw__media {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .soulw__media {
+    transition: none;
+  }
+}
+
+/* вариант «пинтерест»: широкие анкеры во всю ширину + полотно колонок между
+   ними. По колонкам плитки раскидывает splitColumns (в самую короткую), CSS
+   только выстраивает столбцы — поэтому колонки заканчиваются примерно на одной
+   высоте, без дыры справа */
+.soul-flow {
+  --gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.soul-flow__cols {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap);
+}
+.soul-flow__col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* вариант «сетка»: строгий модуль. Высота строки считается из ширины
+   контейнера (cqw), поэтому ячейка ровно квадратная при любой ширине колонки
+   сайта; широкие работы занимают две колонки, вертикальные — две строки, и
+   пропорции квантуются по сетке, а не подгоняются кропом. dense досыпает
+   мелкие плитки в дырки, которые оставляют широкие/высокие */
+.soul-cells-box {
+  container-type: inline-size;
+}
+.soul-cells {
+  --gap: 16px;
+  --cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-auto-rows: calc(
+    (100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols)
+  );
+  grid-auto-flow: row dense;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* сколько колонок занимает широкая работа (финальная полоса — все три).
+   Span больше числа колонок сетка НЕ зажимает по ширине, а достраивает неявную
+   колонку и сплющивает 1fr-колонки в полоски, поэтому в двухколоночном режиме
+   span переопределён ниже, в медиазапросе */
+.soul-cells .soulw--wide {
+  grid-column: span var(--span, 2);
+}
+.soul-cells .soulw--tall {
+  grid-row: span 2;
+}
+/* в сетке медиа заполняет ячейку целиком: пропорцию здесь диктует сама сетка,
+   а --ar (бронь места в потоке до загрузки файла) тут не нужен и мешал бы */
+.soul-cells .soulw__media {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
 /* «special thanks»: пары имя · за что, выключены к центру, той же сеткой */
 .cases--thanks .cases__head {
   margin-bottom: 0;
+}
+
+/* свёрнутый список: три строки, дальше срез под градиентом и кнопка.
+   .thanks-clip — база для градиента: вешать его на сам список нельзя, там
+   overflow: hidden, и градиент обрезался бы вместе со строками */
+.thanks-clip {
+  position: relative;
 }
 .thanks {
   list-style: none;
@@ -168,6 +412,82 @@
   gap: 12px;
   margin: 0;
   padding: 0 12% 0 12%;
+  /* max-height приходит инлайном из Thanks (замер в px) — здесь только сам
+     клип и анимация между свёрнутым и полным состоянием */
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* градиент среза: гасит хвост списка в фон страницы. в раскрытом состоянии
+   не убираем из разметки, а обнуляем прозрачностью — иначе он мигал бы
+   на каждом переключении */
+.thanks__fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4.5em;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    var(--color-bg) 85%
+  );
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.thanks-wrap.is-open .thanks__fade {
+  opacity: 0;
+}
+
+/* кнопка — тихая текстовая строка по центру, в ритме подписей секции */
+.thanks__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px auto 0;
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: var(--fs-md);
+  font-weight: 400;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.62);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.thanks__toggle:hover {
+  color: #000;
+}
+.thanks__toggle:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* стрелка: уголок из двух границ, вниз в свёрнутом виде, вверх — в раскрытом.
+   -2px по Y компенсируют то, что повёрнутый квадрат «висит» ниже оптического
+   центра строки */
+.thanks__chevron {
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.thanks-wrap.is-open .thanks__chevron {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thanks,
+  .thanks__fade,
+  .thanks__chevron {
+    transition: none;
+  }
 }
 .thanks__row {
   display: grid;
@@ -183,18 +503,57 @@
 }
 .thanks__note {
   text-align: left;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
   font-weight: 400; /* приглушённый → 400 */
+}
+
+/* колонка сайта — 60vw, поэтому на «обычном» ноутбуке (1440) три колонки дают
+   ~270px на плитку: наклейки и афиша в такой ширине уже не читаются. Ниже
+   этого порога — две колонки (у масонри тот же порог зашит в useSoulColumns) */
+@media (max-width: 1440px) {
+  .soul-cells {
+    --cols: 2;
+  }
+  /* в двух колонках любая широкая работа — это просто вся ширина */
+  .soul-cells .soulw--wide {
+    grid-column: span 2;
+  }
+}
+
+/* ховер-отклик плитки на тач-устройствах не проигрывается (и «залипает» после
+   тапа) — там даём тот же отклик на нажатие */
+@media (hover: none) {
+  .cases__ph:hover {
+    filter: none;
+    transform: none;
+  }
+  .cases__ph:active {
+    filter: brightness(0.94);
+    transform: scale(0.99);
+  }
+  .cases__ph.cases__ph--static:active {
+    filter: none;
+    transform: none;
+  }
 }
 
 /* узкие экраны: колонки складываются в одну, выключка влево, как в hero-меди */
 @media (max-width: 760px) {
   .cases-page {
-    padding: 80px 20px 64px;
+    padding: 64px 20px 48px;
     --content: 100%; /* 60vw слишком узко на телефоне — во всю ширину, как hero */
   }
+  /* вертикальный ритм десктопа (144px между рядами, 124px над заголовком) на
+     экране 390px превращается в пустые пролёты — сжимаем пропорционально */
+  .cases {
+    gap: 64px;
+  }
   .cases + .cases {
-    margin-top: 80px;
+    margin-top: 72px;
+  }
+  .cases__title {
+    margin-top: 56px;
+    margin-bottom: -40px; /* отрицательный отступ ужимаем вместе с .cases gap */
   }
   .cases__head,
   .cases__row,
@@ -210,10 +569,71 @@
   .cases__label,
   .cases__desc,
   .thanks__name,
-  .thanks__note {
+  .thanks__note,
+  .cases__title--end {
     text-align: left;
+  }
+  /* «the end» и «special thanks» на десктопе стоят парой в одном ряду, и
+     отрицательный margin-bottom гасит там flex-gap секции. в одну колонку они
+     попадают в РАЗНЫЕ ряды грида, где этот же отрицательный отступ делает ряд
+     короче содержимого — заголовки наезжали друг на друга. в паре margins
+     обнуляем и разводим ряды обычным зазором */
+  .cases__head--split {
+    row-gap: 8px;
+  }
+  .cases__head--split .cases__title {
+    margin-bottom: 0;
+  }
+  .cases__head--split .cases__title--muted {
+    margin-top: 0;
+  }
+  /* боковые 12% съедали бы ещё 84px из 350px ширины */
+  .thanks {
+    padding: 0;
   }
   .cases__ph {
     border-radius: 24px;
+  }
+  /* коллаж «для души»: композиция макета рассчитана на 1200px, при сжатии до
+     390 телефонные скрины ужимаются до 90px и перестают читаться. Поэтому на
+     телефоне это столбец, а координаты просто игнорируются — они приезжают
+     кастомными свойствами, и здесь их достаточно не использовать */
+  .cases--soul {
+    gap: 24px;
+  }
+  .soul {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .soul__tile {
+    position: static;
+    width: 100%;
+    border-radius: 16px;
+  }
+  /* мелкие плитки коллаж и держат: если растянуть их во всю ширину, останется
+     ровный столбец одинаковых карточек. Оставляем 72% и разводим по краям */
+  .soul__tile--small {
+    width: 72%;
+  }
+  .soul__tile--small:nth-of-type(even) {
+    align-self: flex-end;
+  }
+  .soul__pair .soul__media {
+    border-radius: 16px;
+  }
+  /* новые раскладки на телефоне остаются двухколоночными: в один столбец они
+     превращаются в тот же ровный список карточек, от которого и уходим.
+     Скругления и зазоры ужимаем пропорционально ширине плитки */
+  .soul-flow {
+    --gap: 12px;
+    --soul-r: 16px;
+    --soul-r-wide: 20px;
+  }
+  .soul-cells {
+    --gap: 10px;
+    --soul-r: 14px;
+    --soul-r-wide: 18px;
   }
 }

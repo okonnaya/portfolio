@@ -6,12 +6,55 @@ import {
   type CSSProperties,
 } from "react";
 import { Link } from "react-router-dom";
+import { TELEGRAM_URL, WRITE_LABEL } from "../lib/contacts";
 import "./Hero.css";
 
 type Props = {
   /** включить/выключить фоновые круги */
   onActiveChange: (v: boolean) => void;
 };
+
+/**
+ * Факты «про меня» — карточки-стикеры, разбросанные по первому экрану вместе
+ * с направляющими (ховер на «двигаю компоненты»). Каждый висит на своей
+ * вертикали композиции — как аннотация к гайду, а не сам по себе:
+ *   x1 — левая вертикаль (левый край «продуктовый дизайнер»),
+ *   x3 — правая вертикаль (правый край поля оптической компенсации),
+ *   x4 — левый край аватарки в мете (у неё своя вертикаль, см. .hero__guide).
+ * Значения меряются в Hero (и тексты, и мета — hug-ширины, в CSS не вычислить).
+ *
+ * y — CSS-длина от верха композиции. Обычно это доли высоты экрана (сама
+ * композиция центрируется по вьюпорту, поэтому разброс держится похожим на
+ * макет на любом экране), но «жим ногами» посажен на нижнюю горизонталь
+ * композиции — там замеренный y2, и поджимать его на низких экранах не нужно.
+ * Переносы строк заданы руками — ровно как в фигме.
+ */
+const FACTS = [
+  {
+    img: "/facts/ufa.webp",
+    lines: ["родилась", "в столице рэпа"],
+    x: "var(--fact-x1)",
+    y: "calc(-29.8vh * var(--fact-spread, 1))",
+  },
+  {
+    img: "/facts/hse.webp",
+    lines: ["красный диплом", "ниу вшэ"],
+    x: "var(--fact-x1)",
+    y: "calc(24.2vh * var(--fact-spread, 1))",
+  },
+  {
+    img: "/facts/sber.svg",
+    lines: ["рисовала картинки", "для грефа"],
+    x: "var(--fact-x3)",
+    y: "calc(24.2vh * var(--fact-spread, 1))",
+  },
+  {
+    img: "/facts/gym.webp",
+    lines: ["жим ногами", "100кг"],
+    x: "var(--fact-x4)",
+    y: "var(--fact-y2)",
+  },
+];
 
 /**
  * Главный экран портфолио: мета-строки по краям + центральная
@@ -37,10 +80,30 @@ export function Hero({ onActiveChange }: Props) {
   // проход «вниз за кромку гашения», сбрасывается при перезарядке
   const dismissed = useRef(false);
 
+  // подсказка «сюда можно навести»: через секунду после загрузки у «двигаю
+  // компоненты» проявляется курсор из макета, подъезжает к строке сверху-слева
+  // и гаснет (сама анимация — в Hero.css). Заводится на каждой загрузке, но
+  // только пока человек сам не навёлся на один из двух заголовков-триггеров:
+  // подсказка объясняет, что на них есть ховер, и тому, кто уже там побывал,
+  // она не нужна. hinted покрывает оба случая — и отмену до показа (таймер ещё
+  // не сработал), и гашение уже играющей анимации
+  const [hint, setHint] = useState(false);
+  const hinted = useRef(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!hinted.current) setHint(true);
+    }, 1000);
+    return () => clearTimeout(t);
+  }, []);
+
   // ховер/клик снова проявляют эффекты «как при загрузке»: снимаем флаг сброса
-  // (чтобы следующий скролл вниз снова всё погасил)
+  // (чтобы следующий скролл вниз снова всё погасил). сюда же вешаем снятие
+  // подсказки: rearm зовут ровно обработчики двух заголовков
   const rearm = () => {
     dismissed.current = false;
+    hinted.current = true;
+    setHint(false);
   };
 
   useEffect(() => {
@@ -69,19 +132,45 @@ export function Hero({ onActiveChange }: Props) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [metaTop, setMetaTop] = useState(0);
 
+  // якоря для карточек-фактов (см. FACTS). и тексты композиции, и мета — hug по
+  // ширине, поэтому левый край «продуктовый дизайнер», правый край поля
+  // опт-компенсации и левый край аватарки в CSS не выразить: меряем тем же
+  // проходом, что и --meta-top. y2 — верх второго ряда (нижняя горизонталь)
+  const leftCellRef = useRef<HTMLHeadingElement>(null);
+  const accentRef = useRef<HTMLParagraphElement>(null);
+  const optRef = useRef<HTMLSpanElement>(null);
+  const avatarRef = useRef<HTMLImageElement>(null);
+  const row2Ref = useRef<HTMLParagraphElement>(null);
+  const [anchors, setAnchors] = useState({ x1: 0, x3: 0, x4: 0, y2: 0 });
+
   useLayoutEffect(() => {
     const inner = innerRef.current;
     const grid = gridRef.current;
     if (!inner || !grid) return;
     const measure = () => {
-      const dy =
-        grid.getBoundingClientRect().top - inner.getBoundingClientRect().top;
-      setMetaTop(Math.max(0, dy));
+      const g = grid.getBoundingClientRect();
+      setMetaTop(Math.max(0, g.top - inner.getBoundingClientRect().top));
+
+      const left = leftCellRef.current?.getBoundingClientRect();
+      const opt = optRef.current?.getBoundingClientRect();
+      const avatar = avatarRef.current?.getBoundingClientRect();
+      const row2 = row2Ref.current?.getBoundingClientRect();
+      if (!left || !opt || !avatar || !row2) return;
+      setAnchors({
+        x1: left.left - g.left,
+        x3: opt.right - g.left,
+        x4: avatar.left - g.left,
+        y2: row2.top - g.top,
+      });
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(inner);
     ro.observe(grid);
+    // триггеры — hug-ширины: их бокс меняется, когда догружается шрифт (высота
+    // сетки при этом та же, на неё одну полагаться нельзя)
+    if (leftCellRef.current) ro.observe(leftCellRef.current);
+    if (accentRef.current) ro.observe(accentRef.current);
     window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
@@ -233,7 +322,12 @@ export function Hero({ onActiveChange }: Props) {
              выровнена по верху ряда (= верх grid), а при скролле залипает
              в 20px от верха вьюпорта (position: sticky) */}
           <div className="hero__meta hero__meta--left">
-            <img className="hero__avatar" src="/avatar.jpg" alt="Карина Р." />
+            <img
+              ref={avatarRef}
+              className="hero__avatar"
+              src="/avatar.jpg"
+              alt="Карина Р."
+            />
             <span>карина р.</span>
             <span className="hero__dot" aria-hidden="true" />
             <Link className="hero__link" to="/cv">
@@ -242,22 +336,45 @@ export function Hero({ onActiveChange }: Props) {
           </div>
 
           {/* центральная композиция */}
-          <div className={`hero__grid${guides ? " is-guides" : ""}`} ref={gridRef}>
-          <p
+          <div
+            className={`hero__grid${guides ? " is-guides" : ""}${
+              hint ? " is-hint" : ""
+            }`}
+            ref={gridRef}
+            style={
+              {
+                "--fact-x1": `${anchors.x1}px`,
+                "--fact-x3": `${anchors.x3}px`,
+                "--fact-x4": `${anchors.x4}px`,
+                "--fact-y2": `${anchors.y2}px`,
+              } as CSSProperties
+            }
+          >
+          {/* h1 страницы. Композиция показывает только роль, а имя стоит мелкой
+             строкой в мете — для поисковиков и парсеров резюме этого мало, они
+             читают заголовок. Поэтому фамилию дописываем невидимо: заголовок
+             отдаётся как «карина рамазанова — продуктовый дизайнер», а на
+             экране всё остаётся как в макете */}
+          <h1
+            ref={leftCellRef}
             className="hero__cell hero__cell--left hero__cell--trigger hero__cell--display"
             onMouseEnter={handleEnter}
             onMouseLeave={handleLeave}
             onClick={handleClick}
           >
+            <span className="visually-hidden">карина рамазанова — </span>
             {/* только текст обёрнут в hero__text: на нём mix-blend-mode: difference.
-               направляющие (::before/::after) и полосы остаются на <p> — не блендятся */}
+               направляющие (::before/::after) и полосы остаются на <h1> — не блендятся */}
             <span className="hero__text">
               продуктовый
               <br />
               дизайнер
             </span>
-          </p>
+            {/* зона наведения шире самого текста — см. .hero__hit в Hero.css */}
+            <span className="hero__hit" aria-hidden="true" />
+          </h1>
           <p
+            ref={accentRef}
             className="hero__cell hero__cell--accent hero__cell--trigger hero__cell--display"
             onMouseEnter={handleGuidesEnter}
             onMouseLeave={handleGuidesLeave}
@@ -273,10 +390,20 @@ export function Hero({ onActiveChange }: Props) {
                уезжает в прозрачную зону маски и срезается. поэтому полосу
                оставляем под маской (вайп как у прочих гайдов), а подпись
                выносим наружу и проявляем непрозрачностью — её ничто не режет */}
-            <span className="hero__band hero__opt" aria-hidden="true" />
+            <span className="hero__band hero__opt" ref={optRef} aria-hidden="true" />
             <span className="hero__opt-label" aria-hidden="true">
               20 px • оптическая компенсация
             </span>
+            {/* подсказка: курсор подъезжает к строке через 3с после загрузки.
+               висит на акцентной ячейке — её левый верхний угол и есть начало
+               «двигаю компоненты», к нему всё и едет (см. Hero.css) */}
+            <img
+              className="hero__cursor"
+              src="/cursor.svg"
+              alt=""
+              aria-hidden="true"
+            />
+            <span className="hero__hit" aria-hidden="true" />
           </p>
 
           <p
@@ -285,16 +412,32 @@ export function Hero({ onActiveChange }: Props) {
             }`}
           >
             <span className="hero__text">
-              с&nbsp;любовью<br />к&nbsp;красивому
+              люблю красоту и приколы
             </span>
           </p>
           <p
+            ref={row2Ref}
             className={`hero__cell hero__cell--muted hero__cell--reveal hero__cell--display${
               guides ? " is-active" : ""
             }`}
           >
-            <span className="hero__text">
-              сейчас&nbsp;исследую<br />в&nbsp;инфре яндекса
+            {/* строки — отдельными спанами: .hero__text это inline-block, и
+               одним куском он занимал бы всю колонку (max-content шире неё),
+               а логотипы срывались бы на новую строку. так они встают встык
+               к концу «в яндексе», как в макете */}
+            <span className="hero__text">сейчас рисую</span>
+            <br />
+            <span className="hero__text">в яндексе</span>
+            {/* иконки сервисов встык к «в яндексе» — вне .hero__text: на нём
+               difference, логотипы бы им перекрасило. inline-flex садится на
+               базовую линию последней строки текста */}
+            <span className="hero__logos" aria-hidden="true">
+              <img className="hero__logo" src="/facts/yandex.webp" alt="" />
+              <img
+                className="hero__logo hero__logo--lg"
+                src="/facts/yandex-infra.webp"
+                alt=""
+              />
             </span>
           </p>
 
@@ -302,12 +445,44 @@ export function Hero({ onActiveChange }: Props) {
             <div className="hero__band hero__gap" aria-hidden="true">
               <span>20</span>
             </div>
+
+            {/* факты «про меня» — проявляются вместе с направляющими.
+               слой лежит поверх сетки, но курсор не ловит: ховер держится на
+               самом триггере, иначе карточки в стороне удерживали бы состояние.
+               картинки декоративные (alt=""), сам факт несёт текст */}
+            <div className="hero__facts">
+              {/* своя вертикаль у аватарки: на ней стоит «жим ногами», и без
+                 линии карточка висела бы в пустом поле ни на чём */}
+              <span className="hero__guide" aria-hidden="true" />
+              {FACTS.map((f, i) => (
+                <span
+                  key={f.lines.join(" ")}
+                  className="hero__fact"
+                  style={
+                    {
+                      "--fact-x": f.x,
+                      "--fact-y": f.y,
+                      "--fact-d": `${i * 0.06}s`,
+                    } as CSSProperties
+                  }
+                >
+                  <span className="hero__fact-thumb">
+                    <img src={f.img} alt="" loading="lazy" decoding="async" />
+                  </span>
+                  <span className="hero__fact-text">
+                    {f.lines[0]}
+                    <br />
+                    {f.lines[1]}
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* правая мета — так же залипает сверху при скролле */}
           <div className="hero__meta hero__meta--right">
-             <a href="https://t.me/okonnaya">
-              &gt; написать
+            <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
+              {WRITE_LABEL}
             </a>
           </div>
         </div>

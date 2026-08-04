@@ -68,7 +68,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.62);
 }
 /* «клик» с лучиками по бокам, как в макете */
 .cases-footer__key {
@@ -113,10 +113,28 @@
 
 /* ── адаптив ─────────────────────────────────────────────────────────── */
 @media (max-width: 760px) {
+  /* на десктопе шапка залипает в 20px от верха без фона: колонка контента
+     занимает 60vw, и под навбаром остаются белые гаттеры. на телефоне контент
+     во всю ширину — чёрные буквы залипшей шапки шли прямо по картинкам кейса.
+     поэтому здесь это честная панель: прижата к верху, с матовым фоном */
   .site-header {
-    font-size: var(--fs-md);
+    top: 0;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .site-header__meta {
+    gap: 8px;
+  }
+  .site-header__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
   }
   .cases-footer {
+    margin-top: 64px;
     flex-wrap: wrap;
     text-align: center;
   }

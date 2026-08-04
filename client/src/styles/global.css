@@ -62,6 +62,17 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* сафари на айфоне сам раздувает кегли, когда страница поворачивается в
+     ландшафт («text inflation»), — вся типографическая шкала уехала бы */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* серый прямоугольник подсветки тапа: на сайте свои состояния (:active),
+     системный блик только мешает */
+  -webkit-tap-highlight-color: transparent;
+  /* тексты композиции склеены неразрывными пробелами (typo) и на узком экране
+     дают длинные неразрывные токены — переносим их, а не растим документ в
+     ширину горизонтальным скроллом */
+  overflow-wrap: break-word;
 }
 
 a {
@@ -82,4 +93,22 @@ textarea,
 select {
   font: inherit;
   color: inherit;
+}
+
+/* Текст только для скринридеров, поисковиков и парсеров резюме. Нужен там, где
+   композиция сознательно недоговаривает: на первом экране крупно стоит роль
+   («продуктовый дизайнер»), а фамилия живёт мелкой строкой в навбаре — в h1
+   её дописываем невидимо, чтобы заголовок страницы читался целиком.
+   Не display: none и не visibility: hidden — оба выкидывают текст и из
+   скринридера тоже; классический приём — клип в 1px вне потока. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

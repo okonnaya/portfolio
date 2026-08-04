@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/cv-pdf.mjs",
+    "build": "tsc -b && node scripts/og-image.mjs && vite build && node scripts/cv-pdf.mjs",
+    "og": "node scripts/og-image.mjs",
     "cv:pdf": "node scripts/cv-pdf.mjs",
+    "posters": "node scripts/video-posters.mjs",
+    "video:compress": "node scripts/video-compress.mjs",
+    "video:boomerang": "node scripts/video-boomerang.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

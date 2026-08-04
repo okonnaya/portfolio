@@ -12,14 +12,33 @@ import { drawLoveStory } from "./loveStory";
    один раз при setup — так каждое появление уникально. Кругов немного — рисуем
    их обычным arc+fill каждый кадр (спрайт-кеш как у поля не нужен). */
 
-const SIZE_VH = 0.2; // диаметр круга в долях высоты вьюпорта (~10vh), у всех один
+/* размеры кругов гоним от МЕНЬШЕЙ стороны вьюпорта, а не от высоты: на десктопе
+   меньшая сторона и есть высота (поведение прежнее), а на телефоне высота втрое
+   больше ширины — круги «в 20% высоты» выходили шириной в пол-экрана и слипались
+   в пятно на всю страницу */
+const SIZE_VMIN = 0.2; // диаметр круга в долях меньшей стороны вьюпорта
 const COUNT_MIN = 5; // случайное число кругов в [MIN, MAX]
 const COUNT_MAX = 11;
-const PAD_VH = 0.06; // отступ центра круга от края (доли высоты)
+// на узком экране места под 5–11 кругов нет — там свой, меньший разброс
+const NARROW_W = 760; // = мобильный брейкпоинт css
+const COUNT_MIN_NARROW = 3;
+const COUNT_MAX_NARROW = 6;
+const PAD_VMIN = 0.06; // отступ центра круга от края (доли меньшей стороны)
 // на сколько (доля диаметра) круги могут налезать друг на друга. 0.2 = не больше
 // чем на 20% → мин. расстояние между центрами = 2r·(1 − 0.2) = 1.6r
 const MAX_OVERLAP = 0.2;
 const PLACE_TRIES = 40; // попыток подобрать непересекающуюся позицию для круга
+// обводка и тень у всех кругов (эквивалент css stroke-width/stroke/drop-shadow —
+// круги на канвасе, css к ним не применить). обводка идёт по контуру радиуса r:
+// половина ширины внутрь (на заливку/картинку), половина наружу
+const STROKE_WIDTH = 8;
+const STROKE_COLOR = "#FFF";
+// drop-shadow(0 2px 4px rgba(0,0,0,.08)): shadowBlur в канвасе задаётся в тех же
+// единицах, что и css-радиус размытия
+const SHADOW_COLOR = "rgba(0, 0, 0, 0.08)";
+const SHADOW_BLUR = 4;
+const SHADOW_OFFSET_Y = 2;
+
 const COLORS = [
   "#FF1F8E",
   "#FF4DA2",
@@ -34,14 +53,15 @@ const COLORS = [
 // hero7 здесь нет намеренно: этот кружок рисуется вживую (см. loveStory) и есть
 // в каждой генерации — картинкой он был бы дублем.
 const IMAGES: string[] = [
-  "/hero1.png",
-  "/hero2.png",
   "/hero3.svg",
+  "/hero5.png",
   "/hero4.png",
-   "/hero5.png",
-    "/hero8.png",
-    "/hero9.png",
-     "/hero10.png",
+  "/hero2.png",
+  "/hero1.png",
+  "/hero6.png",
+  "/hero7.png",
+  "/hero8.png",
+  "/hero10.png",
 ];
 
 // вероятность, что круг зальётся картинкой (а не цветом), если картинки есть/остались
@@ -53,12 +73,29 @@ const IMAGE_MAX_USES = 1;
 // двух кружочках за раз.
 const COLOR_MAX_USES = 2;
 
-// грузим картинки один раз при загрузке модуля — к моменту показа успеют
-const loadedImages: HTMLImageElement[] = IMAGES.map((src) => {
-  const img = new Image();
-  img.src = src;
-  return img;
-});
+// Грузим картинки один раз, но НЕ в момент импорта модуля: круги показываются
+// только по ховеру/клику на первом экране, а импорт случается на самой загрузке
+// страницы — и эти файлы (около 300 кб) тянулись в конкуренции со шрифтом и
+// превьюшками кейсов, то есть с тем, что видно сразу. Откладываем до простоя:
+// к первому ховеру они успевают, а если нет — генерация просто отдаст такому
+// кругу цвет вместо картинки (см. isReady в пуле ниже), эффект не ломается.
+const loadedImages: HTMLImageElement[] = IMAGES.map(() => new Image());
+
+const startLoading = () => {
+  loadedImages.forEach((img, i) => {
+    img.src = IMAGES[i];
+  });
+};
+
+// requestIdleCallback есть не везде (сафари подтянул его поздно) — там просто
+// уходим в конец очереди таймеров
+if (typeof window !== "undefined") {
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(startLoading, { timeout: 2000 });
+  } else {
+    setTimeout(startLoading, 600);
+  }
+}
 
 const isReady = (img: HTMLImageElement) => img.complete && img.naturalWidth > 0;
 
@@ -91,10 +128,13 @@ export function createCircles(): Circles {
   let active = false;
 
   const generate = (W: number, H: number) => {
-    const r = (SIZE_VH * window.innerHeight) / 2; // один радиус на все круги
-    const pad = PAD_VH * window.innerHeight;
-    const count =
-      COUNT_MIN + Math.floor(Math.random() * (COUNT_MAX - COUNT_MIN + 1));
+    const vmin = Math.min(window.innerWidth, window.innerHeight);
+    const r = (SIZE_VMIN * vmin) / 2; // один радиус на все круги
+    const pad = PAD_VMIN * vmin;
+    const narrow = window.innerWidth <= NARROW_W;
+    const min = narrow ? COUNT_MIN_NARROW : COUNT_MIN;
+    const max = narrow ? COUNT_MAX_NARROW : COUNT_MAX;
+    const count = min + Math.floor(Math.random() * (max - min + 1));
 
     // пул картинок на эту генерацию: каждая готовая картинка добавляется
     // IMAGE_MAX_USES раз (может повториться один раз), затем перемешиваем и
@@ -209,6 +249,19 @@ export function createCircles(): Circles {
       if (c.shown !== active) allAtTarget = false;
       if (!c.shown) continue; // не виден — не рисуем
 
+      // тень: рисуем ею отдельный белый круг под содержимым, радиусом по внешнему
+      // краю будущей обводки — иначе тень легла бы от каждого элемента круга
+      // (заливка + обводка) дважды и потемнела
+      ctx.save();
+      ctx.shadowColor = SHADOW_COLOR;
+      ctx.shadowBlur = SHADOW_BLUR;
+      ctx.shadowOffsetY = SHADOW_OFFSET_Y;
+      ctx.fillStyle = STROKE_COLOR;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r + STROKE_WIDTH / 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
       if (c.loveStory) {
         drawLoveStory(ctx, c.x, c.y, c.r);
       } else if (c.img && isReady(c.img)) {
@@ -229,6 +282,14 @@ export function createCircles(): Circles {
         ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // обводка — поверх содержимого (у картинок и love-story оно доходит до
+      // самого края, так что кольцо надо класть последним)
+      ctx.lineWidth = STROKE_WIDTH;
+      ctx.strokeStyle = STROKE_COLOR;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+      ctx.stroke();
     }
 
     if (allAtTarget) asleep = true; // все переключились → засыпаем до смены active

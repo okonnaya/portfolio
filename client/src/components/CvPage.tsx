@@ -2,6 +2,14 @@ import { Fragment, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "./SiteChrome";
 import { typo } from "../lib/typo";
+import {
+  EMAIL,
+  EMAIL_URL,
+  SITE_LABEL,
+  SITE_URL,
+  TELEGRAM_HANDLE,
+  TELEGRAM_URL,
+} from "../lib/contacts";
 import "./CvPage.css";
 
 /**
@@ -21,12 +29,26 @@ type Entry = {
   bullets?: string[];
 };
 
+// абзац скиллов: своя подпись-категория и перечисление через запятую.
+// сплошной список из тридцати инструментов эйчар не читает — он его
+// проматывает; с категориями видно, чего в наборе много, а чего нет
+type Note = { label: string; text: string };
+
 // раздел: название слева, справа либо пункты, либо абзацы (скиллы)
-type Section = { label: string; entries?: Entry[]; notes?: string[] };
+type Section = { label: string; entries?: Entry[]; notes?: Note[] };
 
 const NAME = "карина\nрамазанова";
 
-const CONTACTS = ["@okonnaya", "carina.rama@ya.ru"];
+// контакты — кликабельные: телеграм ведёт в чат, почта открывает письмо.
+// в cv.pdf ссылки остаются рабочими (chrome сохраняет их при печати)
+// адрес портфолио первым: cv.pdf пересылают отдельно от ссылки, и без него
+// из файла не попасть в кейсы. пока SITE_URL пуст (см. lib/contacts.ts),
+// строки просто нет — пустая ссылка хуже её отсутствия
+const CONTACTS: { label: string; href: string }[] = [
+  ...(SITE_URL ? [{ label: SITE_LABEL, href: SITE_URL }] : []),
+  { label: TELEGRAM_HANDLE, href: TELEGRAM_URL },
+  { label: EMAIL, href: EMAIL_URL },
+];
 
 const ABOUT =
   "продуктовый дизайнер с опытом создания сложных цифровых решений. люблю, когда дизайн не только решает задачи, но и выглядит классно. кодила до появления chatgpt";
@@ -62,7 +84,7 @@ const SECTIONS: Section[] = [
         bullets: [
           "интерфейсы и флоу для концептов и их защиты",
           "исследовала пользователей и рынок",
-          "визуал для c-level’a и правительства",
+          "визуал для c-level’а и правительства",
           "работа с gen ai",
           "визуализация данных",
         ],
@@ -78,9 +100,15 @@ const SECTIONS: Section[] = [
       },
       {
         title: "relate",
-        subtitle: "разработчик",
+        // «проектно» снимает вопрос о нахлёсте периодов: 2023 идёт внутри
+        // сбера, и без пометки это читается как две параллельные штатные работы
+        subtitle: "разработчик · проектно",
         period: "2023",
-        bullets: ["разработка на webflow", "ga, ям, gtm"],
+        bullets: [
+          "разработка на webflow",
+          // аббревиатуры развёрнуты: «ям» читалось как слово, а не как метрика
+          "аналитика: google analytics, яндекс метрика, google tag manager",
+        ],
       },
     ],
   },
@@ -89,8 +117,10 @@ const SECTIONS: Section[] = [
     entries: [
       {
         title: "ниу вшэ",
+        // степень отдельной строкой: формальные фильтры (и в ats, и у эйчара
+        // глазами) ищут именно слово «бакалавр», а не название программы
         subtitle:
-          "коммуникационный дизайн → дизайн и программирование → дизайн и продвижение цифрового продукта",
+          "бакалавр дизайна\nкоммуникационный дизайн → дизайн и программирование → дизайн и продвижение цифрового продукта",
         period: "2021–2025",
       },
       {
@@ -104,7 +134,7 @@ const SECTIONS: Section[] = [
     label: "выступления",
     entries: [
       {
-        title: "участник международного экономического форума kazanforum",
+        title: "спикер международного экономического форума kazanforum",
         subtitle: "цифровой дизайн",
         period: "2024",
       },
@@ -114,19 +144,44 @@ const SECTIONS: Section[] = [
     label: "дополнительно",
     entries: [
       {
-        title: "дизайн-волонтерство",
+        title: "дизайн-волонтёрство",
         subtitle: "приют в печатниках",
         period: "2025",
       },
-      { title: "hse creative open / цифровой продукт", period: "2024" },
-      { title: "выбор dafes. июнь", period: "2024" },
+      // без пометки о результате конкурсные строчки читаются как «участвовала»
+      { title: "hse creative open / цифровой продукт", subtitle: "шортлист", period: "2024" },
+      { title: "выбор dafes. июнь", subtitle: "шортлист", period: "2024" },
     ],
   },
   {
     label: "скиллы",
+    // порядок групп — по убыванию того, что спрашивают на продуктовой вакансии:
+    // сначала что умею, потом чем делаю, и только в конце смежное
     notes: [
-      "интерфейсы, прототипирование, юзабилити-тестирование, атомарный подход, jtbd, userflow, анимация, дизайн-системы, исследование пользователей",
-      "figma, photoshop, indesign, after effects, illustrator, ai tools, fontlab, readymag, webflow, miro, figjam, яндекс метрика, google analytics, google tag manager (gtm), excel, powerpoint, keynote, think-cell, cinema 4d (c4d), blender, spark ar, html, css, javascript, react, git, p5.js, protopie",
+      {
+        label: "методы",
+        text: "интерфейсы, прототипирование, юзабилити-тестирование, исследование пользователей, jtbd, userflow, атомарный подход, дизайн-системы",
+      },
+      {
+        label: "дизайн",
+        text: "figma, figjam, protopie, miro, photoshop, illustrator, indesign, fontlab, ai tools",
+      },
+      {
+        label: "аналитика",
+        text: "яндекс метрика, google analytics, google tag manager, excel",
+      },
+      {
+        label: "код и веб",
+        text: "html, css, javascript, react, git, p5.js, webflow, readymag",
+      },
+      {
+        label: "моушен и 3d",
+        text: "after effects, cinema 4d, blender, spark ar",
+      },
+      {
+        label: "презентации",
+        text: "keynote, powerpoint, think-cell",
+      },
     ],
   },
 ];
@@ -148,7 +203,8 @@ function EntryView({ entry }: { entry: Entry }) {
   return (
     <div className="cv__entry">
       <div className="cv__entry-text">
-        <p className="cv__entry-title">{withBreaks(entry.title)}</p>
+        {/* место работы / вуз / пункт — h3 внутри своего раздела */}
+        <h3 className="cv__entry-title">{withBreaks(entry.title)}</h3>
         {entry.subtitle && (
           <p className="cv__entry-sub">{withBreaks(entry.subtitle)}</p>
         )}
@@ -205,10 +261,17 @@ export function CvPage() {
             </div>
             <div className="cv__row">
               <p className="cv__label cv__label--contacts">
-                {CONTACTS.map((line, i) => (
-                  <Fragment key={line}>
+                {CONTACTS.map((contact, i) => (
+                  <Fragment key={contact.href}>
                     {i > 0 && <br />}
-                    {line}
+                    <a
+                      className="cv__contact"
+                      href={contact.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {contact.label}
+                    </a>
                   </Fragment>
                 ))}
               </p>
@@ -220,7 +283,9 @@ export function CvPage() {
 
           {SECTIONS.map((section) => (
             <section className="cv__row" key={section.label}>
-              <p className="cv__label">{typo(section.label)}</p>
+              {/* названия разделов резюме — h2 под h1 с именем: и для
+                  скринридера, и для парсеров ats это структура документа */}
+              <h2 className="cv__label">{typo(section.label)}</h2>
               <div className="cv__body">
                 {section.entries && (
                   <div className="cv__entries">
@@ -231,10 +296,11 @@ export function CvPage() {
                 )}
                 {section.notes && (
                   <div className="cv__notes">
-                    {section.notes.map((note, i) => (
-                      <p className="cv__note" key={i}>
-                        {withBreaks(note)}
-                      </p>
+                    {section.notes.map((note) => (
+                      <div className="cv__note-group" key={note.label}>
+                        <p className="cv__note-label">{typo(note.label)}</p>
+                        <p className="cv__note">{withBreaks(note.text)}</p>
+                      </div>
                     ))}
                   </div>
                 )}

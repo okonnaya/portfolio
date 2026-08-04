@@ -1,7 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
+import { NotFound } from "./NotFound";
+import { LazyVideo } from "./LazyVideo";
 import { typo } from "../lib/typo";
+import { isVideoSrc } from "../lib/media";
 import "./CasePage.css";
 
 /**
@@ -26,9 +29,15 @@ type MediaItem = { src?: string; tall?: boolean; caption?: string; align?: "left
 // относится, не разрывая блок процесса на два
 type StepRow = { label: string; text: string } | { media: MediaItem[] };
 
+// «роль · команда · срок» под заголовком кейса: с чем именно пришёл автор в этот
+// проект. period необязателен — строка собирается только из заполненных частей,
+// чтобы не выводить пустые разделители
+type CaseMeta = { role: string; team: string; period?: string };
+
 type Block =
-  // секция «название (лево) · описание (право)». lead — крупный заголовок кейса
-  | { block: "section"; label: string; lead?: boolean; body: Body }
+  // секция «название (лево) · описание (право)». lead — крупный заголовок кейса,
+  // и только он несёт meta-строку
+  | { block: "section"; label: string; lead?: boolean; meta?: CaseMeta; body: Body }
   // одиночное медиа во всю ширину колонки
   | ({ block: "media" } & MediaItem)
   // группа медиа, идущих подряд: несколько картинок в одном блоке с меньшим
@@ -38,16 +47,29 @@ type Block =
   // label — как блок называется в оглавлении (по умолчанию «процесс»)
   | { block: "steps"; label?: string; rows: StepRow[] };
 
-type Case = { title: string; blocks: Block[] };
+// disclaimer — сноска в конце кейса. Нужна там, где показан интерфейс рабочего
+// продукта: подписывает, что на картинках не боевые экраны и не настоящие
+// пользователи. Поле опциональное — в личных проектах показывать нечего и
+// нечего оговаривать
+type Case = { title: string; disclaimer?: string; blocks: Block[] };
+
+// одна формулировка на все рабочие кейсы: расходиться по смыслу они не должны,
+// а исправлять текст в одном месте проще, чем в трёх
+const NDA_NOTE =
+  "все имена, данные и цифры на изображениях выдуманы, интерфейсы изменены. боевые экраны продуктов и данные реальных пользователей не показаны";
 
 const CASES: Record<string, Case> = {
   "ai-component": {
     title: "ии-решение в b2e продуктах",
+    disclaimer: NDA_NOTE,
     blocks: [
       {
         block: "section",
         lead: true,
         label: "ии-решение в b2e продуктах",
+        // TODO срок: подставьте период работы над кейсом (напр. «2025»);
+        // пока строка собирается только из роли и команды
+        meta: { role: "продуктовый дизайнер", team: "инфра яндекса" },
         body: {
           bullets: [
             "запуск ии-фич сократился с 3 спринтов до 1 — дизайн и большинство UX-согласований исключены из процесса",
@@ -55,7 +77,7 @@ const CASES: Record<string, Case> = {
           ],
         },
       },
-      { block: "media", src: "/case1.svg", caption: "зафиксировала гайдлайны и собрала сквозный компонент AI-чата для внутренних продуктов на одной дизайн-системе. решение встраивается в любой продукт без участия дизайнера и не ломает существующие UX-паттерны",  align: "right" },
+      { block: "media", src: "/case1.svg", caption: "зафиксировала гайдлайны и собрала сквозной компонент AI-чата для внутренних продуктов на одной дизайн-системе. решение встраивается в любой продукт без участия дизайнера и не ломает существующие UX-паттерны",  align: "right" },
       {
         block: "section",
         label: "контекст",
@@ -89,11 +111,11 @@ const CASES: Record<string, Case> = {
           },
           {
             label: "аудит текущих решений",
-            text: "точки входа, поведение, метрики.",
+            text: "точки входа, поведение, метрики",
           },
           {
             label: "качественное исследование",
-            text: "8 респондентов, пользователи уже существующих ии-фич во внутренних продуктах",
+            text: "8 респондентов, пользователей уже существующих ии-фич во внутренних продуктах",
           },
           {
             label: "разработка и сборка гайдов",
@@ -101,7 +123,7 @@ const CASES: Record<string, Case> = {
           },
           {
             label: "продуктовая защита",
-            text: "согласование с десятком менеджером всех продуктов, разработкой и топ-менеджментом бизнес-юнита",
+            text: "согласование с десятком менеджеров всех продуктов, разработкой и топ-менеджментом бизнес-юнита",
           },
         ],
       },
@@ -110,7 +132,7 @@ const CASES: Record<string, Case> = {
         block: "section",
         label: "решение",
         body: {
-          text: "компонент и гайд, который покрывает глобальный и контекстные флоу, ложится на существующие паттерны продуктов внедряется командой продукта самостоятельно, без дизайнера",
+          text: "компонент и гайд, который покрывает глобальный и контекстные флоу, ложится на существующие паттерны продуктов, внедряется командой продукта самостоятельно, без дизайнера",
         },
       },
       {
@@ -121,7 +143,7 @@ const CASES: Record<string, Case> = {
             "3 спринта → 1 спринт на запуск AI-виджета в продукте, из процесса исключена дизайн-часть — компонент готов к использованию из коробки",
             "в проде на 7+ продуктах",
             "гипотезы проверены на интервью",
-            "согласовано с  менджерами продуктов и топ-менеджментом бизнес-юнита без блокеров",
+            "согласовано с менеджерами продуктов и топ-менеджментом бизнес-юнита без блокеров",
           ],
         },
       },
@@ -134,11 +156,15 @@ const CASES: Record<string, Case> = {
 
   "search-button": {
     title: "улучшение поиска",
+    disclaimer: NDA_NOTE,
     blocks: [
       {
         block: "section",
         lead: true,
         label: "улучшение поиска",
+        // TODO срок: подставьте период работы над кейсом (напр. «2025»);
+        // пока строка собирается только из роли и команды
+        meta: { role: "продуктовый дизайнер", team: "инфра яндекса" },
         body: {
           bullets: [
             "+4,19 п.п. к переходам на страницу поиска после проактивной UX-правки",
@@ -194,11 +220,15 @@ const CASES: Record<string, Case> = {
 
   "ai-research-platform": {
     title: "ai research\nplatform",
+    disclaimer: NDA_NOTE,
     blocks: [
       {
         block: "section",
         lead: true,
         label: "ai research\nplatform",
+        // TODO срок: подставьте период работы над кейсом (напр. «2025»);
+        // пока строка собирается только из роли и команды
+        meta: { role: "соло-дизайнер", team: "крупная российская компания" },
         body: {
           bullets: [
             "концепция утверждена топ-менеджментом с первой защиты",
@@ -287,6 +317,9 @@ const CASES: Record<string, Case> = {
         block: "section",
         lead: true,
         label: "пространство\nдля сохранения эмоций",
+        // TODO срок: подставьте период работы над кейсом (напр. «2025»);
+        // пока строка собирается только из роли и команды
+        meta: { role: "соло: ресёрч, продукт, дизайн", team: "личный проект" },
         body: {
           bullets: [
             "от исследования эмоциональных привычек пользователей до mvp цифрового продукта",
@@ -340,6 +373,8 @@ const CASES: Record<string, Case> = {
             text: "изучила существующие решения и свободные ниши: конкурентный анализ, pestel, бенчмаркинг",
           },
           { media: [
+            // выключенные картинки перенесены в assets-src/unused/bubble/ —
+            // в public они только весили; вернёте строки, вернёте и файлы
             // { src: "/bubble/03-interviews.webp", caption: "цели и структура глубинных интервью", align: "right" },
             // { src: "/bubble/04-audience.webp", caption: "портрет аудитории: контекст, задача, сложность" },
             { src: "/bubble/05-competitors.webp"},
@@ -383,13 +418,13 @@ const CASES: Record<string, Case> = {
       },
       {
         block: "media",
-        src: "/bubble/128.png"
+        src: "/bubble/128.webp"
       },
       { block: "media", src: "/bubble/10-save-closeup.webp" },
       { block: "group", items: [
         { src: "/bubble/11-scenarios.webp" },
-        { src: "/bubble/190.png" },
-        { src: "/bubble/189.png" },
+        { src: "/bubble/190.webp" },
+        { src: "/bubble/189.webp" },
       ]},
         {
         block: "section",
@@ -410,7 +445,7 @@ const CASES: Record<string, Case> = {
           bullets: [
             "монетизация — подписка: полная аналитика эмоций и дополнительные виды импорта контента из соцсетей",
             "каналы привлечения: яндекс директ и вк реклама",
-            "экономика сходится при apc > 2 и конверсии > 0,02%",
+            "экономика сходится при apc > 2 и конверсии > 2%",
           ],
         },
       },
@@ -504,24 +539,23 @@ function BodyView({ body }: { body: Body }) {
 // одна единица медиа: картинка/видео (или розовый плейсхолдер) + опциональная
 // подпись. .webm/.mp4 рендерятся как автоплей-видео, всё остальное — как img
 function MediaView({ item }: { item: MediaItem }) {
-  const isVideo = item.src?.endsWith(".webm") || item.src?.endsWith(".mp4");
+  const isVideo = isVideoSrc(item.src);
   return (
     <div className="case__media">
       {item.src ? (
         isVideo ? (
-          <video
+          <LazyVideo
             className={`case__img${item.tall ? " case__img--tall" : ""}`}
             src={item.src}
-            autoPlay
-            loop
-            muted
-            playsInline
           />
         ) : (
           <img
             className={`case__img${item.tall ? " case__img--tall" : ""}`}
             src={item.src}
             alt={item.caption ?? ""}
+            // страница кейса — длинная лента медиа; без lazy браузер тянет все
+            // картинки сразу, хотя видно от них один-два экрана
+            loading="lazy"
           />
         )
       ) : (
@@ -574,15 +608,53 @@ function BlockView({ block, id }: { block: Block; id?: string }) {
     );
   }
 
+  // у заголовка кейса под названием идёт строка «роль · команда · срок».
+  // label и она живут в одной обёртке: .case__row — сетка в две колонки, и
+  // третий прямой ребёнок уехал бы во второй ряд, под название
+  if (block.lead) {
+    return (
+      <div className="case__row" id={id}>
+        <div className="case__lead">
+          {/* название кейса — h1 страницы: до этого вся страница шла без
+             единого заголовка, и парсеры видели плоскую простыню абзацев */}
+          <h1 className="case__label case__label--lead">
+            {withBreaks(block.label)}
+          </h1>
+          {block.meta && <CaseMetaLine meta={block.meta} />}
+        </div>
+        <div className="case__body">
+          <BodyView body={block.body} />
+        </div>
+      </div>
+    );
+  }
+
+  // названия секций («контекст», «проблемы», «результат») — h2 под h1 кейса:
+  // это те же пункты, что и в оглавлении справа
   return (
     <div className="case__row" id={id}>
-      <p className={`case__label${block.lead ? " case__label--lead" : ""}`}>
-        {withBreaks(block.label)}
-      </p>
+      <h2 className="case__label">{withBreaks(block.label)}</h2>
       <div className="case__body">
         <BodyView body={block.body} />
       </div>
     </div>
+  );
+}
+
+// «роль · команда · срок» — собирается только из заполненных частей, чтобы не
+// оставлять висящих разделителей, когда срок ещё не указан
+function CaseMetaLine({ meta }: { meta: CaseMeta }) {
+  const parts = [meta.role, meta.team, meta.period].filter(Boolean) as string[];
+  if (!parts.length) return null;
+  return (
+    <p className="case__meta">
+      {parts.map((part, i) => (
+        <Fragment key={i}>
+          {i > 0 && <span className="case__meta-sep" aria-hidden="true"> · </span>}
+          {typo(part)}
+        </Fragment>
+      ))}
+    </p>
   );
 }
 
@@ -671,11 +743,39 @@ function CaseToc({ items }: { items: TocItem[] }) {
   );
 }
 
+/**
+ * Порядок кейсов — тот же, в котором они идут на главной (продуктовые, потом
+ * «для души»). Нужен для перехода «следующий кейс →»: Record выше порядок не
+ * гарантирует, а читателю кейса логично предложить следующий, а не отправлять
+ * его назад на главную. Список закольцован: после последнего — первый.
+ */
+const CASE_ORDER = [
+  "ai-component",
+  "search-button",
+  "ai-research-platform",
+  "emotions-space",
+] as const;
+
+function nextCase(slug: string) {
+  const i = CASE_ORDER.indexOf(slug as (typeof CASE_ORDER)[number]);
+  if (i === -1) return null;
+  const next = CASE_ORDER[(i + 1) % CASE_ORDER.length];
+  // сам на себя не ссылаемся (если кейс в проекте остался один)
+  if (next === slug) return null;
+  const data = CASES[next];
+  return data ? { slug: next, title: data.title } : null;
+}
+
 export function CasePage() {
   const { slug = "" } = useParams();
   const data = CASES[slug];
   const items = data ? tocItems(data.blocks) : [];
   const ids = data ? anchorIds(data.blocks) : {};
+  const next = data ? nextCase(slug) : null;
+
+  // неизвестный slug — это не «кейс без контента», а несуществующий адрес:
+  // отдаём ту же 404, что и на любом другом непонятном пути
+  if (!data) return <NotFound />;
 
   return (
     <main className="case-page">
@@ -689,21 +789,25 @@ export function CasePage() {
         <CaseToc items={items} />
 
         <div className="case__content">
-          {data ? (
-            data.blocks.map((block, i) => (
-              <BlockView key={i} block={block} id={ids[i]} />
-            ))
-          ) : (
-            <div className="case__row">
-              <p className="case__label case__label--lead">кейс</p>
-              <div className="case__body">
-                <p className="case__text">
-                  страница кейса — скоро здесь будет контент
-                </p>
-              </div>
-            </div>
-          )}
+          {data.blocks.map((block, i) => (
+            <BlockView key={i} block={block} id={ids[i]} />
+          ))}
         </div>
+
+        {/* сноска про содержимое картинок — после кейса, но до перехода на
+            следующий: это подпись именно к этой странице */}
+        {data.disclaimer && (
+          <p className="case__disclaimer">{withBreaks(data.disclaimer)}</p>
+        )}
+
+        {next && (
+          <Link className="case__next" to={`/case/${next.slug}`}>
+            <span className="case__next-label">следующий кейс</span>
+            <span className="case__next-title">
+              {withBreaks(next.title)} <span aria-hidden="true">→</span>
+            </span>
+          </Link>
+        )}
       </div>
 
       <SiteFooter />

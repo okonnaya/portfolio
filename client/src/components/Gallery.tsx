@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { typo } from "../lib/typo";
+import { isVideoSrc, posterFor } from "../lib/media";
 import "./Gallery.css";
 
 /**
@@ -19,10 +20,6 @@ export type GallerySlide = { src?: string; caption?: string };
 
 const DURATION = 460;
 const EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
-
-function isVideoSrc(src?: string) {
-  return src?.endsWith(".webm") || src?.endsWith(".mp4");
-}
 
 function prefersReducedMotion() {
   return (
@@ -177,16 +174,19 @@ export function Gallery({
             <video
               className="gallery__media"
               src={slide.src}
+              poster={posterFor(slide.src)}
               autoPlay
               loop
               muted
               playsInline
+              preload="metadata"
             />
           ) : (
             <img
               className="gallery__media"
               src={slide.src}
               alt={slide.caption ?? ""}
+              // лайтбокс открывается по клику — картинка нужна сразу, не lazy
             />
           )
         ) : (

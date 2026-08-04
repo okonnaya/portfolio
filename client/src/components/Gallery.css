@@ -136,21 +136,44 @@
   outline-offset: 2px;
 }
 
-/* узкие экраны: стрелки поменьше, слайд шире */
+/* узкие экраны: слайд во всю ширину, стрелки — вниз поверх фона.
+   в три колонки (стрелка · слайд · стрелка) на 390px под сам слайд оставалось
+   меньше 280px; листается тут в первую очередь свайпом, поэтому стрелки уходят
+   к нижней кромке рядом со счётчиком и перестают отнимать ширину */
 @media (max-width: 760px) {
   .gallery {
+    grid-template-columns: 1fr;
     gap: 8px;
-    padding: 16px 8px;
+    padding: 16px 16px 68px; /* нижняя полоса — под стрелки и счётчик */
+  }
+  .gallery__stage {
+    grid-column: 1;
   }
   .gallery__nav {
+    position: absolute;
+    /* grid-column из базовых правил снимаем: у абсолютного элемента внутри
+       грида определённое grid-placement делает контейнером его грид-ячейку,
+       а нам нужен padding-box всей галереи (как у ✕ и счётчика) */
+    grid-column: auto;
+    bottom: 12px;
     width: 44px;
     height: 44px;
     font-size: 20px;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  .gallery__nav--prev {
+    left: 16px;
+  }
+  .gallery__nav--next {
+    right: 16px;
   }
   .gallery__ph {
-    width: 86vw;
+    width: 100%;
   }
   .gallery__media {
-    max-height: 74vh;
+    max-height: 70svh;
+  }
+  .gallery__counter {
+    bottom: 26px;
   }
 }
