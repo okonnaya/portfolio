@@ -14,7 +14,7 @@
 .notfound__code {
   margin: 0;
   font-size: var(--fs-md);
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--text-muted);
 }
 
 .notfound__title {
@@ -23,14 +23,14 @@
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.01em;
-  color: #000;
+  color: var(--text);
 }
 
 .notfound__text {
   margin: 12px 0 0;
   font-size: var(--fs-md);
   line-height: 1.35;
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
 }
 
 .notfound__links {
@@ -43,9 +43,9 @@
 }
 
 .notfound__link {
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
   text-decoration: none;
 }
 .notfound__link:hover {
-  color: #000;
+  color: var(--text);
 }

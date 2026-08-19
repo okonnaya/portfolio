@@ -27,9 +27,22 @@ type Props = {
   style?: CSSProperties;
   /** отступ срабатывания: за сколько до появления начинать грузить */
   rootMargin?: string;
+  /**
+   * что запускает ролик: "view" — появление во вьюпорте и луп, пока он там
+   * (по умолчанию), "hover" — один показ при первой прокрутке до блока, дальше
+   * только по наведению курсора. hover нужен там, где вечное движение спорит с
+   * соседним контентом, но про анимацию всё равно надо дать знать
+   */
+  playOn?: "view" | "hover";
 };
 
-export function LazyVideo({ src, className, style, rootMargin = "200px" }: Props) {
+export function LazyVideo({
+  src,
+  className,
+  style,
+  rootMargin = "200px",
+  playOn = "view",
+}: Props) {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -40,6 +53,56 @@ export function LazyVideo({ src, className, style, rootMargin = "200px" }: Props
     if (reduced) {
       video.controls = true;
       return;
+    }
+
+    // По ховеру: наблюдатель не нужен вовсе, ролик стоит на постере, пока на
+    // него не навели. Уход курсора НЕ обрывает проигрывание — анимация
+    // доигрывает круг до конца и только потом встаёт на первый кадр: обрубленное
+    // на середине движение читается как баг, а не как реакция на курсор.
+    // Поэтому в этом режиме нет атрибута loop: цикл крутим сами по событию
+    // ended, пока курсор внутри.
+    if (playOn === "hover") {
+      let hovering = false;
+      const play = () => {
+        hovering = true;
+        void video.play().catch(() => {});
+      };
+      // только снимаем флаг: доигрывает текущий круг, дальше сработает ended
+      const release = () => {
+        hovering = false;
+      };
+      const onEnded = () => {
+        video.currentTime = 0;
+        // круг повторяется, только пока курсор внутри; иначе замираем на первом
+        // кадре — в том числе после единственного показа при первой прокрутке
+        if (hovering) void video.play().catch(() => {});
+      };
+      video.addEventListener("pointerenter", play);
+      video.addEventListener("pointerleave", release);
+      video.addEventListener("ended", onEnded);
+
+      // один показ при первой прокрутке до блока: пользователь должен увидеть,
+      // что здесь вообще есть анимация, иначе про ховер он не догадается.
+      // threshold 0.5 — «долистали», а не «краем зацепили»; наблюдатель
+      // отключается сразу после единственного срабатывания, дальше только ховер
+      const intro = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            intro.disconnect();
+            void video.play().catch(() => {});
+          }
+        },
+        { threshold: 0.5 },
+      );
+      intro.observe(video);
+
+      return () => {
+        intro.disconnect();
+        video.removeEventListener("pointerenter", play);
+        video.removeEventListener("pointerleave", release);
+        video.removeEventListener("ended", onEnded);
+      };
     }
 
     const observer = new IntersectionObserver(
@@ -59,7 +122,7 @@ export function LazyVideo({ src, className, style, rootMargin = "200px" }: Props
     );
     observer.observe(video);
     return () => observer.disconnect();
-  }, [rootMargin]);
+  }, [rootMargin, playOn]);
 
   return (
     <video
@@ -68,10 +131,16 @@ export function LazyVideo({ src, className, style, rootMargin = "200px" }: Props
       style={style}
       src={src}
       poster={posterFor(src)}
-      loop
+      /* в hover-режиме цикл крутится вручную (см. эффект): нативный loop не
+         давал бы событию ended сработать, и ролик нельзя было бы остановить
+         ровно на конце круга */
+      loop={playOn !== "hover"}
       muted
       playsInline
-      preload="none"
+      /* по ховеру ждать нечего: пока курсор доедет, метаданные уже есть, и
+         первый кадр появляется без паузы на загрузку. в остальных режимах
+         ролик может быть за несколькими экранами — там по-прежнему none */
+      preload={playOn === "hover" ? "metadata" : "none"}
     />
   );
 }

@@ -16,7 +16,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--text-faint);
   flex-shrink: 0;
 }
 
@@ -41,7 +41,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 0 24px;
-  color: #000;
+  color: var(--text);
 }
 
 .site-header__meta {
@@ -68,14 +68,14 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
 }
 /* «клик» с лучиками по бокам, как в макете */
 .cases-footer__key {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #000;
+  color: var(--text);
   line-height: 1;
   cursor: pointer;
 }

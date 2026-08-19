@@ -29,10 +29,11 @@ type Entry = {
   bullets?: string[];
 };
 
-// абзац скиллов: своя подпись-категория и перечисление через запятую.
-// сплошной список из тридцати инструментов эйчар не читает — он его
-// проматывает; с категориями видно, чего в наборе много, а чего нет
-type Note = { label: string; text: string };
+// абзац скиллов: перечисление через запятую. Категории остались, но не
+// подписаны — их держит разбивка на абзацы: сплошной список из тридцати
+// инструментов эйчар не читает, а проматывает, тогда как по группам видно,
+// чего в наборе много, а чего нет
+type Note = { text: string };
 
 // раздел: название слева, справа либо пункты, либо абзацы (скиллы)
 type Section = { label: string; entries?: Entry[]; notes?: Note[] };
@@ -51,7 +52,7 @@ const CONTACTS: { label: string; href: string }[] = [
 ];
 
 const ABOUT =
-  "продуктовый дизайнер с опытом создания сложных цифровых решений. люблю, когда дизайн не только решает задачи, но и выглядит классно. кодила до появления chatgpt";
+  "продуктовый дизайнер с опытом создания сложных цифровых решений. люблю, когда дизайн не только решает задачи, но и выглядит классно. писала код до появления chatgpt :)";
 
 // файл резюме. собирается из этой же страницы на каждой сборке
 // (client/scripts/cv-pdf.mjs), поэтому не расходится с текстом ниже
@@ -159,29 +160,15 @@ const SECTIONS: Section[] = [
     // сначала что умею, потом чем делаю, и только в конце смежное
     notes: [
       {
-        label: "методы",
         text: "интерфейсы, прототипирование, юзабилити-тестирование, исследование пользователей, jtbd, userflow, атомарный подход, дизайн-системы",
       },
       {
-        label: "дизайн",
         text: "figma, figjam, protopie, miro, photoshop, illustrator, indesign, fontlab, ai tools",
       },
-      {
-        label: "аналитика",
-        text: "яндекс метрика, google analytics, google tag manager, excel",
-      },
-      {
-        label: "код и веб",
-        text: "html, css, javascript, react, git, p5.js, webflow, readymag",
-      },
-      {
-        label: "моушен и 3d",
-        text: "after effects, cinema 4d, blender, spark ar",
-      },
-      {
-        label: "презентации",
-        text: "keynote, powerpoint, think-cell",
-      },
+      { text: "яндекс метрика, google analytics, google tag manager, excel" },
+      { text: "html, css, javascript, react, git, p5.js, webflow, readymag" },
+      { text: "after effects, cinema 4d, blender, spark ar" },
+      { text: "keynote, powerpoint, think-cell" },
     ],
   },
 ];
@@ -296,11 +283,10 @@ export function CvPage() {
                 )}
                 {section.notes && (
                   <div className="cv__notes">
-                    {section.notes.map((note) => (
-                      <div className="cv__note-group" key={note.label}>
-                        <p className="cv__note-label">{typo(note.label)}</p>
-                        <p className="cv__note">{withBreaks(note.text)}</p>
-                      </div>
+                    {section.notes.map((note, i) => (
+                      <p className="cv__note" key={i}>
+                        {withBreaks(note.text)}
+                      </p>
                     ))}
                   </div>
                 )}

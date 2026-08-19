@@ -38,20 +38,20 @@ type CaseItem = {
 const PRODUCT_CASES: CaseItem[] = [
   {
     slug: "ai-component",
-    label: ["ии-решение\nв b2e продуктах"],
-    desc: ["масштабируемый компонент для 7+ сервисов в инфре"],
+    label: ["ai-ассистент\nв b2e"],
+    desc: ["внутренний помощник\nдля корпоративной экосистемы"],
     image: "/case1.svg",
   },
   {
     slug: "search-button",
-    label: ["улучшение", "поиска"],
-    desc: ["+4,19 п.п. к переходам\nодной UX-правкой"],
+    label: ["поисковой\nсервис"],
+    desc: ["отдельный продукт\nи встраиваемое решение"],
     image: "/case3_1.png",
   },
   {
     slug: "ai-research-platform",
     label: ["ai research", "platform"],
-    desc: ["платформа для бизнеса\nи ресёрчеров"],
+    desc: ["внутреннее решение\nдля коллаборации"],
     image: "/case2_1.png",
   },
   // проект личный, но по объёму это полноценный продуктовый кейс: ресёрч →
@@ -61,8 +61,8 @@ const PRODUCT_CASES: CaseItem[] = [
   // написано в мете кейса — см. meta.team в CasePage.tsx
   {
     slug: "emotions-space",
-    label: ["пространство", "для сохранения эмоций"],
-    desc: ["от исследования проблемы до MVP цифрового продукта"],
+    label: ["архив\nрадостей"],
+    desc: ["от исследования\nдо MVP продукта"],
     image: "/case4_1.png",
   },
 ];
@@ -151,7 +151,7 @@ const SOUL_TILES: SoulTile[] = [
     w: 291.818,
     h: 176.427,
     r: 7.641,
-    src: "/soul/sticker1.webp",
+    src: "/soul/sticker1.jpg",
     alt: "красная наклейка-коробочка в руке: «чихо это правда китай»",
     small: true,
   },
@@ -209,10 +209,8 @@ type SoulWork = {
   href?: string; // внешняя ссылка на работу
   w: number;
   h: number;
-  /** плитка-анкер: во всю ширину раскладки (масонри) / span колонок (сетка) */
+  /** плитка-анкер: во всю ширину раскладки (обе колонки сетки) */
   wide?: boolean;
-  /** сколько колонок занимает анкер в сетке (по умолчанию 2) */
-  span?: number;
   /** вертикальная работа: в сетке занимает две строки, чтобы не резать её в квадрат */
   tall?: boolean;
 };
@@ -227,6 +225,23 @@ type SoulWork = {
 // у них цикл вперёд-назад вышел бы на полминуты
 const SOUL_WORKS: SoulWork[] = [
   { key: "yamusic", src: "/yamusic.webm", w: 1200, h: 545.318, wide: true },
+  {
+    key: "poster",
+    src: "/soul/poster.webp",
+    alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
+    w: 563,
+    h: 792,
+  },
+  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883 },
+  
+  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600 },
+  {
+    key: "sticker1",
+    src: "/soul/sticker1.jpg",
+    alt: "красная наклейка-коробочка в руке: «чихо это правда китай»",
+    w: 584,
+    h: 354,
+  },
   {
     key: "phone1",
     src: "/soul/phone1.webp",
@@ -243,39 +258,21 @@ const SOUL_WORKS: SoulWork[] = [
     h: 1178,
     tall: true,
   },
-  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883 },
-  {
-    key: "poster",
-    src: "/soul/poster.webp",
-    alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
-    w: 563,
-    h: 792,
-  },
-  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600 },
-  {
-    key: "sticker1",
-    src: "/soul/sticker1.webp",
-    alt: "красная наклейка-коробочка в руке: «чихо это правда китай»",
-    w: 584,
-    h: 354,
-  },
-  { key: "flowers", src: "/flowers.webm", w: 298.743, h: 298.743 },
+
   {
     key: "sticker2",
-    src: "/soul/sticker2.webp",
+    src: "/soul/sticker2.jpg",
     alt: "красные наклейки на стене: «мы с твоей 6 лет вместе, ну так, если ты не знал»",
     w: 584,
     h: 411,
   },
+   { key: "flowers", src: "/flowers.webm", w: 298.743, h: 298.743 },
   {
     key: "motion",
     src: "/motion.webm",
     w: 1200,
     h: 669,
     wide: true,
-    // финальная полоса во всю ширину сетки: с ней модуль сходится ровно
-    // (15 ячеек = 5 рядов по 3), без пустой ячейки в углу
-    span: 3,
     href: "https://youtu.be/dy7JG_fK-gQ?si=qzivTsX3kw403P_R",
   },
 ];
@@ -739,7 +736,6 @@ function SoulGrid() {
             ]
               .filter(Boolean)
               .join(" ")}
-            style={{ "--span": work.span ?? 2 } as CSSProperties}
             key={work.key}
             onPointerEnter={onTileEnter}
           >
@@ -773,12 +769,10 @@ export function Sections() {
   return (
     <div className="cases-page">
       {/* продуктовые кейсы */}
-      <section className="cases" aria-label="Продуктовые кейсы">
+      <section className="cases" aria-label="кейсы">
         <header className="cases__head">
           <h2 className="cases__title">
-            продуктовые
-            <br />
-            кейсы
+            опыт
           </h2>
         </header>
         {PRODUCT_CASES.map((item, i) => (
@@ -814,6 +808,9 @@ export function Sections() {
 
       {/* подвал */}
       <SiteFooter />
+
+      {/* декор, приклеенный к низу окна по левому краю центральной колонки */}
+      <img className="tiny-fixed" src="/tiny1.png" alt="" aria-hidden="true" />
     </div>
   );
 }

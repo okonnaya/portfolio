@@ -57,7 +57,7 @@
   background: #f7f7fa;
 }
 .gallery__ph-label {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--text-muted);
   font-size: var(--fs-xl);
   font-weight: 400; /* приглушённый → 400 */
 }

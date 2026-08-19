@@ -14,7 +14,24 @@
   font-weight: 400;
   letter-spacing: -0.01em;
   line-height: 1.1;
-  color: #000;
+  color: var(--text);
+}
+
+/* декор, приклеенный к низу окна. Левый край совпадает с левым краем
+   центральной колонки: она шириной --content и центрирована, поэтому отступ
+   считается от середины окна, а не от его края. 50% (а не 50vw) — потому что у
+   fixed проценты берутся от окна без вертикального скроллбара, и ровно на эту
+   же половину скроллбара смещена сама колонка в потоке.
+   pointer-events: none — картинка лежит поверх контента и не должна перехватывать
+   клики по благодарностям и подвалу */
+.tiny-fixed {
+  position: fixed;
+  left: calc(50% - var(--content) / 2);
+  bottom: 0;
+  z-index: 3;
+  width: min(80px, 4vw); /* файл 467×134 отдан в 2×; на телефоне сжимается */
+  height: auto;
+  pointer-events: none;
 }
 
 /* секция: вертикальный ритм рядов и плейсхолдеров общим gap.
@@ -42,7 +59,7 @@
   font-size: var(--fs-2xl);
   font-weight: 500;
   line-height: 1;
-  color: #000;
+  color: var(--text);
   margin-top: 124px;
       margin-bottom: -100px;
 }
@@ -58,7 +75,7 @@
   text-align: right;
 }
 .cases__title--muted {
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--text-muted);
 }
 
 /* ряд кейса: две колонки, выключка к центру, как в hero.
@@ -80,14 +97,14 @@
 .cases__label {
   margin: 0;
   text-align: right;
-  color: #000;
+  color: var(--text);
   font-size: var(--fs-xl);
   font-weight: 500; /* без прозрачности → 500 */
 }
 .cases__desc {
   margin: 0;
   text-align: left;
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
   font-size: var(--fs-xl);
   font-weight: 400; /* приглушённый → 400 */
 }
@@ -157,7 +174,7 @@
   transform: translateY(-2px);
 }
 .cases__ph:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid var(--text);
   outline-offset: 3px;
 }
 
@@ -233,7 +250,7 @@
   transform: translateY(-2px);
 }
 .soul__link:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid var(--text);
   outline-offset: 3px;
 }
 @media (hover: none) {
@@ -315,7 +332,7 @@
   transform: scale(1.03);
 }
 .soulw__link:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid var(--text);
   outline-offset: 3px;
 }
 @media (hover: none) {
@@ -355,17 +372,19 @@
   gap: var(--gap);
 }
 
-/* вариант «сетка»: строгий модуль. Высота строки считается из ширины
-   контейнера (cqw), поэтому ячейка ровно квадратная при любой ширине колонки
-   сайта; широкие работы занимают две колонки, вертикальные — две строки, и
-   пропорции квантуются по сетке, а не подгоняются кропом. dense досыпает
-   мелкие плитки в дырки, которые оставляют широкие/высокие */
+/* вариант «сетка»: строгий модуль в те же две колонки и с тем же зазором, что
+   и ряды выше (--col-gap), — блок «для души» встаёт под сетку страницы, а не
+   живёт своей. Высота строки считается из ширины контейнера (cqw), поэтому
+   ячейка ровно квадратная при любой ширине колонки сайта; широкие работы
+   занимают обе колонки, вертикальные — две строки, и пропорции квантуются по
+   сетке, а не подгоняются кропом. dense досыпает мелкие плитки в дырки,
+   которые оставляют широкие/высокие */
 .soul-cells-box {
   container-type: inline-size;
 }
 .soul-cells {
-  --gap: 16px;
-  --cols: 3;
+  --gap: var(--col-gap);
+  --cols: 2;
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   grid-auto-rows: calc(
@@ -377,12 +396,9 @@
   padding: 0;
   list-style: none;
 }
-/* сколько колонок занимает широкая работа (финальная полоса — все три).
-   Span больше числа колонок сетка НЕ зажимает по ширине, а достраивает неявную
-   колонку и сплющивает 1fr-колонки в полоски, поэтому в двухколоночном режиме
-   span переопределён ниже, в медиазапросе */
+/* широкая работа — на обе колонки, во всю ширину сетки */
 .soul-cells .soulw--wide {
-  grid-column: span var(--span, 2);
+  grid-column: 1 / -1;
 }
 .soul-cells .soulw--tall {
   grid-row: span 2;
@@ -454,15 +470,15 @@
   font-size: var(--fs-md);
   font-weight: 400;
   line-height: 1;
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 .thanks__toggle:hover {
-  color: #000;
+  color: var(--text);
 }
 .thanks__toggle:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid var(--text);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -498,26 +514,13 @@
 }
 .thanks__name {
   text-align: right;
-  color: #000;
+  color: var(--text);
   font-weight: 500; /* без прозрачности → 500 */
 }
 .thanks__note {
   text-align: left;
-  color: rgba(0, 0, 0, 0.62);
+  color: var(--text-secondary);
   font-weight: 400; /* приглушённый → 400 */
-}
-
-/* колонка сайта — 60vw, поэтому на «обычном» ноутбуке (1440) три колонки дают
-   ~270px на плитку: наклейки и афиша в такой ширине уже не читаются. Ниже
-   этого порога — две колонки (у масонри тот же порог зашит в useSoulColumns) */
-@media (max-width: 1440px) {
-  .soul-cells {
-    --cols: 2;
-  }
-  /* в двух колонках любая широкая работа — это просто вся ширина */
-  .soul-cells .soulw--wide {
-    grid-column: span 2;
-  }
 }
 
 /* ховер-отклик плитки на тач-устройствах не проигрывается (и «залипает» после
@@ -542,6 +545,11 @@
   .cases-page {
     padding: 64px 20px 48px;
     --content: 100%; /* 60vw слишком узко на телефоне — во всю ширину, как hero */
+  }
+  /* колонка тут во всю ширину, и её левый край — это боковой padding страницы,
+     а не середина минус полколонки */
+  .tiny-fixed {
+    left: 20px;
   }
   /* вертикальный ритм десктопа (144px между рядами, 124px над заголовком) на
      экране 390px превращается в пустые пролёты — сжимаем пропорционально */

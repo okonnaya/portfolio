@@ -28,6 +28,10 @@ type Props = {
  * макет на любом экране), но «жим ногами» посажен на нижнюю горизонталь
  * композиции — там замеренный y2, и поджимать его на низких экранах не нужно.
  * Переносы строк заданы руками — ровно как в фигме.
+ *
+ * tilt/lift — как превью ведёт себя под курсором. Значения намеренно разные у
+ * каждой карточки (и знак угла чередуется): одинаковый наклон на всех читался
+ * бы как один общий эффект, а разнобой — как стопка живых стикеров.
  */
 const FACTS = [
   {
@@ -35,24 +39,32 @@ const FACTS = [
     lines: ["родилась", "в столице рэпа"],
     x: "var(--fact-x1)",
     y: "calc(-29.8vh * var(--fact-spread, 1))",
+    tilt: "-9deg",
+    lift: "4px",
   },
   {
     img: "/facts/hse.svg",
     lines: ["красный диплом", "ниу вшэ"],
     x: "var(--fact-x1)",
     y: "calc(24.2vh * var(--fact-spread, 1))",
+    tilt: "6deg",
+    lift: "2px",
   },
   {
     img: "/facts/sber.svg",
     lines: ["рисовала картинки", "для грефа"],
     x: "var(--fact-x3)",
     y: "calc(24.2vh * var(--fact-spread, 1))",
+    tilt: "-5deg",
+    lift: "5px",
   },
   {
     img: "/facts/gym.webp",
     lines: ["жим ногами", "100кг"],
     x: "var(--fact-x4)",
     y: "var(--fact-y2)",
+    tilt: "11deg",
+    lift: "3px",
   },
 ];
 
@@ -430,8 +442,19 @@ export function Hero({ onActiveChange }: Props) {
             <span className="hero__text">в яндексе</span>
             {/* иконки сервисов встык к «в яндексе» — вне .hero__text: на нём
                difference, логотипы бы им перекрасило. inline-flex садится на
-               базовую линию последней строки текста */}
-            <span className="hero__logos" aria-hidden="true">
+               базовую линию последней строки текста.
+
+               ховер-обработчики те же, что у акцентной ячейки: ряд проявляется
+               по guides, и уход курсора с триггера сюда гасил бы его раньше,
+               чем курсор доедет до иконок. так логотипы сами удерживают
+               состояние, пока на них наведено */}
+            <span
+              className="hero__logos"
+              aria-hidden="true"
+              onMouseEnter={handleGuidesEnter}
+              onMouseLeave={handleGuidesLeave}
+              onClick={handleGuidesClick}
+            >
               <img className="hero__logo" src="/facts/yandex.webp" alt="" />
               <img
                 className="hero__logo hero__logo--lg"
@@ -463,6 +486,8 @@ export function Hero({ onActiveChange }: Props) {
                       "--fact-x": f.x,
                       "--fact-y": f.y,
                       "--fact-d": `${i * 0.06}s`,
+                      "--fact-tilt": f.tilt,
+                      "--fact-lift": f.lift,
                     } as CSSProperties
                   }
                 >
