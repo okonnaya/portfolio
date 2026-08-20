@@ -4,7 +4,43 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>карина р.</title>
+    <!-- полное имя: заголовок уходит во вкладку, в выдачу поисковика и в
+         закладку — «карина р.» там нечего ни найти, ни вбить в ats -->
+    <title>карина рамазанова — продуктовый дизайнер</title>
+    <meta
+      name="description"
+      content="портфолио продуктового дизайнера карины рамазановой: ии-решения в b2e, платформа для ai-ресёрчеров, продуктовые метрики и личные проекты."
+    />
+
+    <!-- превью для мессенджеров и соцсетей: без og-тегов ссылка на портфолио
+         разворачивалась пустой карточкой с одним доменом. og.jpg собирается
+         скриптом на каждой сборке (client/scripts/og-image.mjs) в 1200×630 —
+         это то соотношение (1.91:1), которое телеграм, твиттер и слак
+         показывают без обрезки. На карточке имя, роль и текущее место: раньше
+         там был коллаж скриншотов кейса — в мелком превью он читался как
+         «какой-то интерфейс», а заодно тащил в публичное поле ФИО и данные из
+         рабочего проекта.
+         ВАЖНО: когда появится домен, пропишите его в og:url и сделайте
+         og:image абсолютным (https://домен/og.jpg) — часть скрейперов
+         (в т.ч. фейсбук) относительные пути не разворачивает. -->
+    <meta property="og:type" content="website" />
+    <!-- имя в og — полное: карточку ссылки пересылают дальше, и «карина р.»
+         в ней нечего вбить ни в поиск, ни в ats -->
+    <meta property="og:site_name" content="карина рамазанова" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="карина рамазанова — продуктовый дизайнер" />
+    <meta
+      property="og:description"
+      content="ии-решения в b2e, платформа для ai-ресёрчеров, продуктовые метрики и личные проекты."
+    />
+    <meta property="og:image" content="/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="карина рамазанова — продуктовый дизайнер"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

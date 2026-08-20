@@ -1,25 +1,131 @@
-* {
+/* Базовый сброс + переменные. Без CSS-фреймворка — он будет выбран позже
+   вместе с UI-стеком (Lottie / p5 / анимации). */
+
+/* Шрифт макета лежит в проекте (public/fonts), а не берётся из системы: иначе
+   сайт и cv.pdf выглядели бы по-разному у каждого, кто открывает страницу или
+   собирает билд. Файл вариативный — одна загрузка на все начертания (wght
+   100–900), поэтому отдельных @font-face на вес не нужно. */
+@font-face {
+  font-family: "PP Neue Montreal Variable";
+  src: url("/fonts/PPNeueMontreal-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #ffffff;
+
+  /* Цвет текста — единственный источник «серых». Все ступени берутся из одного
+     чернильного тона (--ink) прозрачностью, поэтому приглушённый текст остаётся
+     того же цвета, что и заголовки, а не уезжает в чужой серый.
+     Чистого #000 на странице нет: на белом он звенит и утолщает тонкие
+     начертания вариативного шрифта — база чуть мягче и с холодным подтоном.
+     от плотного к тихому: */
+  --ink: 20, 20, 26; /* rgb-триплет базы: ступени = его альфа */
+  --text: rgb(var(--ink)); /* заголовки, названия, активные состояния */
+  --text-body: rgba(var(--ink), 0.80); /* тело текста */
+  --text-secondary: rgba(var(--ink), 0.40); /* описания, подписи, ссылки в покое */
+  --text-muted: rgba(var(--ink), 0.45); /* надзаголовки, сноски, оглавление */
+  --text-faint: rgba(var(--ink), 0.30); /* самое тихое, что ещё читают */
+  --text-ghost: rgba(var(--ink), 0.2); /* метки вложенности, «роль · срок» */
+  --rule: rgba(var(--ink), 0.12); /* разделители, рамки, точки-сепараторы */
+
+  --color-fg: var(--text);
+  --color-accent: #5a8193;
+  --font-sans: -apple-system, Helvetica, "Inter", "Segoe UI", Roboto,
+    Arial, sans-serif;
+  /* шрифт макета (см. @font-face выше); системный sans — фолбэк на время
+     загрузки файла и если он не отдался */
+  --font-display: "PP Neue Montreal Variable", var(--font-sans);
+
+  /* типографическая шкала — единственный источник размеров текста.
+     fluid-значения (clamp) для заголовков, фиксированные px для UI/тела.
+     от крупного к мелкому: */
+  --fs-3xl: clamp(32px, 3vw, 64px); /* hero-заголовок */
+  --fs-2xl: clamp(28px, 3.6vw, 42px); /* заголовки секций, lead кейса */
+  --fs-xl: clamp(18px, 1.5vw, 24px); /* ряды/названия/описания кейсов, thanks */
+  --fs-md: 16px; /* тело, навбар, подписи, оглавление, адаптив шапки */
+  --fs-xs: 11px; /* микротекст на канвасе hero */
+
+  color-scheme: light;
 }
 
 html,
 body,
 #root {
-  width: 100%;
   height: 100%;
+  text-wrap: pretty;
 }
 
-main {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: #fffff;
+/* фоновые канвасы — position: fixed; при эластичном overscroll у верхней кромки
+   контент hero оттягивается, а фон остаётся, и сверху оголяется «сырое» розовое
+   свечение. отключаем резиновый отскок документа, чтобы кромка не оголялась */
+html {
+  overscroll-behavior-y: none;
 }
 
-.circle {
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* сафари на айфоне сам раздувает кегли, когда страница поворачивается в
+     ландшафт («text inflation»), — вся типографическая шкала уехала бы */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* серый прямоугольник подсветки тапа: на сайте свои состояния (:active),
+     системный блик только мешает */
+  -webkit-tap-highlight-color: transparent;
+  /* тексты композиции склеены неразрывными пробелами (typo) и на узком экране
+     дают длинные неразрывные токены — переносим их, а не растим документ в
+     ширину горизонтальным скроллом */
+  overflow-wrap: break-word;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Текст только для скринридеров, поисковиков и парсеров резюме. Нужен там, где
+   композиция сознательно недоговаривает: на первом экране крупно стоит роль
+   («продуктовый дизайнер»), а фамилия живёт мелкой строкой в навбаре — в h1
+   её дописываем невидимо, чтобы заголовок страницы читался целиком.
+   Не display: none и не visibility: hidden — оба выкидывают текст и из
+   скринридера тоже; классический приём — клип в 1px вне потока. */
+.visually-hidden {
   position: absolute;
-  border-radius: 50%;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

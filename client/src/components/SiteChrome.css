@@ -1,0 +1,141 @@
+/* Единый хром сайта: хедер + подвал. Общие мелочи — в классах .chrome-*,
+   чтобы типографику/разделитель/ссылки править в одном месте. */
+
+/* ── общее для хедера и подвала ─────────────────────────────────────── */
+/* типографика меты */
+.site-header,
+.cases-footer {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-size: var(--fs-md);
+}
+
+/* точка-разделитель — одна на оба */
+.chrome-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+
+/* кликабельная мета/ссылка — общий ховер */
+.chrome-link {
+  color: inherit;
+  text-decoration: none;
+}
+.chrome-link:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* ── хедер: аватар · карина р. · cv | > приветик ─────────────────────── */
+/* Прижат к краям (padding 24px), залипает в 20px от верха при скролле. */
+.site-header {
+  position: sticky;
+  top: 20px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 24px;
+  color: var(--text);
+}
+
+.site-header__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-header__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ── подвал: клик · чтобы вытянуть карту дня · 2026 ──────────────────── */
+/* Ширину колонки берём из --content родителя (главная/кейс задают её сами),
+   с запасным значением 60vw для автономного использования. */
+.cases-footer {
+  max-width: var(--content, 60vw);
+  margin: 96px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+/* «клик» с лучиками по бокам, как в макете */
+.cases-footer__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text);
+  line-height: 1;
+  cursor: pointer;
+}
+.cases-footer__word {
+  line-height: 1;
+}
+/* лучики: узкий svg ~в высоту строки; overflow visible — чтобы линии
+   могли выехать за рамки на ховер */
+.key-rays {
+  flex: none;
+  width: 0.45em;
+  height: 1em;
+  overflow: visible;
+}
+.key-rays--left {
+  transform: scaleX(-1); /* зеркалим правый набор влево */
+}
+.key-rays .ray {
+  stroke: currentColor;
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* на ховер линии разъезжаются лучиками: верхняя — вверх-наружу,
+   средняя — наружу, нижняя — вниз-наружу (по диагонали) */
+.cases-footer__key:hover .ray--top {
+  transform: translate(2px, -2.5px);
+}
+.cases-footer__key:hover .ray--mid {
+  transform: translate(3px, 0);
+}
+.cases-footer__key:hover .ray--bot {
+  transform: translate(2px, 2.5px);
+}
+
+/* ── адаптив ─────────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  /* на десктопе шапка залипает в 20px от верха без фона: колонка контента
+     занимает 60vw, и под навбаром остаются белые гаттеры. на телефоне контент
+     во всю ширину — чёрные буквы залипшей шапки шли прямо по картинкам кейса.
+     поэтому здесь это честная панель: прижата к верху, с матовым фоном */
+  .site-header {
+    top: 0;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    gap: 8px;
+  }
+  .site-header__meta {
+    gap: 8px;
+  }
+  .site-header__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+  .cases-footer {
+    margin-top: 64px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+}

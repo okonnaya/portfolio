@@ -1,0 +1,51 @@
+/* 404. Типографика и колонка — как на странице кейса (.case-page / .case задают
+   шрифт, --content и гаттеры), тут только сама композиция блока. */
+
+.notfound {
+  /* по центру экрана, а не прижато к шапке: страница короткая, и текст
+     у верхней кромки смотрелся бы обрезком. 60svh — мобильный вьюпорт */
+  min-height: 60svh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.notfound__code {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+.notfound__title {
+  margin: 12px 0 0;
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.notfound__text {
+  margin: 12px 0 0;
+  font-size: var(--fs-md);
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+
+.notfound__links {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap; /* на узком экране переносятся, а не сжимаются в столбик */
+  font-size: var(--fs-md);
+}
+
+.notfound__link {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.notfound__link:hover {
+  color: var(--text);
+}

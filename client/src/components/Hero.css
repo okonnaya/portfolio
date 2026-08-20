@@ -1,0 +1,905 @@
+/* Главный экран: ряд «фреймов», выровненных по верху и отцентрованных по высоте
+   во весь вьюпорт (100vw × 100vh). Лежит поверх фоновой анимации (z-index: 2).
+
+   Шрифт макета — PP Neue Montreal (Medium): вариативный файл лежит в
+   public/fonts, @font-face — в styles/global.css. */
+
+/* первый экран: ряд «фреймов» отцентрован по высоте во весь вьюпорт.
+   больше не fixed — экран уезжает вверх при скролле ко второму блоку. */
+.hero {
+  position: relative;
+  /* НЕ ставим z-index: он делает .hero отдельным стекинг-контекстом, а тот
+     изолирует mix-blend-mode потомков (hero-текст с difference переставал
+     смешиваться с реальным фоном — кругами/страницей — и «пропадал» на белом).
+     навбар держится поверх кейсов собственным z-index:3 у .hero__meta: без
+     контекста .hero он считается в корне (3 > 2 у .cases-page), поэтому мета
+     по-прежнему выше контента кейсов и ловит курсор/клик */
+  min-height: 100vh;
+  display: flex;
+  align-items: center; /* центрируем ряд по высоте */
+  pointer-events: none;
+  /* направляющие/полосы намеренно вылезают за вьюпорт (left:-100vw, top:-100vh)
+     и гаснут под маской. в потоке (не fixed) этот «вынос» раздувал бы документ
+     и давал горизонтальный скролл — обрезаем по горизонтали. clip (а не hidden)
+     не создаёт скролл-контейнер, поэтому sticky у меты продолжает работать */
+  overflow-x: clip;
+}
+
+/* единый флекс-ряд: левая мета · центральная сетка · правая мета.
+   едины padding left/right (24px), метаданные прижаты к верху ряда */
+.hero__inner {
+  width: 100%;
+  /* во всю высоту первого экрана: containing block для sticky-меты, навбар
+     залипает на протяжении всего hero. grid 1fr | сетка | 1fr: позиция
+     центральной колонки НЕ зависит от боковых — поэтому когда меты уходят в
+     fixed (залипание), текст НЕ прыгает по горизонтали (раньше на flex сетка
+     теряла «распорки» и перецентровывалась). align-items: center — мета на
+     уровне центрального текста, при скролле залипает навбаром сверху */
+  min-height: 100vh;
+  display: grid;
+  /* 1fr | сетка | 1fr: центральная колонка всегда 60vw, боковые 1fr держат её
+     по центру вьюпорта. позиция колонки фиксируется через grid-column: 2 на
+     самой сетке (см. .hero__grid), поэтому когда меты уходят в fixed при
+     залипании — текст не прыгает по горизонтали */
+  grid-template-columns: 1fr 60vw 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+  /* mix-blend-mode НЕ здесь: предок с blend заставляет браузер рендерить
+     поддерево отдельной группой и обрезает position:fixed-потомка (мету) по
+     своим границам → навбар пропадал при скролле. blend вешаем на детей по
+     отдельности (.hero__grid и .hero__meta) — они не перекрываются, вид тот же */
+  /* filter: brightness(0.7) contrast(1.2); */
+}
+
+/* центральная композиция: 2 колонки × 2 ряда, ряды выровнены по верху.
+   flex-basis = желаемая ширина, но сетка ужимается, чтобы не залезать
+   на мета-строки — её ширина не превышает gap между ними */
+.hero__grid {
+  flex: 0 1 889px;
+  min-width: 0;
+  /* явно держим центральную колонку. без этого при залипании меты уходят в
+     position: fixed и выпадают из авто-размещения грида — тогда единственный
+     авто-элемент (.hero__grid) уезжает в первую свободную колонку (левую 1fr)
+     и текст прыгает влево. grid-column: 2 фиксирует его по центру всегда */
+  grid-column: 2;
+  position: relative; /* база для направляющих и полос-мер */
+  /* блендинг НЕ здесь: mix-blend-mode сделал бы .hero__grid стекинг-контекстом,
+     а он изолирует блендинг потомков от фона. difference вешаем точечно на
+     .hero__text (только глифы текста) — см. ниже */
+  /* опт-компенсация НЕ здесь: margin-right на всей сетке двигал обе строки
+     (и главный блок, и ряд-ревил). компенсацию вешаем только на первый ряд —
+     см. .hero__cell--trigger ниже */
+  --col-gap: 32px;
+  --opt-comp: 40px;
+  /* насколько зона наведения триггеров вылезает за их текст (см. .hero__hit).
+     по горизонтали — чуть меньше половины просвета между блоками (он равен
+     --col-gap), чтобы зоны соседних триггеров не сходились впритык */
+  --hit-x: 14px;
+  --hit-y: 20px;
+  --guide: #dbdada; /* розовый цвет направляющих */
+  /* маска проявления: радиальный градиент от центра — плавный непрерывный
+     спад без плато, поэтому и фронт проявления мягкий, и в покое линии
+     ярко горят по центру и плавно гаснут к краям вьюпорта.
+     размер маски гоним от 0 (скрыто) до конечного (видно) */
+  --guide-mask: radial-gradient(circle at center, #000 0%, transparent 75%);
+  display: grid;
+  /* minmax(0, 1fr): без нижней границы min-content треки остаются строго
+     равными, даже когда правый текст склеен nbsp в широкий токен. иначе
+     правая колонка распухает, гэп уезжает влево от центра сетки, а полоса-мера
+     (.hero__gap на left:50%) остаётся по центру → залезает на правый текст */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: var(--col-gap);
+  /* просвет между рядами: line-height 0.85 сажает строки почти встык, и нижний
+     ряд («люблю красоту и приколы» / «сейчас рисую в яндексе») липнет к
+     заголовкам над ним. в em, а не в px: кегль композиции резиновый (clamp по
+     vw), отступ должен ехать вместе с ним. нижняя горизонталь-направляющая и
+     карточка «жим ногами» якорятся к верху этого ряда (top: 0 у ::before,
+     замер y2 в Hero.tsx) — они съезжают вниз вместе с ним, как и надо */
+  row-gap: 0.2em;
+  align-items: start; /* фреймы выравниваются по верху */
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+}
+
+.hero__cell {
+  margin: 0;
+  position: relative;
+  /* «продуктовый дизайнер» — это h1 (см. Hero.tsx), и браузерное h1 { bold }
+     побило бы font-weight: 500, унаследованный от .hero__grid: правило на самом
+     элементе сильнее наследования. приглушённые ячейки ниже переопределяют это
+     на 400 своими классами */
+  font-weight: inherit;
+}
+
+/* обёртка глифов текста: единственный носитель блендинга. difference инвертирует
+   текст поверх реального фона (кругов + белой страницы). direction эффекта держим
+   строго на тексте — направляющие/полосы лежат на <p> вне этого спана и не блендятся.
+   inline-block — чтобы принимать transform (reveal-сдвиг ниже); цвет наследуется
+   от ячейки. reveal-анимация (opacity/translateY) вешается тоже сюда: собственные
+   opacity/transform элемента изолируют лишь его потомков, а его блендинг всё равно
+   считается против фона родителя, поэтому эффект не глохнет */
+.hero__text {
+  display: inline-block;
+  mix-blend-mode: difference;
+}
+
+/* направляющие появляются при ховере/клике на «…в яндексе».
+   это не контуры блоков, а сквозные линии (как guides в фигме):
+   вертикали — во всю высоту сетки, горизонтали — во всю ширину. */
+
+/* левая вертикаль — по левому краю блока «продуктовый дизайнер». триггеры теперь
+   hug по ширине, поэтому линия жмётся к самому тексту, а не к краю колонки.
+   правую вертикаль рисует левая граница полосы «оптической компенсации»,
+   внутренние — границы полосы gap. линия тянется во всю высоту вьюпорта */
+.hero__cell--left.hero__cell--trigger::after,
+.hero__guide {
+  content: "";
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  left: 0;
+  width: 1px;
+  background: var(--guide);
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+.hero__grid.is-guides .hero__cell--left.hero__cell--trigger::after,
+.hero__grid.is-guides .hero__guide {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* вертикаль по левому краю аватарки в мете (замер — в Hero.tsx): на ней стоит
+   карточка «жим ногами». left переопределяет 0 из общего правила выше */
+.hero__guide {
+  left: var(--fact-x4, 0px);
+}
+
+/* горизонталь по верху каждого текст-ряда: якорится к верху ячейки (он совпадает
+   с верхом ряда — align-items: start), а в стороны уезжает во всю ширину вьюпорта */
+.hero__cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  right: -100vw;
+  height: 1px;
+  background: var(--guide);
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+.hero__grid.is-guides .hero__cell::before {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* розовые полосы-меры (gap между колонками и оптическая компенсация).
+   общая база: во всю высоту вьюпорта, та же радиальная маска проявления */
+.hero__band {
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  display: flex;
+  align-items: center;
+  background: rgba(223, 223, 223, 0.12);
+  border-inline: 1px solid var(--guide);
+  -webkit-mask-image: var(--guide-mask);
+  mask-image: var(--guide-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: mask-size 0.6s ease, -webkit-mask-size 0.6s ease;
+  pointer-events: none;
+}
+
+.hero__grid.is-guides .hero__band {
+  -webkit-mask-size: 150vmax 150vmax;
+  mask-size: 150vmax 150vmax;
+}
+
+/* gap column-gap — по центру сетки, подпись по центру полосы */
+.hero__gap {
+  left: 50%;
+  width: var(--col-gap);
+  /* держим полосу в гэпе первого блока: он сдвинут влево на --opt-comp/2,
+     поэтому и центр полосы уводим на столько же (сверх обычного -50%) */
+  transform: translateX(calc(-50% - var(--opt-comp) / 2));
+  justify-content: center;
+}
+
+/* оптическая компенсация — 40px-поле справа от блока (его margin-right) */
+.hero__opt {
+  left: 100%;
+  width: var(--opt-comp);
+}
+
+/* подпись поля — отдельным узлом рядом с полосой (см. Hero.tsx). полоса —
+   вертикальная лента во всю высоту, а текст композиции занимает только её
+   середину; справа впритык мета «приветик», а длинная подпись упиралась бы в
+   неё и в край вьюпорта. поэтому кладём подпись НАД композицией по центру
+   полосы — там чисто на любой ширине. НЕ под радиальной маской полосы (та
+   гасит длинную подпись к краям) — проявляется непрозрачностью, не срезается */
+.hero__opt-label {
+  position: absolute;
+  left: calc(100% + 10px); /* левый край подписи — на правой вертикали (у линии) */
+  top: 0; /* верх акцентной ячейки = верх композиции (это верхний ряд) */
+  transform: translateY(calc(-100% - 10px)); /* целиком над текстом, без гориз. сдвига */
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  color: #a3a3a3;
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.hero__grid.is-guides .hero__opt-label {
+  opacity: 1;
+}
+
+.hero__band span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  color: #fff;
+  background: var(--guide);
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #a3a3a3;
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  white-space: nowrap; /* подпись шире полосы — пусть аккуратно выходит за края */
+}
+
+/* ── карточки-факты ───────────────────────────────────────────────────── */
+/* Стикеры «про меня», разбросанные по первому экрану: проявляются тем же
+   ховером, что и направляющие. Слой растянут по боксу сетки, поэтому top у
+   карточек отсчитывается от верхней горизонтали композиции, а left — от
+   вертикалей, замеренных в Hero.tsx (--fact-x1/x2/x3).
+
+   pointer-events: none обязателен: карточки — потомки сетки, но лежат далеко
+   от текста; ловили бы они курсор — ховер на триггере не считался бы ушедшим,
+   и по экрану остались бы невидимые зоны, удерживающие направляющие. */
+.hero__facts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero__fact {
+  position: absolute;
+  /* обычно карточка стоит ровно на своей вертикали. на узких десктопах правая
+     вертикаль подходит вплотную к краю экрана, и самая длинная подпись
+     срезалась бы (у .hero сlip по горизонтали) — второй аргумент min() не даёт
+     ей вылезти за поле в 24px. сетка занимает центральные 60vw, поэтому край
+     вьюпорта в её координатах — это 80vw минус её левый отступ */
+  left: min(var(--fact-x, 0px), 80vw - 200px);
+  /* --fact-y приходит из FACTS готовой длиной: у разбросанных карточек это доли
+     высоты экрана (композиция центрируется — так пропорции макета держатся на
+     разных экранах), у «жима ногами» — замеренный верх второго ряда */
+  top: var(--fact-y, 0px);
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  line-height: 0.92;
+  letter-spacing: normal;
+  color: var(--text);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+/* появление — тем же вайпом, что и гайды, но со стаггером по порядку.
+   на уход задержку не даём (transition-delay объявлен только здесь) —
+   карточки гаснут разом, как и линии */
+.hero__grid.is-guides .hero__fact {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--fact-d, 0s);
+}
+
+/* превью 28×28: белая карточка со скруглением и мягкой тенью (как в макете).
+   отступ сверху сажает картинку на оптический верх первой строки текста */
+.hero__fact-thumb {
+  flex-shrink: 0;
+  width: 32px;
+  box-sizing: content-box;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.68px solid #f9f9f9;
+  background: #fff;
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  transition: translate 0.35s ease, rotate 0.35s ease, filter 0.35s ease;
+}
+
+/* курсор ловит карточку целиком (превью + подпись) и только пока карточки
+   видны: слой выше отключён (pointer-events: none), иначе по экрану остались бы
+   невидимые зоны. в скрытом состоянии карточка тоже прозрачна для курсора —
+   ховер оживает вместе с направляющими */
+.hero__grid.is-guides .hero__fact {
+  pointer-events: auto;
+}
+
+/* наклон и подъём приходят с самой карточки (--fact-tilt/--fact-lift заданы
+   в FACTS, Hero.tsx): у каждого превью свои значения, чтобы стопка не
+   отыгрывала ховер одним и тем же движением. фолбэки — на случай карточки
+   без заданных значений. двигается по-прежнему только превью — подпись стоит
+   на месте, шевелится картинка */
+.hero__grid.is-guides .hero__fact:hover .hero__fact-thumb {
+  translate: 0 var(--fact-lift, 3px);
+  rotate: var(--fact-tilt, 10deg);
+  /* filter: brightness(108%); */
+  filter: opacity(90%);
+}
+
+.hero__fact-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* низкие экраны (ноутбук с открытыми панелями, альбомный планшет): полный
+   разброс в 30vh над композицией упирался бы в навбар */
+@media (max-height: 760px) {
+  .hero__facts {
+    --fact-spread: 0.72;
+  }
+}
+
+/* триггер — интерактивная ячейка: ховер проявляет, клик закрепляет.
+   width: fit-content — бокс ужимается по тексту, чтобы зона ховера не
+   растягивалась на всю колонку. justify-self прижимает бокс к нужному краю
+   колонки, поэтому сам текст остаётся на месте */
+.hero__cell--trigger {
+  pointer-events: auto;
+  cursor: pointer;
+  width: fit-content;
+  /* оптическая компенсация — сдвиг влево на пол-поля (--opt-comp/2 = 20px).
+     раньше делали transform'ом, но transform сделал бы ячейку стекинг-контекстом
+     и заглушил бы difference на вложенном .hero__text. поэтому сдвигаем margin'ом
+     (не изолирует блендинг) — сдвигается и текст, и направляющие/полоса вместе.
+     направление зависит от выключки: у правого края тянем margin-right, у левого —
+     отрицательный margin-left, обе ячейки уезжают влево на одинаковые 20px */
+}
+.hero__cell--left.hero__cell--trigger {
+  justify-self: end; /* левая колонка — текст у правого края */
+  margin-right: calc(var(--opt-comp) / 2);
+}
+.hero__cell--accent.hero__cell--trigger {
+  justify-self: start; /* правая колонка — текст у левого края */
+  margin-left: calc(var(--opt-comp) / -2);
+}
+
+/* увеличенная зона наведения: прозрачный оверлей, растянутый за края ячейки.
+   отдельным узлом, а не padding'ом у самого триггера — padding сдвинул бы и
+   направляющие (они якорятся к краям бокса: горизонталь на top: 0, вертикаль
+   на left: 0), и вертикали фактов, которые меряются по этим же боксам в
+   Hero.tsx. mouseenter/mouseleave ячейки считают оверлей своим: он её потомок,
+   хоть и вылезает наружу — поэтому обработчики остаются на самой ячейке */
+.hero__hit {
+  position: absolute;
+  inset: calc(-1 * var(--hit-y)) calc(-1 * var(--hit-x));
+  pointer-events: auto;
+}
+
+/* ── подсказка «сюда можно навести» ───────────────────────────────────── */
+/* Направляющие и факты живут на ховере, но на первом экране ничто об этом не
+   говорит. Через 3с после загрузки (таймер в Hero.tsx вешает .is-hint) у
+   акцентной строки проявляется курсор из макета, подъезжает к ней сверху-слева
+   и гаснет. Иконка декоративная и курсор не ловит. Заводится на каждой
+   загрузке, но только пока человек сам не навёлся на один из двух
+   заголовков-триггеров — тогда .is-hint снимается (см. Hero.tsx). */
+.hero__cursor {
+  position: absolute;
+  top: -10px; /* левый верхний угол ячейки = начало «двигаю компоненты» */
+  left: 40px;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero__grid.is-hint .hero__cursor {
+  /* both — чтобы курсор не мигал в стартовой позиции до первого кадра
+     и остался погашенным после последнего */
+  animation: hero-hint 2.4s ease-in-out both;
+}
+
+/* «кончик пальца» у иконки примерно в (10, 4) от её левого верхнего угла,
+   поэтому кадры считаны так, чтобы он приезжал на первую строку текста */
+@keyframes hero-hint {
+  0% {
+    opacity: 0;
+    transform: translate(-30px, -34px);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-30px, -34px);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(2px, 4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6px, 8px);
+  }
+}
+
+/* при reduced-motion подсказка остаётся (она несёт смысл), но без проезда —
+   переопределяем сами кадры, одно проявление и затухание */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes hero-hint {
+    0%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+    25%,
+    70% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* строка «с любовью к красивому» скрыта, проявляется при ховере на триггер.
+   тот же сдвиг опт-компенсации (--opt-comp/2 влево), что и у триггер-ряда выше.
+   ячейка растянута на колонку — двигаем парой margin'ов (левый отрицательный,
+   правый положительный): ширина сохраняется, бокс уезжает влево на 20px, без
+   transform'а (который изолировал бы блендинг .hero__text) */
+.hero__cell--reveal {
+  margin-left: calc(var(--opt-comp) / -2);
+  margin-right: calc(var(--opt-comp) / 2);
+}
+
+/* логотипы сервисов встык к «в яндексе»: карточки 28px.
+   картинки экспортированы по-разному — это важно для стилей ниже:
+     yandex.webp        112px — голый арт, рамки нет;
+     yandex-infra.webp  121px = 115px арта + рамка #f9f9f9 в 3px, запечённая
+                        в саму картинку.
+   обе непрозрачные (альфы нет), поэтому карточку первой дорисовываем в CSS,
+   а второй — только подгоняем размер, см. .hero__logo--lg */
+.hero__logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  margin-left: 8px;
+  /* по базовой линии иконки повисли бы под строкой: в макете они посажены на
+     середину строчных. middle делает ровно это (центр бокса = базовая линия +
+     половина x-height) и держит посадку при любом кегле — а он у композиции
+     резиновый (clamp по vw) */
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* всё в em, а не в px: кегль композиции резиновый (clamp по vw), иконки должны
+   ехать вместе со строкой. 0.64em = 28px при 44px текста — как в макете.
+   width/height — сторона самого арта: content-box кладёт рамку снаружи, поэтому
+   арт у обеих иконок выходит одинаковым, как бы ни отличались их файлы.
+   рамка 0.038em = 1.68px при 44px текста — как у превью фактов (.hero__fact-thumb).
+   радиус 0.2em: за вычетом рамки внутренний край ложится на скругление самого
+   арта (26% стороны), поэтому кольцо обнимает сквиркл, а не режет его.
+   border-radius обрезает и содержимое <img>, поэтому маска не нужна */
+.hero__logo {
+  width: 0.64em;
+  height: 0.64em;
+  display: block;
+  box-sizing: content-box;
+  border-radius: 0.2em;
+  border: 0.038em solid #f9f9f9;
+  background: #fff;
+  object-fit: cover;
+  /* box-shadow, а не drop-shadow: у картинок нет альфы, и drop-shadow обводил
+     квадрат мимо скругления. box-shadow идёт по border-radius */
+  box-shadow: 0 0 2.8px rgba(0, 0, 0, 0.16);
+  transition: translate 0.35s ease, rotate 0.35s ease;
+}
+
+/* infra CSS-карточку не получает вовсе: у неё карточка, рамка #f9f9f9 и наклон
+   уже запечены в пиксели — сама плашка внутри файла повёрнута примерно на 5°
+   (замер: тёмный край едет с 7px на 2px сверху вниз и с 2px на 8px слева
+   направо). всё, что рисует CSS, идёт строго по осям, поэтому любая обводка,
+   скругление или тень оказывались под своим углом и не совпадали с картинкой —
+   свести их нельзя, rotate на <img> крутит и содержимое, и рамку заодно.
+   размер здесь — вся картинка целиком, вместе с запечённой рамкой
+   (0.64em × 121/115), так что арт внутри выходит ровно как у соседа.
+
+   чтобы у infra была такая же толстая рамка и тень, картинку надо
+   переэкспортировать плоской: голый арт без рамки и без наклона, 112×112,
+   как у остальных карточек в /public/facts */
+.hero__logo--lg {
+  width: 0.673em;
+  height: 0.673em;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* курсор ловим только когда ряд проявлен: у .hero стоит pointer-events: none,
+   и без этого ховер на логотипах не срабатывал вовсе. в скрытом состоянии
+   иконки так же прозрачны для курсора — невидимой зоны не остаётся.
+   auto на контейнере, а не на самих <img>: иначе просвет между ними считался
+   бы уходом курсора и ряд моргал бы */
+.hero__cell--reveal.is-active .hero__logos {
+  pointer-events: auto;
+}
+
+/* наклон разный у каждой — как у карточек-фактов, чтобы пара не отыгрывала
+   ховер одним движением */
+.hero__cell--reveal.is-active .hero__logo:hover {
+  translate: 0 3px;
+  rotate: -7deg;
+}
+
+.hero__cell--reveal.is-active .hero__logo--lg:hover {
+  translate: 0 4px;
+  rotate: 9deg;
+}
+
+/* саму reveal-анимацию (проявление + подъезд) вешаем на .hero__text, а не на <p>:
+   у него mix-blend-mode, и собственные opacity/transform элемента изолируют лишь
+   его потомков — а его блендинг против фона родителя продолжает работать. будь
+   opacity/transform на <p>, спан внутри оказался бы в изолированной группе и
+   difference заглох бы */
+.hero__cell--reveal .hero__text,
+.hero__cell--reveal .hero__logos {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.hero__cell--reveal.is-active .hero__text,
+.hero__cell--reveal.is-active .hero__logos {
+  opacity: 1; /* появляются/уходят своим transition (как и вся механика is-active) */
+  transform: translateY(0);
+}
+
+/* цвета белые: текст блендится через difference (см. .hero__text), прозрачность
+   сохранена от прежних чёрных значений. выключка левой колонки — вправо */
+.hero__cell--left {
+  text-align: right;
+  color: rgba(255, 255, 255, 1);
+}
+
+/* приглушённые ячейки (прозрачность 0.4) идут на 400; непрозрачный
+   «продуктовый дизайнер» остаётся на 500 из .hero__grid */
+.hero__cell--accent {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+.hero__cell--left.hero__cell--reveal{
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+
+.hero__cell--muted {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+
+/* крупный hero-заголовок */
+.hero__cell--display {
+  font-size: var(--fs-3xl);
+}
+
+/* мета-строки по краям. равный flex слева/справа держит центральную сетку
+   строго по центру вьюпорта. в покое мета стоит по верхнему краю центрального
+   текста: align-self: flex-start + margin-top = --meta-top (смещение верха
+   сетки, замеряется в Hero.tsx). inner растянут на 100vh, поэтому при скролле
+   sticky-мета залипает в 20px от верха и держится навбаром весь первый экран —
+   отлипает у нижней кромки hero. */
+.hero__meta {
+  flex: 1 0 0;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  margin-top: var(--meta-top, 0);
+  z-index: 3; /* поверх композиции, когда залипла */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  color: var(--text);
+  pointer-events: auto;
+  /* блендинг навбара — normal: раньше стоял overlay, но он был фактически no-op
+     (мета изолировалась внутри стекинг-контекста .hero → смешивалась с пустотой).
+     теперь .hero не изолирован, и overlay начал бы реально блендить мету по фону —
+     оставляем сплошной чёрный, как и было визуально */
+  mix-blend-mode: normal;
+  a{
+    color: var(--text);
+    text-decoration: none;
+  }
+}
+
+/* залипание: мета становится fixed и держится навбаром на всём сайте (sticky
+   жил бы только в пределах hero). top:20px = линия залипания, margin-top
+   сбрасываем (он был нужен только для покоя на уровне текста). bounce при
+   залипании — пружина на rAF из Hero.tsx, она пишет смещение в --bounce-y,
+   которое мы вешаем на transform (в покое 0 — sticky-позиция не страдает).
+   класс is-stuck вешается на inner из Hero.tsx */
+.hero__inner.is-stuck .hero__meta {
+  position: fixed;
+  top: 20px;
+  margin-top: 0;
+  transform: translateY(var(--bounce-y, 0px));
+}
+.hero__inner.is-stuck .hero__meta--left {
+  left: 24px;
+}
+.hero__inner.is-stuck .hero__meta--right {
+  right: 24px;
+}
+/* сетку центрировать вручную не нужно: grid-колонка 1fr|сетка|1fr держит центр
+   даже когда меты ушли из потока в fixed. баунс при reduced-motion отключается
+   в Hero.tsx (пружина просто не запускается), отдельного CSS-правила не нужно */
+
+.hero__meta--left {
+  justify-content: flex-start;
+}
+
+.hero__meta--right {
+  justify-content: flex-end;
+}
+
+.hero__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.hero__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.hero__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ссылки меты (cv, > приветик) — тот же ховер, что у .chrome-link:
+   курсор-палец и лёгкое затухание */
+.hero__meta a:hover,
+.hero__link:hover {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* ── адаптив: мета уходит наверх ─────────────────────────────────────── */
+/* Ряд «мета · композиция · мета» держится примерно до 900px. Ниже боковые 20vw
+   становятся уже самой меты: «карина р.» переносится в две строки, а «написать»
+   налезает на «двигаю компоненты». Поэтому мету кладём отдельной строкой над
+   композицией — и та получает всю ширину вместо 60vw. Раньше на узких мету
+   просто скрывали, и с телефона не было доступа ни к резюме, ни к телеграму.
+
+   Мета здесь — не строка в потоке, а панель, залипшая к верху на весь документ:
+   под первым экраном главной идёт ~8000px кейсов и благодарностей, и мета в
+   потоке уезжала вверх на первой же тысяче пикселей. Дальше до самого подвала
+   на экране не оставалось ни телеграма, ни ссылки на резюме — чтобы написать,
+   надо было скроллить обратно наверх. На страницах кейсов ровно то же делает
+   .site-header (SiteChrome.css), так что поведение сходится по всему сайту. */
+@media (max-width: 900px) {
+  .hero,
+  .hero__inner {
+    /* svh — «маленький» вьюпорт (как при раскрытой адресной строке): с 100vh
+       мобильные браузеры считают высоту по свёрнутому UI, и первый экран
+       оказывается выше видимой области */
+    min-height: 100svh;
+  }
+
+  /* высота панели: аватар 32px + по 12px полей (на ≤760px аватар 28px — там
+     переопределяем) */
+  .hero {
+    --bar-h: 56px;
+  }
+
+  /* матовая подложка панели. Отдельным слоем на всю ширину, потому что мета —
+     это два блока по краям, и общего фона между ними взять неоткуда. Без
+     подложки чёрные буквы залипшей меты шли бы прямо по картинкам кейсов —
+     ровно та причина, по которой .site-header на мобильном тоже с блюром.
+     ::before висит на .hero, а не на .hero__inner: у inner в потомках
+     mix-blend-mode, и лишний слой с backdrop-filter рядом с ними только
+     множит поводы для артефактов композитинга */
+  .hero::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--bar-h);
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  /* композиция — в остатке высоты под панелью. мета ушла из потока, первый ряд
+     схлопнулся в ноль, поэтому высоту панели резервируем паддингом */
+  .hero__inner {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 0;
+    padding: var(--bar-h) 24px 0;
+  }
+
+  /* fixed сразу, а не по .is-stuck: панель должна стоять с самого верха
+     страницы, а не появляться после скролла. --meta-top (замер под десктопное
+     выравнивание с текстом) обнуляем, пружину залипания — тоже: качать нечего,
+     панель никуда не «прилетает» */
+  .hero__meta,
+  .hero__inner.is-stuck .hero__meta {
+    position: fixed;
+    top: 0;
+    height: var(--bar-h);
+    margin-top: 0;
+    padding: 0 24px;
+    gap: 8px;
+    z-index: 5;
+    transform: none;
+  }
+  .hero__meta--left {
+    left: 0;
+  }
+  .hero__meta--right {
+    right: 0;
+  }
+
+  /* композиция — во второй ряд, по центру остатка высоты. колонок по-прежнему
+     две (до 760px они влезают: без боковой меты под них вся ширина) */
+  .hero__grid {
+    grid-area: 2 / 1 / 3 / 3;
+    align-self: center;
+  }
+
+  /* факты — как и гайды, десктопная деталь: разброс рассчитан на широкий
+     экран, а тут карточки лезли бы и на композицию, и под залипшую панель */
+  .hero__facts {
+    display: none;
+  }
+}
+
+/* ── мобильный: композиция в одну колонку ─────────────────────────────── */
+/* Два трека по ~170px рвут «продуктовый дизайнер» и «двигаю компоненты» по
+   краям экрана, поэтому на телефоне складываем композицию в одну колонку с
+   выключкой влево. */
+@media (max-width: 760px) {
+  /* аватар ниже сжимается до 28px — панель следом: 28 + по 12px полей */
+  .hero {
+    --bar-h: 52px;
+  }
+  .hero__inner {
+    padding: var(--bar-h) 20px 0; /* гаттеры как у .cases-page/.case на мобильном */
+  }
+  /* поля панели — те же 20px, что и у контента */
+  .hero__meta,
+  .hero__inner.is-stuck .hero__meta {
+    padding: 0 20px;
+  }
+  .hero__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .hero__grid {
+    grid-template-columns: 1fr;
+    row-gap: 0.4em;
+    justify-items: start;
+  }
+
+  /* порядок строк — по колонкам десктопа, а не по порядку в разметке: в макете
+     пары читаются вертикально («продуктовый дизайнер» → «с любовью к красивому»
+     в левой колонке, «двигаю компоненты» → «сейчас исследую» в правой). при
+     простом складывании в одну колонку пары перемешались бы */
+  .hero__cell--left.hero__cell--trigger {
+    grid-row: 1;
+  }
+  .hero__cell--left.hero__cell--reveal {
+    grid-row: 2;
+  }
+  .hero__cell--accent.hero__cell--trigger {
+    grid-row: 3;
+    /* пары нужно развести: line-height 0.85 сжимает строки внутри блока сильнее,
+       чем row-gap разводит блоки, и все четыре сливались в одно пятно */
+    margin-top: 0.75em;
+  }
+  .hero__cell--muted.hero__cell--reveal {
+    grid-row: 4;
+  }
+  /* чуть крупнее токенных 32px — на телефоне заголовок должен держать экран.
+     потолок низкий, чтобы на границе брейкпоинта не было скачка кегля; нижняя
+     граница ниже токенной: строки склеены неразрывными пробелами и не переносятся,
+     а «двигаю компоненты,» в 32px не влезает в 320px-экран (iPhone SE) */
+  .hero__cell--display {
+    font-size: clamp(28px, 8.6vw, 36px);
+  }
+  /* всё влево: выключка к центру работает только в двухколоночной сетке */
+  .hero__cell--left,
+  .hero__cell--left.hero__cell--trigger,
+  .hero__cell--accent.hero__cell--trigger {
+    text-align: left;
+    justify-self: start;
+  }
+  /* опт-компенсация — про зазор между колонками, которого тут больше нет */
+  .hero__cell--left.hero__cell--trigger,
+  .hero__cell--accent.hero__cell--trigger,
+  .hero__cell--reveal {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* строки «с любовью к красивому» и «сейчас исследую…» на десктопе ждут
+     ховера, а на телефоне ховера нет — и содержательный текст (в том числе
+     где я сейчас работаю) оставался бы за неочевидным тапом. поэтому на
+     мобильном они видны сразу; тап по строкам композиции продолжает
+     вызывать фоновые круги */
+  .hero__cell--reveal .hero__text,
+  .hero__cell--reveal .hero__logos {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* направляющие и полосы-меры (гайды из фигмы) — десктопная деталь про
+     двухколоночную композицию: на телефоне они и не про что, и лезут поверх
+     текста. тап по строкам продолжает вызывать круги */
+  .hero__cell::before,
+  .hero__cell--left.hero__cell--trigger::after,
+  .hero__band,
+  .hero__opt-label,
+  /* подсказка зовёт навестись на строку — гайдов тут всё равно нет */
+  .hero__cursor {
+    display: none;
+  }
+}
+
+/* тач: ховера нет, звать курсором некуда */
+@media (hover: none) {
+  .hero__cursor {
+    display: none;
+  }
+}
