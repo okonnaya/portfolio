@@ -34,7 +34,10 @@ export function Canvas({ sketch, className, style, resolution = 1 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // держим актуальный скетч в ref, чтобы не пересоздавать RAF-цикл на каждый рендер
   const sketchRef = useRef(sketch);
-  sketchRef.current = sketch;
+
+  useEffect(() => {
+    sketchRef.current = sketch;
+  }, [sketch]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -94,7 +97,7 @@ export function Canvas({ sketch, className, style, resolution = 1 }: Props) {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
     };
-  }, []);
+  }, [resolution]);
 
   return <canvas ref={canvasRef} className={className} style={style} />;
 }

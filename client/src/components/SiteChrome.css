@@ -129,9 +129,7 @@
     background: rgba(255, 255, 255, 0.84);
     -webkit-backdrop-filter: blur(18px) saturate(1.08);
     backdrop-filter: blur(18px) saturate(1.08);
-    box-shadow:
-      0 18px 48px rgba(var(--ink), 0.14),
-      0 2px 8px rgba(var(--ink), 0.08);
+    box-shadow: var(--mobile-nav-shadow);
     gap: 8px;
     z-index: 30;
   }

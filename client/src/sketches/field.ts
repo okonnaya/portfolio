@@ -226,7 +226,7 @@ export function createField(): Field {
         count++;
       }
       while (count < N) {
-        let i = -1;
+        let i: number;
         if (fr.length > 0 && Math.random() < pGrow) {
           i = takeFromPool(fr);
           if (i < 0) continue;

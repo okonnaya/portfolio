@@ -56,6 +56,9 @@
    background-color: var(--text-secondary);
 }
 
+.cv__sticky-nav {
+  display: none;
+}
 
 /* ── вертикальный ритм: между разделами ~124px, как в макете ──────────── */
 .cv__content {
@@ -246,8 +249,62 @@
   .cv__nav {
     padding: 28px 20px 0;
   }
+  .cv__sticky-nav {
+    position: fixed;
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: min(430px, calc(100vw - 32px));
+    min-height: 56px;
+    padding: 10px 12px;
+    border: 1px solid rgba(var(--ink), 0.1);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.84);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
+    box-shadow: var(--mobile-nav-shadow);
+    color: var(--text);
+    font-size: var(--fs-md);
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 16px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+  .cv__sticky-nav.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+  .cv__sticky-home,
+  .cv__sticky-download {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cv__sticky-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cv__sticky-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .cv__sticky-home:hover,
+  .cv__sticky-download:hover {
+    opacity: 0.6;
+  }
   .cv {
-    padding: 40px 20px 0;
+    padding: 40px 20px calc(80px + env(safe-area-inset-bottom));
   }
   .cv__content {
     gap: 56px;
@@ -262,6 +319,15 @@
   .cv__label {
     padding-right: 0;
   }
+  .cv__name {
+    font-size: clamp(40px, 14vw, 56px);
+  }
+  .cv__section-title {
+    font-size: clamp(30px, 9vw, 40px);
+  }
+  .cv__entry-title {
+    font-size: clamp(22px, 6.8vw, 28px);
+  }
   .cv__entry {
     grid-template-columns: 1fr;
     row-gap: 2px;
@@ -271,6 +337,7 @@
   }
   .cv__period {
     text-align: left;
+    font-size: 12px;
   }
 }
 
@@ -282,17 +349,18 @@
    120px между разделами растянули бы резюме на три листа. */
 @page {
   size: A4;
-  margin: 14mm 12mm;
+  margin: 8mm 8mm;
 }
 
 @media print {
   .cv-page {
     /* токены переопределяем локально: экранные clamp(vw) на бумаге дают
        случайные кегли, тут нужны фиксированные */
-    --fs-2xl: 28px;
-    --fs-xl: 15px;
-    --fs-md: 11px; /* ≈8.3pt — привычный кегль тела для резюме на бумаге */
-    --period-gap: 16px;
+    --label-col: 24%;
+    --fs-2xl: 21px;
+    --fs-xl: 12px;
+    --fs-md: 8.7px;
+    --period-gap: 10px;
     min-height: 0;
     padding: 0;
   }
@@ -311,7 +379,8 @@
     grid-template-columns: var(--label-col) 1fr;
   }
   .cv__label {
-    padding-right: 24px;
+    padding-right: 14px;
+    line-height: 1.05;
   }
   .cv__entry {
     grid-template-columns: minmax(0, 1fr) max-content;
@@ -322,27 +391,40 @@
   }
   .cv__period {
     text-align: right;
+    line-height: 1.15;
   }
   .cv__content {
-    gap: 22px;
+    gap: 9px;
   }
   .cv__head {
-    gap: 14px;
+    gap: 7px;
   }
   .cv__entries {
-    gap: 14px;
+    gap: 6px;
   }
   .cv__bullets {
-    margin-top: 4px;
-    gap: 3px;
+    margin-top: 2px;
+    gap: 0;
   }
   .cv__notes {
-    gap: 10px;
+    gap: 4px;
+    margin-right: 0;
   }
   .cv__avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+  }
+  .cv__name {
+    line-height: 1;
+  }
+  .cv__about,
+  .cv__label--contacts,
+  .cv__entry-title,
+  .cv__entry-sub,
+  .cv__bullet,
+  .cv__note {
+    line-height: 1.18;
   }
   /* пункт и шапка не разрываются между листами. на .cv__row такое правило
      не ставим: раздел «опыт работы» целиком выше того, что остаётся на листе,

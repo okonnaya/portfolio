@@ -22,7 +22,7 @@ export const EMAIL_URL = `mailto:${EMAIL}`;
 
    Заодно пропишите домен в index.html — og:url и абсолютный og:image.
    ───────────────────────────────────────────────────────────────────────── */
-export const SITE_URL = "";
+export const SITE_URL = "https://okonnaya.com";
 
 /** как адрес показывается в тексте: без протокола, «karina.design» */
 export const SITE_LABEL = SITE_URL.replace(/^https?:\/\//, "").replace(/\/$/, "");

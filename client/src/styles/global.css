@@ -38,6 +38,9 @@
   --text-faint: rgba(var(--ink), 0.30); /* самое тихое, что ещё читают */
   --text-ghost: rgba(var(--ink), 0.2); /* метки вложенности, «роль · срок» */
   --rule: rgba(var(--ink), 0.12); /* разделители, рамки, точки-сепараторы */
+  --mobile-nav-shadow:
+    0 -10px 34px rgba(var(--ink), 0.1),
+    0 1px 6px rgba(var(--ink), 0.06);
 
   --color-fg: var(--text);
   --color-accent: #5a8193;

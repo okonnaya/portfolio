@@ -42,32 +42,16 @@
     />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Yandex.Metrika counter -->
+    <!-- Yandex.Metrika counter: грузим после первого рендера. Через VPN
+         внешние аналитические домены часто отвечают медленно, а портфолио не
+         должно ждать их перед показом контента. -->
     <script type="text/javascript">
-      (function (m, e, t, r, i, k, a) {
-        m[i] =
-          m[i] ||
-          function () {
-            (m[i].a = m[i].a || []).push(arguments);
-          };
-        m[i].l = 1 * new Date();
-        for (var j = 0; j < document.scripts.length; j++) {
-          if (document.scripts[j].src === r) {
-            return;
-          }
-        }
-        (k = e.createElement(t)),
-          (a = e.getElementsByTagName(t)[0]),
-          (k.async = 1),
-          (k.src = r),
-          a.parentNode.insertBefore(k, a);
-      })(
-        window,
-        document,
-        "script",
-        "https://mc.yandex.ru/metrika/tag.js?id=111828641",
-        "ym",
-      );
+      window.ym =
+        window.ym ||
+        function () {
+          (window.ym.a = window.ym.a || []).push(arguments);
+        };
+      window.ym.l = 1 * new Date();
 
       ym(111828641, "init", {
         ssr: true,
@@ -82,18 +66,10 @@
     </script>
     <!-- /Yandex.Metrika counter -->
 
-    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager: сам контейнер подключаем лениво, см. скрипт ниже. -->
     <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-5V7G6ZPX");
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
     </script>
     <!-- End Google Tag Manager -->
   </head>
@@ -119,6 +95,21 @@
       </div>
     </noscript>
     <div id="root"></div>
+    <script>
+      window.addEventListener("load", function () {
+        window.setTimeout(function () {
+          var metrika = document.createElement("script");
+          metrika.async = true;
+          metrika.src = "https://mc.yandex.ru/metrika/tag.js?id=111828641";
+          document.head.appendChild(metrika);
+
+          var gtm = document.createElement("script");
+          gtm.async = true;
+          gtm.src = "https://www.googletagmanager.com/gtm.js?id=GTM-5V7G6ZPX";
+          document.head.appendChild(gtm);
+        }, 1200);
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

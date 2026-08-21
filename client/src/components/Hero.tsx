@@ -433,7 +433,9 @@ export function Hero({ onActiveChange }: Props) {
                выносим наружу и проявляем непрозрачностью — её ничто не режет */}
             <span className="hero__band hero__opt" ref={optRef} aria-hidden="true" />
             <span className="hero__opt-label" aria-hidden="true">
-              20 px • оптическая компенсация
+              <span>20 px</span>
+              <span className="hero__opt-dot" />
+              <span>оптическая компенсация</span>
             </span>
             {/* подсказка: курсор подъезжает к строке через 3с после загрузки.
                висит на акцентной ячейке — её левый верхний угол и есть начало
@@ -453,7 +455,7 @@ export function Hero({ onActiveChange }: Props) {
             }`}
           >
             <span className="hero__text">
-              люблю красоту и приколы
+              люблю красоту и&nbsp;приколы
             </span>
           </p>
           <p
@@ -468,7 +470,7 @@ export function Hero({ onActiveChange }: Props) {
                к концу «в яндексе», как в макете */}
             <span className="hero__text">сейчас рисую</span>
             <br />
-            <span className="hero__text">в яндексе</span>
+            <span className="hero__text">в&nbsp;яндексе</span>
             {/* иконки сервисов встык к «в яндексе» — вне .hero__text: на нём
                difference, логотипы бы им перекрасило. inline-flex садится на
                базовую линию последней строки текста.

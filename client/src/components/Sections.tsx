@@ -386,16 +386,24 @@ function Thanks() {
   );
 }
 
-// многострочный текст → строки, разделённые <br>.
-// перенос можно задать и отдельным элементом массива, и \n внутри строки.
-// typo расставляет неразрывные пробелы, чтобы предлоги не висели в конце строк
-function multiline(lines: Line[]) {
-  return lines.flatMap((line) => typo(line).split("\n")).map((line, i) => (
+function renderLines(lines: Line[], transform: (line: string) => string) {
+  return lines.flatMap((line) => transform(line).split("\n")).map((line, i) => (
     <Fragment key={i}>
       {i > 0 && <br />}
       {line}
     </Fragment>
   ));
+}
+
+// многострочный текст → строки, разделённые <br>.
+// перенос можно задать и отдельным элементом массива, и \n внутри строки.
+// typo расставляет неразрывные пробелы, чтобы предлоги не висели в конце строк
+function multiline(lines: Line[]) {
+  return renderLines(lines, typo);
+}
+
+function multilineMobileLoose(lines: Line[]) {
+  return renderLines(lines, (line) => line.replace(/\u00A0/g, " "));
 }
 
 // ряд кейса: заголовок (левая колонка) + описание (правая), затем плейсхолдер-
@@ -428,7 +436,14 @@ function CaseRow({ item }: { item: CaseItem }) {
       <div className="cases__row">
         {/* h3 под h2 секции («продуктовые кейсы» / «для души»): список кейсов
             должен читаться парсером как список, а не как абзацы */}
-        <h3 className="cases__label">{multiline(item.label)}</h3>
+        <h3 className="cases__label">
+          <span className="cases__label-text cases__label-text--wide">
+            {multiline(item.label)}
+          </span>
+          <span className="cases__label-text cases__label-text--mobile">
+            {multilineMobileLoose(item.label)}
+          </span>
+        </h3>
         <p className="cases__desc">{multiline(item.desc)}</p>
       </div>
       {item.static ? (
@@ -809,8 +824,6 @@ export function Sections() {
       {/* подвал */}
       <SiteFooter />
 
-      {/* декор, приклеенный к низу окна по левому краю центральной колонки */}
-      <img className="tiny-fixed" src="/tiny1.png" alt="" aria-hidden="true" />
     </div>
   );
 }

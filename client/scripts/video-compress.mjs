@@ -5,7 +5,7 @@
  * минутами, а исходники меняются раз в несколько месяцев. Гонять его на каждый
  * `npm run build` — терять время на пустом месте.
  *
- * Что делает: находит ffmpeg, пережимает каждый .webm/.mp4 из public в VP9
+ * Что делает: находит ffmpeg, пережимает каждый .webm из public в VP9
  * (constant quality, две прохода не нужны — режим -crf без -b:v), сносит
  * звуковую дорожку (все видео на сайте немые лупы, дорожка в них — мёртвый вес)
  * и заменяет файл, только если он реально стал меньше. Оригинал уезжает в
@@ -40,8 +40,6 @@ const MAX_WIDTH = 1600;
 // 30, а битрейт от лишних кадров растёт линейно. вниз никогда не тянем: если
 // исходник 24 fps, так и оставляем (иначе ffmpeg надублирует кадры)
 const MAX_FPS = 30;
-
-const VIDEO_EXT = new Set([".webm", ".mp4"]);
 
 function run(cmd, args) {
   return new Promise((done, fail) => {
@@ -96,7 +94,7 @@ async function main() {
     return;
   }
 
-  const files = (await readdir(PUBLIC)).filter((f) => VIDEO_EXT.has(extname(f)));
+  const files = (await readdir(PUBLIC)).filter((f) => extname(f) === ".webm");
   if (!files.length) {
     console.log("[video] в public нет видео");
     return;
@@ -147,13 +145,6 @@ async function main() {
     // оригинал в assets-src (не в сборке), на его место — пережатый
     await rename(src, join(ORIGINALS, file));
     await rename(out, join(PUBLIC, `${basename(file, extname(file))}.webm`));
-    // .mp4 → .webm меняет имя файла: у такого случая остался бы висячий путь
-    // в коде, поэтому предупреждаем громко
-    if (extname(file) !== ".webm") {
-      console.warn(
-        `[video] ${file} стал ${basename(file, extname(file))}.webm — поправьте путь в коде`,
-      );
-    }
     saved += before - after;
     const note = capFps ? `, ${Math.round(fps)} → ${MAX_FPS} fps` : "";
     console.log(`[video] ${file}: ${kb(before)} → ${kb(after)}${note}`);

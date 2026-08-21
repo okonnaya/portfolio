@@ -270,6 +270,9 @@
   left: calc(100% + 10px); /* левый край подписи — на правой вертикали (у линии) */
   top: 0; /* верх акцентной ячейки = верх композиции (это верхний ряд) */
   transform: translateY(calc(-100% - 10px)); /* целиком над текстом, без гориз. сдвига */
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--fs-xs);
@@ -286,6 +289,13 @@
 }
 .hero__grid.is-guides .hero__opt-label {
   opacity: 1;
+}
+.hero__opt-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
 }
 
 .hero__band span {
@@ -896,9 +906,7 @@
     background: rgba(255, 255, 255, 0.84);
     -webkit-backdrop-filter: blur(18px) saturate(1.08);
     backdrop-filter: blur(18px) saturate(1.08);
-    box-shadow:
-      0 18px 48px rgba(var(--ink), 0.14),
-      0 2px 8px rgba(var(--ink), 0.08);
+    box-shadow: var(--mobile-nav-shadow);
     transform: translateX(-50%);
     z-index: 30;
   }
@@ -962,6 +970,7 @@
      а «двигаю компоненты,» в 32px не влезает в 320px-экран (iPhone SE) */
   .hero__cell--display {
     font-size: clamp(28px, 8.6vw, 36px);
+    line-height: 0.96;
   }
   /* всё влево: выключка к центру работает только в двухколоночной сетке */
   .hero__cell--left,

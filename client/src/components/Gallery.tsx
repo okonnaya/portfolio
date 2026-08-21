@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { typo } from "../lib/typo";
-import { isVideoSrc, posterFor } from "../lib/media";
+import { isVideoSrc, posterFor, videoSourcesFor } from "../lib/media";
 import "./Gallery.css";
 
 /**
@@ -173,14 +173,17 @@ export function Gallery({
           isVideoSrc(slide.src) ? (
             <video
               className="gallery__media"
-              src={slide.src}
               poster={posterFor(slide.src)}
               autoPlay
               loop
               muted
               playsInline
               preload="metadata"
-            />
+            >
+              {videoSourcesFor(slide.src).map((source) => (
+                <source key={source.src} src={source.src} type={source.type} />
+              ))}
+            </video>
           ) : (
             <img
               className="gallery__media"

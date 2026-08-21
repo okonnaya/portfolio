@@ -1,5 +1,5 @@
 import { useEffect, useRef, type CSSProperties } from "react";
-import { posterFor } from "../lib/media";
+import { posterFor, videoSourcesFor } from "../lib/media";
 
 /**
  * Автоплей-луп, который начинает грузиться только когда доезжает до экрана.
@@ -44,6 +44,7 @@ export function LazyVideo({
   playOn = "view",
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const sources = videoSourcesFor(src);
 
   useEffect(() => {
     const video = ref.current;
@@ -129,7 +130,6 @@ export function LazyVideo({
       ref={ref}
       className={className}
       style={style}
-      src={src}
       poster={posterFor(src)}
       /* в hover-режиме цикл крутится вручную (см. эффект): нативный loop не
          давал бы событию ended сработать, и ролик нельзя было бы остановить
@@ -141,6 +141,10 @@ export function LazyVideo({
          первый кадр появляется без паузы на загрузку. в остальных режимах
          ролик может быть за несколькими экранами — там по-прежнему none */
       preload={playOn === "hover" ? "metadata" : "none"}
-    />
+    >
+      {sources.map((source) => (
+        <source key={source.src} src={source.src} type={source.type} />
+      ))}
+    </video>
   );
 }

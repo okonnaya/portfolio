@@ -10,6 +10,7 @@
     "cv:pdf": "node scripts/cv-pdf.mjs",
     "posters": "node scripts/video-posters.mjs",
     "video:compress": "node scripts/video-compress.mjs",
+    "video:mp4": "node scripts/video-mp4-fallbacks.mjs",
     "video:boomerang": "node scripts/video-boomerang.mjs",
     "lint": "eslint .",
     "preview": "vite preview"

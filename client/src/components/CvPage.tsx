@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "./SiteChrome";
 import { typo } from "../lib/typo";
@@ -185,6 +185,10 @@ function withBreaks(text: string) {
     ));
 }
 
+function withoutBreaks(text: string) {
+  return typo(text.replace(/\n/g, " "));
+}
+
 // пункт: текстовая часть в первой колонке, период — во второй, у правого края
 function EntryView({ entry }: { entry: Entry }) {
   return (
@@ -206,12 +210,15 @@ function EntryView({ entry }: { entry: Entry }) {
           </ul>
         )}
       </div>
-      {entry.period && <p className="cv__period">{withBreaks(entry.period)}</p>}
+      {entry.period && <p className="cv__period">{withoutBreaks(entry.period)}</p>}
     </div>
   );
 }
 
 export function CvPage() {
+  const navRef = useRef<HTMLDivElement>(null);
+  const [stickyNavVisible, setStickyNavVisible] = useState(false);
+
   useEffect(() => {
     const before = document.title;
     document.title = PAGE_TITLE;
@@ -220,11 +227,27 @@ export function CvPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const updateStickyNav = () => {
+      const nav = navRef.current;
+      if (!nav) return;
+      setStickyNavVisible(nav.getBoundingClientRect().bottom < 0);
+    };
+
+    updateStickyNav();
+    window.addEventListener("scroll", updateStickyNav, { passive: true });
+    window.addEventListener("resize", updateStickyNav);
+    return () => {
+      window.removeEventListener("scroll", updateStickyNav);
+      window.removeEventListener("resize", updateStickyNav);
+    };
+  }, []);
+
   return (
     <main className="cv-page">
       {/* «назад» слева, «скачать» справа — как «назад» в кейсах. на узких
          экранах становятся обычной строкой над резюме (см. css) */}
-      <div className="cv__nav">
+      <div className="cv__nav" ref={navRef}>
         <Link className="cv__back" to="/">
           ← назад
         </Link>
@@ -232,6 +255,24 @@ export function CvPage() {
           скачать
         </a>
       </div>
+
+      <nav
+        className={`cv__sticky-nav${stickyNavVisible ? " is-visible" : ""}`}
+        aria-label="Навигация резюме"
+      >
+        <Link className="cv__sticky-home" to="/">
+          <img
+            className="cv__sticky-avatar"
+            src="/avatar.jpeg"
+            alt=""
+            aria-hidden="true"
+          />
+          <span>карина р.</span>
+        </Link>
+        <a className="cv__sticky-download" href={CV_FILE} download={CV_FILENAME}>
+          скачать
+        </a>
+      </nav>
 
       <div className="cv">
         <div className="cv__content">
@@ -272,7 +313,9 @@ export function CvPage() {
             <section className="cv__row" key={section.label}>
               {/* названия разделов резюме — h2 под h1 с именем: и для
                   скринридера, и для парсеров ats это структура документа */}
-              <h2 className="cv__label">{typo(section.label)}</h2>
+              <h2 className="cv__label cv__section-title">
+                {typo(section.label)}
+              </h2>
               <div className="cv__body">
                 {section.entries && (
                   <div className="cv__entries">
