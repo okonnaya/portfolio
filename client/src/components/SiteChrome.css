@@ -113,17 +113,27 @@
 
 /* ── адаптив ─────────────────────────────────────────────────────────── */
 @media (max-width: 760px) {
-  /* на десктопе шапка залипает в 20px от верха без фона: колонка контента
-     занимает 60vw, и под навбаром остаются белые гаттеры. на телефоне контент
-     во всю ширину — чёрные буквы залипшей шапки шли прямо по картинкам кейса.
-     поэтому здесь это честная панель: прижата к верху, с матовым фоном */
+  /* мобильная шапка уходит вниз фиксированным островом: так она не перекрывает
+     первый экран и остаётся под рукой на длинных кейсах */
   .site-header {
-    top: 0;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.88);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    position: fixed;
+    top: auto;
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: min(430px, calc(100vw - 32px));
+    min-height: 56px;
+    padding: 10px 12px;
+    border: 1px solid rgba(var(--ink), 0.1);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.84);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
+    box-shadow:
+      0 18px 48px rgba(var(--ink), 0.14),
+      0 2px 8px rgba(var(--ink), 0.08);
     gap: 8px;
+    z-index: 30;
   }
   .site-header__meta {
     gap: 8px;

@@ -46,7 +46,7 @@ const FACTS = [
     img: "/facts/hse.svg",
     lines: ["красный диплом", "ниу вшэ"],
     x: "var(--fact-x1)",
-    y: "calc(24.2vh * var(--fact-spread, 1))",
+    y: "calc(24.2vh * var(--fact-spread, 1) + 100px)",
     tilt: "6deg",
     lift: "2px",
   },
@@ -54,7 +54,7 @@ const FACTS = [
     img: "/facts/sber.svg",
     lines: ["рисовала картинки", "для грефа"],
     x: "var(--fact-x3)",
-    y: "calc(24.2vh * var(--fact-spread, 1))",
+    y: "calc(24.2vh * var(--fact-spread, 1) + 100px)",
     tilt: "-5deg",
     lift: "5px",
   },
@@ -62,11 +62,22 @@ const FACTS = [
     img: "/facts/gym.webp",
     lines: ["жим ногами", "100кг"],
     x: "var(--fact-x4)",
-    y: "var(--fact-y2)",
+    y: "var(--fact-y3)",
     tilt: "11deg",
     lift: "3px",
   },
 ];
+
+const GUIDE_DOT_XS = [
+  "var(--fact-x1)",
+  "calc(50% - var(--opt-comp) / 2 - var(--col-gap) / 2)",
+  "calc(50% - var(--opt-comp) / 2 + var(--col-gap) / 2)",
+  "var(--guide-x2)",
+  "var(--fact-x3)",
+  "var(--fact-x4)",
+];
+
+const GUIDE_DOT_YS = ["0px", "var(--fact-y2)"];
 
 /**
  * Главный экран портфолио: мета-строки по краям + центральная
@@ -153,7 +164,14 @@ export function Hero({ onActiveChange }: Props) {
   const optRef = useRef<HTMLSpanElement>(null);
   const avatarRef = useRef<HTMLImageElement>(null);
   const row2Ref = useRef<HTMLParagraphElement>(null);
-  const [anchors, setAnchors] = useState({ x1: 0, x3: 0, x4: 0, y2: 0 });
+  const [anchors, setAnchors] = useState({
+    x1: 0,
+    x2: 0,
+    x3: 0,
+    x4: 0,
+    y2: 0,
+    y3: 0,
+  });
 
   useLayoutEffect(() => {
     const inner = innerRef.current;
@@ -170,9 +188,11 @@ export function Hero({ onActiveChange }: Props) {
       if (!left || !opt || !avatar || !row2) return;
       setAnchors({
         x1: left.left - g.left,
+        x2: opt.left - g.left,
         x3: opt.right - g.left,
         x4: avatar.left - g.left,
         y2: row2.top - g.top,
+        y3: row2.bottom - g.top,
       });
     };
     measure();
@@ -322,6 +342,13 @@ export function Hero({ onActiveChange }: Props) {
     }
   };
 
+  const scrollToCases = () => {
+    const target = document.getElementById("cases");
+    if (!target) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  };
+
   return (
     <>
       <section className="hero" aria-label="Главный экран">
@@ -337,7 +364,7 @@ export function Hero({ onActiveChange }: Props) {
             <img
               ref={avatarRef}
               className="hero__avatar"
-              src="/avatar.jpg"
+              src="/avatar.jpeg"
               alt="Карина Р."
             />
             <span>карина р.</span>
@@ -356,9 +383,11 @@ export function Hero({ onActiveChange }: Props) {
             style={
               {
                 "--fact-x1": `${anchors.x1}px`,
+                "--guide-x2": `${anchors.x2}px`,
                 "--fact-x3": `${anchors.x3}px`,
                 "--fact-x4": `${anchors.x4}px`,
                 "--fact-y2": `${anchors.y2}px`,
+                "--fact-y3": `${anchors.y3}px`,
               } as CSSProperties
             }
           >
@@ -469,6 +498,23 @@ export function Hero({ onActiveChange }: Props) {
               <span>20</span>
             </div>
 
+            <div className="hero__guide-dots" aria-hidden="true">
+              {GUIDE_DOT_YS.flatMap((y) =>
+                GUIDE_DOT_XS.map((x) => (
+                  <span
+                    key={`${x}-${y}`}
+                    className="hero__guide-dot"
+                    style={
+                      {
+                        "--dot-x": x,
+                        "--dot-y": y,
+                      } as CSSProperties
+                    }
+                  />
+                )),
+              )}
+            </div>
+
             {/* факты «про меня» — проявляются вместе с направляющими.
                слой лежит поверх сетки, но курсор не ловит: ховер держится на
                самом триггере, иначе карточки в стороне удерживали бы состояние.
@@ -511,6 +557,14 @@ export function Hero({ onActiveChange }: Props) {
             </a>
           </div>
         </div>
+        <button
+          type="button"
+          className="hero__scroll"
+          aria-label="Перейти к кейсам"
+          onClick={scrollToCases}
+        >
+          <span className="hero__scroll-arrow" aria-hidden="true" />
+        </button>
       </section>
     </>
   );

@@ -324,7 +324,6 @@ const CASES: Record<string, Case> = {
       {
         block: "highlight",
         label: "итоги года",
-        toc: true,
         media: "/highlight2.jpg",
         body: {
           column: [

@@ -652,6 +652,7 @@
 @media (max-width: 760px) {
   .case-page {
     --content: 100%;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
   .case {
     padding: 24px 20px 0;
@@ -706,6 +707,9 @@
   .case__highlight {
     --r: 16px;
     padding: calc(24px + var(--r)) calc(8px + var(--r));
+  }
+  .case__nested .case__highlight .case__row {
+    grid-template-columns: 1fr;
   }
   /* на телефоне сетка ряда схлопнута в одну колонку — вторую надо отпустить,
      иначе grid-column: 2 создаст неявную колонку справа и утащит карточку в неё */

@@ -219,6 +219,30 @@
   mask-size: 150vmax 150vmax;
 }
 
+/* точки на пересечениях направляющих: тот же размер, что у точки в мета-строке
+   (.hero__dot), но отдельный декоративный слой поверх линий/полос */
+.hero__guide-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.hero__grid.is-guides .hero__guide-dots {
+  opacity: 1;
+}
+
+.hero__guide-dot {
+  position: absolute;
+  left: var(--dot-x, 0);
+  top: var(--dot-y, 0);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transform: translate(-50%, -50%);
+}
+
 /* gap column-gap — по центру сетки, подпись по центру полосы */
 .hero__gap {
   left: 50%;
@@ -700,6 +724,53 @@
   text-decoration: none;
 }
 
+.hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 12;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  transition: background 0.15s ease;
+}
+.hero__scroll:hover,
+.hero__scroll:focus-visible {
+  background: #ededef;
+}
+.hero__scroll:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+.hero__scroll-arrow {
+  position: relative;
+  width: 2px;
+  height: 16px;
+  border-radius: 999px;
+  background: currentColor;
+}
+.hero__scroll-arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateX(-50%) rotate(45deg);
+  transform-origin: 50% 50%;
+}
+
 /* ссылки меты (cv, > приветик) — тот же ховер, что у .chrome-link:
    курсор-палец и лёгкое затухание */
 .hero__meta a:hover,
@@ -811,24 +882,58 @@
   /* аватар ниже сжимается до 28px — панель следом: 28 + по 12px полей */
   .hero {
     --bar-h: 52px;
+    --mobile-nav-w: min(430px, calc(100vw - 32px));
+  }
+  .hero::before {
+    top: auto;
+    left: 50%;
+    right: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    width: var(--mobile-nav-w);
+    height: 56px;
+    border: 1px solid rgba(var(--ink), 0.1);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.84);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
+    box-shadow:
+      0 18px 48px rgba(var(--ink), 0.14),
+      0 2px 8px rgba(var(--ink), 0.08);
+    transform: translateX(-50%);
+    z-index: 30;
   }
   .hero__inner {
-    padding: var(--bar-h) 20px 0; /* гаттеры как у .cases-page/.case на мобильном */
+    padding: 24px 20px 120px; /* гаттеры как у .cases-page/.case на мобильном */
   }
-  /* поля панели — те же 20px, что и у контента */
+  /* кликабельные части раскладываются внутри общего нижнего острова */
   .hero__meta,
   .hero__inner.is-stuck .hero__meta {
-    padding: 0 20px;
+    top: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    height: 56px;
+    padding: 0;
+    z-index: 31;
+  }
+  .hero__meta--left,
+  .hero__inner.is-stuck .hero__meta--left {
+    left: calc(50% - var(--mobile-nav-w) / 2 + 12px);
+  }
+  .hero__meta--right,
+  .hero__inner.is-stuck .hero__meta--right {
+    right: calc(50% - var(--mobile-nav-w) / 2 + 12px);
   }
   .hero__avatar {
     width: 28px;
     height: 28px;
     border-radius: 7px;
   }
+  .hero__scroll {
+    bottom: calc(96px + env(safe-area-inset-bottom));
+  }
 
   .hero__grid {
     grid-template-columns: 1fr;
-    row-gap: 0.4em;
+    row-gap: 0.58em;
     justify-items: start;
   }
 
@@ -846,7 +951,7 @@
     grid-row: 3;
     /* пары нужно развести: line-height 0.85 сжимает строки внутри блока сильнее,
        чем row-gap разводит блоки, и все четыре сливались в одно пятно */
-    margin-top: 0.75em;
+    margin-top: 1.05em;
   }
   .hero__cell--muted.hero__cell--reveal {
     grid-row: 4;
@@ -890,6 +995,7 @@
   .hero__cell::before,
   .hero__cell--left.hero__cell--trigger::after,
   .hero__band,
+  .hero__guide-dots,
   .hero__opt-label,
   /* подсказка зовёт навестись на строку — гайдов тут всё равно нет */
   .hero__cursor {

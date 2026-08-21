@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { CasePage } from "./components/CasePage";
+import { ContactNudge } from "./components/ContactNudge";
 import { CvPage } from "./components/CvPage";
 import { Home } from "./components/Home";
 import { NotFound } from "./components/NotFound";
@@ -31,6 +32,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <ContactNudge />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/case/:slug" element={<CasePage />} />

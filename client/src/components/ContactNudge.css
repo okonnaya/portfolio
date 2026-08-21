@@ -1,0 +1,80 @@
+.contact-nudge {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 40;
+  width: min(320px, calc(100vw - 32px));
+  padding: 18px 44px 18px 18px;
+  border: 1px solid rgba(255, 94, 170, 0.34);
+  border-radius: 8px;
+  background: #ffd6ea;
+  color: var(--text);
+  font-family: var(--font-display);
+  box-shadow:
+    0 20px 60px rgba(255, 94, 170, 0.28),
+    0 4px 14px rgba(var(--ink), 0.1);
+  animation: contact-nudge-in 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-nudge__text {
+  max-width: 15em;
+  font-size: 18px;
+  font-weight: 560;
+  line-height: 1.08;
+}
+
+.contact-nudge__link {
+  display: inline-block;
+  margin-top: 14px;
+  color: inherit;
+  font-size: var(--fs-md);
+  font-weight: 520;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.contact-nudge__link:hover,
+.contact-nudge__close:hover {
+  opacity: 0.62;
+}
+
+.contact-nudge__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes contact-nudge-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-nudge {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .contact-nudge {
+    right: 16px;
+    bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}

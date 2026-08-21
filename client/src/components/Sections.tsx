@@ -27,7 +27,7 @@ type CaseItem = {
   slug: string; // адрес страницы кейса: /case/{slug}
   label: Line[]; // левая колонка — заголовок кейса (может быть в 2 строки)
   desc: Line[]; // правая колонка — короткое описание
-  image?: string; // картинка-превью в плейсхолдере (путь от корня, напр. /avatar.jpg)
+  image?: string; // картинка-превью в плейсхолдере (путь от корня, напр. /avatar.jpeg)
   href?: string; // внешняя ссылка вместо страницы кейса (открывается в новой вкладке)
   slides?: GallerySlide[]; // если задано — клик открывает галерею-лайтбокс вместо перехода
   static?: boolean; // плитка без ссылки/ховера/перехода — просто медиа
@@ -769,7 +769,7 @@ export function Sections() {
   return (
     <div className="cases-page">
       {/* продуктовые кейсы */}
-      <section className="cases" aria-label="кейсы">
+      <section className="cases" id="cases" aria-label="кейсы">
         <header className="cases__head">
           <h2 className="cases__title">
             опыт

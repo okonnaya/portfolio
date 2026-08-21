@@ -85,7 +85,7 @@ const html = `<!doctype html>
 </style></head>
 <body>
   <div class="top">
-    <img class="avatar" src="/avatar.jpg" alt="" />
+    <img class="avatar" src="/avatar.jpeg" alt="" />
     <span class="muted">${NOW}</span>
   </div>
   <div class="mid">

@@ -240,7 +240,7 @@ export function CvPage() {
           <div className="cv__head">
             <div className="cv__row">
               <div className="cv__label cv__label--avatar">
-                <img className="cv__avatar" src="/avatar.jpg" alt="Карина Р." />
+                <img className="cv__avatar" src="/avatar.jpeg" alt="Карина Р." />
               </div>
               <div className="cv__body">
                 <h1 className="cv__name">{withBreaks(NAME)}</h1>

@@ -20,7 +20,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header__meta">
-        <img className="site-header__avatar" src="/avatar.jpg" alt="Карина Р." />
+        <img className="site-header__avatar" src="/avatar.jpeg" alt="Карина Р." />
         <Link className="chrome-link" to="/">
           карина р.
         </Link>

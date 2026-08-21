@@ -543,32 +543,35 @@
 /* узкие экраны: колонки складываются в одну, выключка влево, как в hero-меди */
 @media (max-width: 760px) {
   .cases-page {
-    padding: 64px 20px 48px;
+    padding: 88px 24px calc(128px + env(safe-area-inset-bottom));
     --content: 100%; /* 60vw слишком узко на телефоне — во всю ширину, как hero */
   }
   /* колонка тут во всю ширину, и её левый край — это боковой padding страницы,
      а не середина минус полколонки */
   .tiny-fixed {
-    left: 20px;
+    left: 24px;
   }
   /* вертикальный ритм десктопа (144px между рядами, 124px над заголовком) на
      экране 390px превращается в пустые пролёты — сжимаем пропорционально */
   .cases {
-    gap: 64px;
+    gap: 88px;
   }
   .cases + .cases {
-    margin-top: 72px;
+    margin-top: 104px;
+  }
+  .case_block {
+    gap: 32px;
   }
   .cases__title {
-    margin-top: 56px;
-    margin-bottom: -40px; /* отрицательный отступ ужимаем вместе с .cases gap */
+    margin-top: 72px;
+    margin-bottom: -48px; /* отрицательный отступ ужимаем вместе с .cases gap */
   }
   .cases__head,
   .cases__row,
   .thanks__row {
     grid-template-columns: 1fr;
     column-gap: 0;
-    row-gap: 6px;
+    row-gap: 10px;
   }
   .cases__title,
   .cases__title--end {
@@ -607,13 +610,13 @@
      телефоне это столбец, а координаты просто игнорируются — они приезжают
      кастомными свойствами, и здесь их достаточно не использовать */
   .cases--soul {
-    gap: 24px;
+    gap: 40px;
   }
   .soul {
     aspect-ratio: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 28px;
   }
   .soul__tile {
     position: static;
@@ -635,12 +638,12 @@
      превращаются в тот же ровный список карточек, от которого и уходим.
      Скругления и зазоры ужимаем пропорционально ширине плитки */
   .soul-flow {
-    --gap: 12px;
+    --gap: 16px;
     --soul-r: 16px;
     --soul-r-wide: 20px;
   }
   .soul-cells {
-    --gap: 10px;
+    --gap: 14px;
     --soul-r: 14px;
     --soul-r-wide: 18px;
   }
