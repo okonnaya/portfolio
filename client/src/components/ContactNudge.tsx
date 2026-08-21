@@ -33,10 +33,12 @@ export function ContactNudge() {
         aria-label="закрыть баннер"
         onClick={dismiss}
       >
-        ×
+        х
       </button>
       <p className="contact-nudge__text">
-        может, пора познакомиться лично?
+        {"может, пора "}
+        <br />
+        познакомиться лично?
       </p>
       <a
         className="contact-nudge__link"

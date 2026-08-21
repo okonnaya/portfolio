@@ -1,36 +1,46 @@
 .contact-nudge {
   position: fixed;
-  right: 24px;
+  right: 36px;
   bottom: calc(24px + env(safe-area-inset-bottom));
   z-index: 40;
-  width: min(320px, calc(100vw - 32px));
-  padding: 18px 44px 18px 18px;
-  border: 1px solid rgba(255, 94, 170, 0.34);
-  border-radius: 8px;
-  background: #ffd6ea;
-  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  padding: 8px 20px;
+  border: 1px solid #f9f9f9;
+  border-radius: 1000px;
+  background: #ff69b4;
+  color: #fff;
   font-family: var(--font-display);
-  box-shadow:
-    0 20px 60px rgba(255, 94, 170, 0.28),
-    0 4px 14px rgba(var(--ink), 0.1);
+  filter: drop-shadow(0 0 1.4px rgba(0, 0, 0, 0.16));
   animation: contact-nudge-in 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .contact-nudge__text {
-  max-width: 15em;
-  font-size: 18px;
-  font-weight: 560;
-  line-height: 1.08;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  text-align: center;
+  word-break: break-word;
 }
 
 .contact-nudge__link {
-  display: inline-block;
-  margin-top: 14px;
-  color: inherit;
-  font-size: var(--fs-md);
-  font-weight: 520;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px 6px;
+  border-radius: 20px;
+  background: #fff;
+  color: #545454;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .contact-nudge__link:hover,
@@ -40,17 +50,21 @@
 
 .contact-nudge__close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
+  top: 0;
+  right: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0 0 2px;
   border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  font-family: inherit;
   font-size: 24px;
+  font-weight: 500;
   line-height: 1;
   cursor: pointer;
 }
@@ -74,7 +88,44 @@
 
 @media (max-width: 760px) {
   .contact-nudge {
-    right: 16px;
-    bottom: calc(88px + env(safe-area-inset-bottom));
+    top: calc(12px + env(safe-area-inset-top));
+    right: 12px;
+    bottom: auto;
+    left: 12px;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    height: auto;
+    padding: 12px 12px 12px 16px;
+    border-radius: 12px;
+    animation-name: contact-nudge-in-top;
+  }
+
+  .contact-nudge__text {
+    flex: 1;
+    text-align: left;
+  }
+
+  .contact-nudge__text br {
+    display: none;
+  }
+
+  .contact-nudge__close {
+    position: static;
+    order: 1;
+    flex-shrink: 0;
+  }
+
+  @keyframes contact-nudge-in-top {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -12px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
 }

@@ -27,6 +27,7 @@ type CaseItem = {
   slug: string; // адрес страницы кейса: /case/{slug}
   label: Line[]; // левая колонка — заголовок кейса (может быть в 2 строки)
   desc: Line[]; // правая колонка — короткое описание
+  facts?: Line[]; // короткие факты-лейблы под описанием кейса
   image?: string; // картинка-превью в плейсхолдере (путь от корня, напр. /avatar.jpeg)
   href?: string; // внешняя ссылка вместо страницы кейса (открывается в новой вкладке)
   slides?: GallerySlide[]; // если задано — клик открывает галерею-лайтбокс вместо перехода
@@ -40,18 +41,21 @@ const PRODUCT_CASES: CaseItem[] = [
     slug: "ai-component",
     label: ["ai-ассистент\nв b2e"],
     desc: ["внутренний помощник\nдля корпоративной экосистемы"],
+    facts: ["7+ продуктов", "3→1 спринт", "8 интервью"],
     image: "/case1.svg",
   },
   {
     slug: "search-button",
     label: ["поисковой\nсервис"],
     desc: ["отдельный продукт\nи встраиваемое решение"],
+    facts: ["+4,19 п.п.", "57→61%", "регулярные интервью"],
     image: "/case3_1.png",
   },
   {
     slug: "ai-research-platform",
     label: ["ai research", "platform"],
     desc: ["внутреннее решение\nдля коллаборации"],
+    facts: ["4 юзер-сториза", "1 защита", "в разработке"],
     image: "/case2_1.png",
   },
   // проект личный, но по объёму это полноценный продуктовый кейс: ресёрч →
@@ -63,6 +67,7 @@ const PRODUCT_CASES: CaseItem[] = [
     slug: "emotions-space",
     label: ["архив\nрадостей"],
     desc: ["от исследования\nдо MVP продукта"],
+    facts: ["130 респондентов", "30 интервью", "50+ активных"],
     image: "/case4_1.png",
   },
 ];
@@ -446,6 +451,15 @@ function CaseRow({ item }: { item: CaseItem }) {
         </h3>
         <p className="cases__desc">{multiline(item.desc)}</p>
       </div>
+      {item.facts && (
+        <ul className="cases__facts" aria-label="Короткие факты">
+          {item.facts.map((fact) => (
+            <li className="cases__fact" key={fact}>
+              {typo(fact)}
+            </li>
+          ))}
+        </ul>
+      )}
       {item.static ? (
         <div className="cases__ph cases__ph--static">{media}</div>
       ) : item.slides ? (

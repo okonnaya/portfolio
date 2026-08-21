@@ -424,7 +424,7 @@ export function Hero({ onActiveChange }: Props) {
             <span className="hero__text">
               двигаю&nbsp;компоненты,<br />смотрю&nbsp;метрики;
             </span>
-            {/* поле «оптической компенсации» — 40px справа от блока текста,
+            {/* поле «оптической компенсации» — 24px справа от блока текста,
                его левая граница = правая вертикаль композиции. подпись —
                ОТДЕЛЬНЫМ узлом, не внутри полосы: радиальная маска-проявление
                полосы ярка только в центре и гаснет к краям, а длинная подпись
@@ -433,7 +433,7 @@ export function Hero({ onActiveChange }: Props) {
                выносим наружу и проявляем непрозрачностью — её ничто не режет */}
             <span className="hero__band hero__opt" ref={optRef} aria-hidden="true" />
             <span className="hero__opt-label" aria-hidden="true">
-              <span>20 px</span>
+              <span>12 px</span>
               <span className="hero__opt-dot" />
               <span>оптическая компенсация</span>
             </span>
