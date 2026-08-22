@@ -42,7 +42,7 @@ const PRODUCT_CASES: CaseItem[] = [
     label: ["ai-ассистент\nв b2e"],
     desc: ["внутренний помощник\nдля корпоративной экосистемы"],
     facts: ["7+ продуктов", "3→1 спринт", "8 интервью"],
-    image: "/case1.svg",
+    image: "/case1.png",
   },
   {
     slug: "search-button",
@@ -451,15 +451,6 @@ function CaseRow({ item }: { item: CaseItem }) {
         </h3>
         <p className="cases__desc">{multiline(item.desc)}</p>
       </div>
-      {item.facts && (
-        <ul className="cases__facts" aria-label="Короткие факты">
-          {item.facts.map((fact) => (
-            <li className="cases__fact" key={fact}>
-              {typo(fact)}
-            </li>
-          ))}
-        </ul>
-      )}
       {item.static ? (
         <div className="cases__ph cases__ph--static">{media}</div>
       ) : item.slides ? (
@@ -487,6 +478,17 @@ function CaseRow({ item }: { item: CaseItem }) {
         <Link to={`/case/${item.slug}`} className="cases__ph" aria-label={ariaLabel}>
           {media}
         </Link>
+      )}
+      {/* факты-теги идут под плиткой и разведены по её краям — строка читается
+          как подпись к картинке, а не как хвост описания */}
+      {item.facts && (
+        <ul className="cases__facts" aria-label="Короткие факты">
+          {item.facts.map((fact) => (
+            <li className="cases__fact" key={fact}>
+              {typo(fact)}
+            </li>
+          ))}
+        </ul>
       )}
       </div>
       {item.slides && galleryOpen && (

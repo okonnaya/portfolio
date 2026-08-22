@@ -94,13 +94,15 @@
   font-size: var(--fs-xl);
   font-weight: 400; /* приглушённый → 400 */
 }
+/* строка фактов под плиткой кейса: тянется во всю её ширину, теги разведены
+   по краям картинки (space-between), собственный размер пилюль не трогаем */
 .cases__facts {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 8px;
-  align-self: flex-end;
-  width: calc((100% - var(--col-gap)) / 2);
-  margin: -8px 0 4px;
+  width: 100%;
+  margin: -8px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -568,14 +570,17 @@
   .case_block {
     gap: 32px;
   }
+  /* на телефоне три тега в строку не помещаются, и space-between на перенесённой
+     строке разъезжается дырами — прижимаем к левому краю */
   .cases__facts {
-    align-self: stretch;
-    width: 100%;
+    justify-content: flex-start;
     margin: -16px 0 0;
   }
   .cases__title {
     margin-top: 72px;
     margin-bottom: -48px; /* отрицательный отступ ужимаем вместе с .cases gap */
+    font-size: clamp(36px, 10.2vw, 48px);
+    line-height: 0.98;
   }
   .cases__head,
   .cases__row,
@@ -600,6 +605,10 @@
   .thanks__note,
   .cases__title--end {
     text-align: left;
+  }
+  .cases__label {
+    font-size: clamp(28px, 8.2vw, 36px);
+    line-height: 1.02;
   }
   /* «the end» и «special thanks» на десктопе стоят парой в одном ряду, и
      отрицательный margin-bottom гасит там flex-gap секции. в одну колонку они

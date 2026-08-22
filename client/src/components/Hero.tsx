@@ -422,7 +422,7 @@ export function Hero({ onActiveChange }: Props) {
             onClick={handleGuidesClick}
           >
             <span className="hero__text">
-              двигаю&nbsp;компоненты,<br />смотрю&nbsp;метрики;
+              двигаю компоненты,<br />смотрю метрики;
             </span>
             {/* поле «оптической компенсации» — 24px справа от блока текста,
                его левая граница = правая вертикаль композиции. подпись —

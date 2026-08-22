@@ -1,37 +1,43 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="2" y="2" width="60" height="60" fill="white"/>
-  <g shape-rendering="crispEdges">
-    <rect x="2" y="2" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="17" y="2" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="32" y="2" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="47" y="2" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="9.5" y="9.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="24.5" y="9.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="39.5" y="9.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="54.5" y="9.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="2" y="17" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="17" y="17" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="32" y="17" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="47" y="17" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="9.5" y="24.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="24.5" y="24.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="39.5" y="24.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="54.5" y="24.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="2" y="32" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="17" y="32" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="32" y="32" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="47" y="32" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="9.5" y="39.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="24.5" y="39.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="39.5" y="39.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="54.5" y="39.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="2" y="47" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="17" y="47" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="32" y="47" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="47" y="47" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="9.5" y="54.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="24.5" y="54.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="39.5" y="54.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-    <rect x="54.5" y="54.5" width="7.5" height="7.5" fill="#F5F5F5"/>
-  </g>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_430_18433)">
+<rect width="60" height="60" fill="white"/>
+<path d="M60 0H0V60H60V0Z" fill="white"/>
+<path d="M7.5 0H0V7.5H7.5V0Z" fill="#F5F5F5"/>
+<path d="M22.5 0H15V7.5H22.5V0Z" fill="#F5F5F5"/>
+<path d="M37.5 0H30V7.5H37.5V0Z" fill="#F5F5F5"/>
+<path d="M52.5 0H45V7.5H52.5V0Z" fill="#F5F5F5"/>
+<path d="M15 7.5H7.5V15H15V7.5Z" fill="#F5F5F5"/>
+<path d="M30 7.5H22.5V15H30V7.5Z" fill="#F5F5F5"/>
+<path d="M45 7.5H37.5V15H45V7.5Z" fill="#F5F5F5"/>
+<path d="M60 7.5H52.5V15H60V7.5Z" fill="#F5F5F5"/>
+<path d="M7.5 15H0V22.5H7.5V15Z" fill="#F5F5F5"/>
+<path d="M22.5 15H15V22.5H22.5V15Z" fill="#F5F5F5"/>
+<path d="M37.5 15H30V22.5H37.5V15Z" fill="#F5F5F5"/>
+<path d="M52.5 15H45V22.5H52.5V15Z" fill="#F5F5F5"/>
+<path d="M15 22.5H7.5V30H15V22.5Z" fill="#F5F5F5"/>
+<path d="M30 22.5H22.5V30H30V22.5Z" fill="#F5F5F5"/>
+<path d="M45 22.5H37.5V30H45V22.5Z" fill="#F5F5F5"/>
+<path d="M60 22.5H52.5V30H60V22.5Z" fill="#F5F5F5"/>
+<path d="M7.5 30H0V37.5H7.5V30Z" fill="#F5F5F5"/>
+<path d="M22.5 30H15V37.5H22.5V30Z" fill="#F5F5F5"/>
+<path d="M37.5 30H30V37.5H37.5V30Z" fill="#F5F5F5"/>
+<path d="M52.5 30H45V37.5H52.5V30Z" fill="#F5F5F5"/>
+<path d="M15 37.5H7.5V45H15V37.5Z" fill="#F5F5F5"/>
+<path d="M30 37.5H22.5V45H30V37.5Z" fill="#F5F5F5"/>
+<path d="M45 37.5H37.5V45H45V37.5Z" fill="#F5F5F5"/>
+<path d="M60 37.5H52.5V45H60V37.5Z" fill="#F5F5F5"/>
+<path d="M7.5 45H0V52.5H7.5V45Z" fill="#F5F5F5"/>
+<path d="M22.5 45H15V52.5H22.5V45Z" fill="#F5F5F5"/>
+<path d="M37.5 45H30V52.5H37.5V45Z" fill="#F5F5F5"/>
+<path d="M52.5 45H45V52.5H52.5V45Z" fill="#F5F5F5"/>
+<path d="M15 52.5H7.5V60H15V52.5Z" fill="#F5F5F5"/>
+<path d="M30 52.5H22.5V60H30V52.5Z" fill="#F5F5F5"/>
+<path d="M45 52.5H37.5V60H45V52.5Z" fill="#F5F5F5"/>
+<path d="M60 52.5H52.5V60H60V52.5Z" fill="#F5F5F5"/>
+</g>
+<defs>
+<clipPath id="clip0_430_18433">
+<rect width="60" height="60" fill="white"/>
+</clipPath>
+</defs>
 </svg>

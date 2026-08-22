@@ -692,6 +692,21 @@
   .case__next {
     text-align: left;
   }
+  .case__label--lead {
+    font-size: clamp(36px, 10.2vw, 48px);
+    line-height: 0.98;
+  }
+  .case__label {
+    font-size: clamp(26px, 7.8vw, 34px);
+    line-height: 1.02;
+  }
+  .case__nested-title {
+    font-size: clamp(30px, 8.8vw, 40px);
+    line-height: 1;
+  }
+  .case__highlight .case__label {
+    font-size: clamp(28px, 8.2vw, 36px) !important;
+  }
   /* на телефоне подложка так же вровень с картинками — в гаттере .case (20px),
      а не в полях; поля внутри мельче, иначе от колонки ничего не останется */
   .case__nested {

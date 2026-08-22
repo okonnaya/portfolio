@@ -49,3 +49,10 @@
 .notfound__link:hover {
   color: var(--text);
 }
+
+@media (max-width: 760px) {
+  .notfound__title {
+    font-size: clamp(36px, 10.2vw, 48px);
+    line-height: 0.98;
+  }
+}
