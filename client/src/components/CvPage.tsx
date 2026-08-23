@@ -42,11 +42,12 @@ const NAME = "карина\nрамазанова";
 
 // контакты — кликабельные: телеграм ведёт в чат, почта открывает письмо.
 // в cv.pdf ссылки остаются рабочими (chrome сохраняет их при печати)
-// адрес портфолио первым: cv.pdf пересылают отдельно от ссылки, и без него
-// из файла не попасть в кейсы. пока SITE_URL пуст (см. lib/contacts.ts),
-// строки просто нет — пустая ссылка хуже её отсутствия
-const CONTACTS: { label: string; href: string }[] = [
-  ...(SITE_URL ? [{ label: SITE_LABEL, href: SITE_URL }] : []),
+// адрес портфолио первым, но только на бумаге (printOnly): cv.pdf пересылают
+// отдельно от ссылки, и без него из файла не попасть в кейсы, — а на самом
+// сайте ссылка на этот же сайт лишняя. пока SITE_URL пуст (см.
+// lib/contacts.ts), строки просто нет — пустая ссылка хуже её отсутствия
+const CONTACTS: { label: string; href: string; printOnly?: boolean }[] = [
+  ...(SITE_URL ? [{ label: SITE_LABEL, href: SITE_URL, printOnly: true }] : []),
   { label: TELEGRAM_HANDLE, href: TELEGRAM_URL },
   { label: EMAIL, href: EMAIL_URL },
 ];
@@ -85,7 +86,7 @@ const SECTIONS: Section[] = [
         bullets: [
           "интерфейсы и флоу для концептов и их защиты",
           "исследовала пользователей и рынок",
-          "визуал для c-level’а и правительства",
+          "визуал для c-level’а",
           "работа с gen ai",
           "визуализация данных",
         ],
@@ -288,19 +289,20 @@ export function CvPage() {
               </div>
             </div>
             <div className="cv__row">
+              {/* каждый контакт — своя строка (блочная ссылка, а не <br>):
+                  так строку с адресом сайта можно спрятать с экрана целиком,
+                  не оставив пустой строки от разделителя */}
               <p className="cv__label cv__label--contacts">
-                {CONTACTS.map((contact, i) => (
-                  <Fragment key={contact.href}>
-                    {i > 0 && <br />}
-                    <a
-                      className="cv__contact"
-                      href={contact.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {contact.label}
-                    </a>
-                  </Fragment>
+                {CONTACTS.map((contact) => (
+                  <a
+                    key={contact.href}
+                    className={`cv__contact${contact.printOnly ? " cv__contact--print" : ""}`}
+                    href={contact.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {contact.label}
+                  </a>
                 ))}
               </p>
               <div className="cv__body">

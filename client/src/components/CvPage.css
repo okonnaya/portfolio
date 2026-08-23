@@ -32,7 +32,7 @@
   transform: translateY(-50%);
   z-index: 5;
   font-size: var(--fs-md);
-  color: var(--text-secondary);
+  color: hotpink;
   text-decoration: none;
 }
 .cv__back {
@@ -112,11 +112,17 @@
    подчёркивания) — подсвечиваются только на ховер. в pdf это тоже правильно:
    печатается тот же приглушённый текст, а ссылка остаётся рабочей */
 .cv__contact {
+  display: block; /* строка на контакт — вместо <br> между ними */
   color: inherit;
   text-decoration: none;
 }
 .cv__contact:hover {
   color: var(--text);
+}
+/* адрес портфолио нужен только в cv.pdf: на самом сайте ссылка на этот же
+   сайт бессмысленна, а в пересланном файле это единственный путь к кейсам */
+.cv__contact--print {
+  display: none;
 }
 
 /* имя — как lead-заголовок кейса */
@@ -368,6 +374,10 @@
   .cv__nav,
   .cv-page .cases-footer {
     display: none;
+  }
+  /* …а адрес портфолио, наоборот, есть только на листе */
+  .cv__contact--print {
+    display: block;
   }
   .cv {
     max-width: none;
