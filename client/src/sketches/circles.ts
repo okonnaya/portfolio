@@ -79,7 +79,11 @@ const COLOR_MAX_USES = 2;
 // превьюшками кейсов, то есть с тем, что видно сразу. Откладываем до простоя:
 // к первому ховеру они успевают, а если нет — генерация просто отдаст такому
 // кругу цвет вместо картинки (см. isReady в пуле ниже), эффект не ломается.
-const loadedImages: HTMLImageElement[] = IMAGES.map(() => new Image());
+// При статической генерации модуль импортируется в Node, где конструктора Image
+// нет. Пустой серверный пул безопасен: картинки нужны только интерактивному
+// canvas после hydration в браузере.
+const loadedImages: HTMLImageElement[] =
+  typeof Image === "undefined" ? [] : IMAGES.map(() => new Image());
 
 const startLoading = () => {
   loadedImages.forEach((img, i) => {

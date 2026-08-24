@@ -744,6 +744,11 @@
   flex-shrink: 0;
 }
 
+.hero__mobile-avatar,
+.hero__mobile-only {
+  display: none;
+}
+
 .hero__dot {
   width: 4px;
   height: 4px;
@@ -934,6 +939,11 @@
     box-shadow: var(--mobile-nav-shadow);
     transform: translateX(-50%);
     z-index: 30;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .hero.is-stuck::before {
+    opacity: 1;
   }
   .hero__inner {
     padding: 24px 20px 120px; /* гаттеры как у .cases-page/.case на мобильном */
@@ -946,6 +956,14 @@
     height: 56px;
     padding: 0;
     z-index: 31;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .hero.is-stuck .hero__meta,
+  .hero.is-stuck .hero__inner.is-stuck .hero__meta {
+    opacity: 1;
+    pointer-events: auto;
   }
   .hero__meta--left,
   .hero__inner.is-stuck .hero__meta--left {
@@ -971,6 +989,37 @@
     grid-template-columns: 1fr;
     row-gap: 0.58em;
     justify-items: start;
+    align-self: start;
+    margin-top: 72px;
+  }
+
+  .hero__mobile-avatar {
+    display: block;
+    grid-row: 1;
+    width: 112px;
+    height: 112px;
+    margin-bottom: 22px;
+    border-radius: 28px;
+    object-fit: cover;
+  }
+
+  .hero__mobile-only {
+    display: inline;
+    color: var(--text-secondary);
+  }
+  .hero__mobile-paragraph {
+    display: block;
+    margin-top: 0.55em;
+  }
+  .hero__desktop-only {
+    display: none;
+  }
+  .hero__logos--mobile {
+    display: inline-flex;
+    opacity: 1;
+    transform: none;
+    mix-blend-mode: normal;
+    isolation: isolate;
   }
 
   /* порядок строк — по колонкам десктопа, а не по порядку в разметке: в макете
@@ -978,10 +1027,10 @@
      в левой колонке, «двигаю компоненты» → «сейчас исследую» в правой). при
      простом складывании в одну колонку пары перемешались бы */
   .hero__cell--left.hero__cell--trigger {
-    grid-row: 1;
+    grid-row: 2;
   }
   .hero__cell--left.hero__cell--reveal {
-    grid-row: 2;
+    grid-row: 4;
   }
   .hero__cell--accent.hero__cell--trigger {
     grid-row: 3;
@@ -990,7 +1039,11 @@
     margin-top: 1.05em;
   }
   .hero__cell--muted.hero__cell--reveal {
-    grid-row: 4;
+    grid-row: 5;
+  }
+  .hero__cell--left.hero__cell--reveal,
+  .hero__cell--muted.hero__cell--reveal {
+    display: none;
   }
   /* чуть крупнее токенных 32px — на телефоне заголовок должен держать экран.
      потолок низкий, чтобы на границе брейкпоинта не было скачка кегля; нижняя
@@ -999,6 +1052,11 @@
   .hero__cell--display {
     font-size: clamp(34px, 10.8vw, 46px);
     line-height: 0.94;
+  }
+  .hero__cell--accent.hero__cell--display,
+  .hero__cell--reveal.hero__cell--display {
+    font-size: clamp(21px, 6.2vw, 26px);
+    line-height: 1.05;
   }
   /* всё влево: выключка к центру работает только в двухколоночной сетке */
   .hero__cell--left,

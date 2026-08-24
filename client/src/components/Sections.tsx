@@ -408,7 +408,10 @@ function multiline(lines: Line[]) {
 }
 
 function multilineMobileLoose(lines: Line[]) {
-  return renderLines(lines, (line) => line.replace(/\u00A0/g, " "));
+  return lines
+    .flatMap((line) => line.split("\n"))
+    .join(" ")
+    .replace(/\u00A0/g, " ");
 }
 
 // ряд кейса: заголовок (левая колонка) + описание (правая), затем плейсхолдер-
@@ -449,7 +452,14 @@ function CaseRow({ item }: { item: CaseItem }) {
             {multilineMobileLoose(item.label)}
           </span>
         </h3>
-        <p className="cases__desc">{multiline(item.desc)}</p>
+        <p className="cases__desc">
+          <span className="cases__desc-text cases__desc-text--wide">
+            {multiline(item.desc)}
+          </span>
+          <span className="cases__desc-text cases__desc-text--mobile">
+            {multilineMobileLoose(item.desc)}
+          </span>
+        </p>
       </div>
       {item.static ? (
         <div className="cases__ph cases__ph--static">{media}</div>
@@ -594,10 +604,11 @@ function workMedia(work: SoulWork) {
 
 // обёртка плитки: у работы со ссылкой — <a> с ховером, у остальных просто рамка
 function workFrame(work: SoulWork) {
-  if (!work.href) return <div className="soulw__frame">{workMedia(work)}</div>;
+  const frameClass = `soulw__frame soulw__frame--${work.key}`;
+  if (!work.href) return <div className={frameClass}>{workMedia(work)}</div>;
   return (
     <a
-      className="soulw__frame soulw__link"
+      className={`${frameClass} soulw__link`}
       href={work.href}
       target="_blank"
       rel="noopener noreferrer"

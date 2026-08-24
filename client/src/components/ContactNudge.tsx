@@ -33,14 +33,7 @@ export function ContactNudge() {
         aria-label="закрыть баннер"
         onClick={dismiss}
       >
-        <svg
-          className="contact-nudge__close-icon"
-          viewBox="0 0 12 12"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path d="M1 1L11 11M11 1L1 11" />
-        </svg>
+        <span className="contact-nudge__close-icon" aria-hidden="true" />
       </button>
       <p className="contact-nudge__text">
         {"может, пора "}

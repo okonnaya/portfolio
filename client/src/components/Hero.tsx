@@ -272,7 +272,10 @@ export function Hero({ onActiveChange }: Props) {
       lastY.current = y;
       lastT.current = now;
 
-      const isStuck = y >= metaTop - 20;
+      const isMobile = window.matchMedia("(max-width: 760px)").matches;
+      const isStuck = isMobile
+        ? y >= window.innerHeight * 0.18
+        : y >= metaTop - 20;
       if (isStuck !== stuckRef.current) {
         stuckRef.current = isStuck;
         // баунс только при залипании и только если скролл был достаточно резким:
@@ -351,7 +354,10 @@ export function Hero({ onActiveChange }: Props) {
 
   return (
     <>
-      <section className="hero" aria-label="Главный экран">
+      <section
+        className={`hero${stuck ? " is-stuck" : ""}`}
+        aria-label="Главный экран"
+      >
         <div
           className={`hero__inner${stuck ? " is-stuck" : ""}`}
           ref={innerRef}
@@ -391,6 +397,12 @@ export function Hero({ onActiveChange }: Props) {
               } as CSSProperties
             }
           >
+          <img
+            className="hero__mobile-avatar"
+            src="/avatar.jpeg"
+            alt=""
+            aria-hidden="true"
+          />
           {/* h1 страницы. Композиция показывает только роль, а имя стоит мелкой
              строкой в мете — для поисковиков и парсеров резюме этого мало, они
              читают заголовок. Поэтому фамилию дописываем невидимо: заголовок
@@ -421,8 +433,22 @@ export function Hero({ onActiveChange }: Props) {
             onMouseLeave={handleGuidesLeave}
             onClick={handleGuidesClick}
           >
-            <span className="hero__text">
-              двигаю компоненты,<br />смотрю метрики;
+            <span className="hero__text hero__desktop-only">
+              двигаю&nbsp;компоненты,<br />смотрю&nbsp;метрики;
+            </span>
+            <span className="hero__mobile-only">
+              разбираю сложные сценарии, двигаю компоненты, смотрю метрики;
+              <span className="hero__mobile-paragraph">
+                люблю красоту и приколы, сейчас рисую в&nbsp;яндексе
+                <span className="hero__logos hero__logos--mobile" aria-hidden="true">
+                  <img className="hero__logo" src="/facts/yandex.webp" alt="" />
+                  <img
+                    className="hero__logo hero__logo--lg"
+                    src="/facts/yandex-infra.webp"
+                    alt=""
+                  />
+                </span>
+              </span>
             </span>
             {/* поле «оптической компенсации» — 24px справа от блока текста,
                его левая граница = правая вертикаль композиции. подпись —
@@ -455,7 +481,7 @@ export function Hero({ onActiveChange }: Props) {
             }`}
           >
             <span className="hero__text">
-              люблю красоту и&nbsp;приколы
+              люблю красоту и&nbsp;приколы,
             </span>
           </p>
           <p

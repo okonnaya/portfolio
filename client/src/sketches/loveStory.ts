@@ -23,9 +23,10 @@ const STOPS: [number, string][] = [
 // сердце — один path из макета; Path2D понимает SVG-синтаксис d как есть.
 // путь задан в своих координатах (viewBox 755.527×663) и ставится со сдвигом
 // HEART_DX/HEART_DY внутри кружка
-const HEART = new Path2D(
-  "M755.527 196.53C755.527 86.5431 668.827 0 561.989 0C475.719 0 402.741 59.4347 377.743 139.741C352.724 59.4452 279.745 2.0683 193.475 2.0683C86.6166 2.0683 0 86.1441 0 196.173C0 251.692 22.1213 290.916 57.7234 332.891L377.921 663L697.752 332.891C733.385 290.916 755.527 252.007 755.527 196.53Z",
-);
+const HEART_PATH =
+  "M755.527 196.53C755.527 86.5431 668.827 0 561.989 0C475.719 0 402.741 59.4347 377.743 139.741C352.724 59.4452 279.745 2.0683 193.475 2.0683C86.6166 2.0683 0 86.1441 0 196.173C0 251.692 22.1213 290.916 57.7234 332.891L377.921 663L697.752 332.891C733.385 290.916 755.527 252.007 755.527 196.53Z";
+let heart: Path2D | null = null;
+const getHeart = () => (heart ??= new Path2D(HEART_PATH));
 const HEART_FILL = "#ff5cb6";
 const HEART_DX = 39.736;
 const HEART_DY = 132.928;
@@ -78,7 +79,7 @@ export function drawLoveStory(
   ctx.save();
   ctx.translate(HEART_DX, HEART_DY);
   ctx.fillStyle = HEART_FILL;
-  ctx.fill(HEART);
+  ctx.fill(getHeart());
   ctx.restore();
 
   ctx.fillStyle = TEXT_COLOR;

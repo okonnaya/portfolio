@@ -1,13 +1,19 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./styles/global.css";
 import App from "./App.tsx";
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root")!;
+const app = (
   <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 );
+
+// Production build already contains prerendered markup. Hydration attaches
+// handlers without throwing that HTML away; dev keeps the ordinary SPA path.
+if (root.hasChildNodes()) hydrateRoot(root, app);
+else createRoot(root).render(app);

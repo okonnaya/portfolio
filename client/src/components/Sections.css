@@ -96,6 +96,9 @@
 }
 /* строка фактов под плиткой кейса: тянется во всю её ширину, теги разведены
    по краям картинки (space-between), собственный размер пилюль не трогаем */
+.cases__desc-text--mobile {
+  display: none;
+}
 .cases__facts {
   display: flex;
   flex-wrap: wrap;
@@ -305,6 +308,9 @@
   aspect-ratio: var(--ar);
   object-fit: cover;
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.soulw__frame--poster .soulw__media {
+  object-position: center 44%;
 }
 /* наведение на плитку гасит соседей: работа под курсором остаётся в полном
    цвете, остальные уходят в фон. Считает это :has() на контейнере — так
@@ -562,19 +568,21 @@
   /* вертикальный ритм десктопа (144px между рядами, 124px над заголовком) на
      экране 390px превращается в пустые пролёты — сжимаем пропорционально */
   .cases {
-    gap: 88px;
+    gap: 52px;
   }
   .cases + .cases {
-    margin-top: 104px;
+    margin-top: 48px;
   }
   .case_block {
-    gap: 32px;
+    gap: 20px;
   }
   /* на телефоне три тега в строку не помещаются, и space-between на перенесённой
      строке разъезжается дырами — прижимаем к левому краю */
   .cases__facts {
     justify-content: flex-start;
-    margin: -16px 0 0;
+    align-self: stretch;
+    width: 100%;
+    margin: -8px 0 0;
   }
   .cases__title {
     margin-top: 72px;
@@ -582,12 +590,17 @@
     font-size: clamp(36px, 10.2vw, 48px);
     line-height: 0.98;
   }
+  #cases > .cases__head .cases__title {
+    margin-bottom: 16px;
+    font-size: clamp(36px, 8.6vw, 44px);
+    line-height: 0.96;
+  }
   .cases__head,
   .cases__row,
   .thanks__row {
     grid-template-columns: 1fr;
     column-gap: 0;
-    row-gap: 10px;
+    row-gap: 6px;
   }
   .cases__title,
   .cases__title--end {
@@ -599,6 +612,12 @@
   .cases__label-text--mobile {
     display: inline;
   }
+  .cases__desc-text--wide {
+    display: none;
+  }
+  .cases__desc-text--mobile {
+    display: inline;
+  }
   .cases__label,
   .cases__desc,
   .thanks__name,
@@ -607,8 +626,8 @@
     text-align: left;
   }
   .cases__label {
-    font-size: clamp(28px, 8.2vw, 36px);
-    line-height: 1.02;
+    font-size: clamp(26px, 7.4vw, 32px);
+    line-height: 0.98;
   }
   /* «the end» и «special thanks» на десктопе стоят парой в одном ряду, и
      отрицательный margin-bottom гасит там flex-gap секции. в одну колонку они
@@ -624,6 +643,17 @@
   .cases__head--split .cases__title--muted {
     margin-top: 0;
   }
+  .cases + .cases.cases--thanks {
+    margin-top: 40px;
+    gap: 32px;
+  }
+  .cases--thanks .cases__title {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .cases--thanks .cases__head--split {
+    row-gap: 2px;
+  }
   /* боковые 12% съедали бы ещё 84px из 350px ширины */
   .thanks {
     padding: 0;
@@ -637,6 +667,9 @@
      кастомными свойствами, и здесь их достаточно не использовать */
   .cases--soul {
     gap: 40px;
+  }
+  .cases--soul .cases__title {
+    margin-top: 0;
   }
   .soul {
     aspect-ratio: auto;
