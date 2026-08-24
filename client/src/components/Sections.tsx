@@ -485,7 +485,7 @@ function CaseRow({ item }: { item: CaseItem }) {
           {media}
         </a>
       ) : (
-        <Link to={`/case/${item.slug}`} className="cases__ph" aria-label={ariaLabel}>
+        <Link to={`/case/${item.slug}/`} className="cases__ph" aria-label={ariaLabel}>
           {media}
         </Link>
       )}

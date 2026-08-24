@@ -39,7 +39,7 @@ export function NotFound() {
           <Link className="notfound__link" to="/">
             ← на главную
           </Link>
-          <Link className="notfound__link" to="/cv">
+          <Link className="notfound__link" to="/cv/">
             cv
           </Link>
           <a

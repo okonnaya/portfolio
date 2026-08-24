@@ -1089,7 +1089,7 @@ export function CasePage() {
         )}
 
         {next && (
-          <Link className="case__next" to={`/case/${next.slug}`}>
+          <Link className="case__next" to={`/case/${next.slug}/`}>
             {/* <span className="case__next-label">следующий кейс</span> */}
             <span className="case__next-title">
               {withBreaks(next.title)} <span aria-hidden="true">→</span>
