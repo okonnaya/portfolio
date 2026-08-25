@@ -979,7 +979,7 @@
     border-radius: 7px;
   }
   .hero__scroll {
-    bottom: calc(96px + env(safe-area-inset-bottom));
+    bottom: calc(24px + env(safe-area-inset-bottom));
     /* сдвиг влево — про двухколоночную композицию, как и опт-компенсация выше:
        на телефоне колонка одна, и кнопка просто стоит по центру экрана */
     transform: translateX(-50%);
@@ -1002,14 +1002,14 @@
     row-gap: 0.58em;
     justify-items: start;
     align-self: start;
-    margin-top: 72px;
+    margin-top: 0;
   }
 
   .hero__mobile-avatar {
     display: block;
     grid-row: 1;
-    width: 112px;
-    height: 112px;
+    width: 80px;
+    height: 80px;
     margin-bottom: 22px;
     border-radius: 28px;
     object-fit: cover;

@@ -41,7 +41,7 @@ const PRODUCT_CASES: CaseItem[] = [
     slug: "ai-component",
     label: ["ai-ассистент\nв b2e"],
     desc: ["внутренний помощник\nдля корпоративной экосистемы"],
-    facts: ["масштабирование на 7+ продуктов", "внедрение 3 → 1 спринт","для внедрения без дизайн-поддержки"],
+    facts: ["масштабирование на 7+ продуктов", "внедрение 3 → 1 спринт","для внедрения без дизайн-поддержки"],
     image: "/case1.png",
   },
   {
@@ -408,10 +408,12 @@ function multiline(lines: Line[]) {
 }
 
 function multilineMobileLoose(lines: Line[]) {
-  return lines
+  const loose = lines
     .flatMap((line) => line.split("\n"))
     .join(" ")
     .replace(/\u00A0/g, " ");
+
+  return typo(loose);
 }
 
 // ряд кейса: заголовок (левая колонка) + описание (правая), затем плейсхолдер-
@@ -828,7 +830,7 @@ export function Sections() {
         aria-label="Для души"
       >
         <header className="cases__head">
-          <h2 className="cases__title">для души</h2>
+          <h2 className="cases__title">для{"\u00A0"}души</h2>
         </header>
         {soulVariant === "masonry" ? (
           <SoulMasonry />

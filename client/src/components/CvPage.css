@@ -10,12 +10,18 @@
   --content: 75vw; /* = 1077 / 1440 в макете */
   --label-col: 30%; /* = 322 / 1077 */
   --period-gap: 32px; /* отбивка периода от текста пункта */
+  --cv-text-lg: var(--fs-xl);
+  --cv-text-sm: var(--fs-md);
+  --cv-weight-strong: 500;
+  --cv-weight-regular: 400;
+  --cv-color-primary: var(--text);
+  --cv-color-secondary: var(--text-secondary);
   padding: 0 0 16px;
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-weight: var(--cv-weight-regular);
+  letter-spacing: 0;
   line-height: 1.1;
-  color: var(--text);
+  color: var(--cv-color-primary);
 }
 
 .cv {
@@ -83,9 +89,9 @@
   margin: 0;
   padding-right: 24px; /* чтобы длинное название не упиралось в контент */
   text-align: left;
-  color: var(--text);
-  font-size: var(--fs-xl);
-  font-weight: 500;
+  color: var(--cv-color-primary);
+  font-size: var(--cv-text-lg);
+  font-weight: var(--cv-weight-strong);
   line-height: 1.1;
 }
 .cv__body {
@@ -103,9 +109,9 @@
   object-fit: cover;
 }
 .cv__label--contacts {
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
-  font-weight: 400;
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 /* контакты-ссылки выглядят как обычный текст резюме (цвет наследуется, без
@@ -128,15 +134,20 @@
 /* имя — как lead-заголовок кейса */
 .cv__name {
   margin: 0;
-  font-size: var(--fs-2xl);
-  font-weight: 500;
+  font-size: var(--cv-text-lg);
+  font-weight: var(--cv-weight-strong);
   line-height: 1.05;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+}
+.cv__name-short,
+.cv__mobile-role {
+  display: none;
 }
 .cv__about {
   margin: 0;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 
@@ -161,22 +172,24 @@
 }
 .cv__entry-title {
   margin: 0;
-  color: var(--text);
-  font-size: var(--fs-md);
-  font-weight: 500;
+  color: var(--cv-color-primary);
+  font-size: var(--cv-text-lg);
+  font-weight: var(--cv-weight-strong);
   line-height: 1.35;
 }
 .cv__period {
   margin: 0;
   text-align: right;
-  color: var(--text-muted);
-  font-size: var(--fs-md);
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 .cv__entry-sub {
   margin: 0;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 
@@ -194,15 +207,16 @@
   grid-template-columns: 4px 1fr;
   column-gap: 12px;
   align-items: start;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 .cv__dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--text-secondary);
+  background: var(--cv-color-secondary);
   margin-top: 0.5em;
 }
 
@@ -218,8 +232,9 @@
 }
 .cv__note {
   margin: 0;
-  color: var(--text);
-  font-size: var(--fs-md);
+  color: var(--cv-color-secondary);
+  font-size: var(--cv-text-sm);
+  font-weight: var(--cv-weight-regular);
   line-height: 1.35;
 }
 
@@ -253,7 +268,7 @@
     --content: 100%;
   }
   .cv__nav {
-    padding: 28px 20px 0;
+    padding: 28px 36px 0;
   }
   .cv__sticky-nav {
     position: fixed;
@@ -310,7 +325,7 @@
     opacity: 0.6;
   }
   .cv {
-    padding: 40px 20px calc(80px + env(safe-area-inset-bottom));
+    padding: 40px 36px calc(80px + env(safe-area-inset-bottom));
   }
   .cv__content {
     gap: 56px;
@@ -322,17 +337,49 @@
     grid-template-columns: 1fr;
     row-gap: 8px;
   }
+  .cv__row--intro {
+    grid-template-columns: 46px minmax(0, 1fr);
+    column-gap: 18px;
+    row-gap: 0;
+    align-items: start;
+  }
   .cv__label {
     padding-right: 0;
   }
+  .cv__label--avatar {
+    padding-top: 2px;
+  }
+  .cv__avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+  }
   .cv__name {
-    font-size: clamp(44px, 15vw, 62px);
+    font-size: 22px;
+    line-height: 1;
   }
-  .cv__section-title {
-    font-size: clamp(34px, 10vw, 46px);
+  .cv__name-full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  .cv__entry-title {
-    font-size: clamp(24px, 7.4vw, 32px);
+  .cv__name-short {
+    display: inline;
+  }
+  .cv__mobile-role {
+    display: block;
+    margin: 10px 0 0;
+    color: var(--cv-color-secondary);
+    font-size: 22px;
+    font-weight: var(--cv-weight-regular);
+    line-height: 1;
+  }
+  .cv__row--intro + .cv__row {
+    margin-top: 16px;
   }
   .cv__entry {
     grid-template-columns: 1fr;
@@ -343,7 +390,6 @@
   }
   .cv__period {
     text-align: left;
-    font-size: 12px;
   }
 }
 
@@ -355,18 +401,21 @@
    120px между разделами растянули бы резюме на три листа. */
 @page {
   size: A4;
-  margin: 8mm 8mm;
+  margin: 10mm 9mm;
 }
 
 @media print {
   .cv-page {
     /* токены переопределяем локально: экранные clamp(vw) на бумаге дают
        случайные кегли, тут нужны фиксированные */
-    --label-col: 24%;
-    --fs-2xl: 21px;
-    --fs-xl: 12px;
-    --fs-md: 8.7px;
-    --period-gap: 10px;
+    --label-col: 25%;
+    --cv-text-lg: 13px;
+    --cv-text-sm: 9.4px;
+    --period-gap: 12px;
+    /* длина строки мелкого текста. колонка контента на листе — ~545px, и в неё
+       влезало под 120 знаков: такую строку глаз теряет на возврате. режем до
+       комфортных ~80 */
+    --cv-measure: 430px;
     min-height: 0;
     padding: 0;
   }
@@ -389,7 +438,7 @@
     grid-template-columns: var(--label-col) 1fr;
   }
   .cv__label {
-    padding-right: 14px;
+    padding-right: 16px;
     line-height: 1.05;
   }
   .cv__entry {
@@ -403,30 +452,57 @@
     text-align: right;
     line-height: 1.15;
   }
+  /* ритм на листе: раньше всё стояло вплотную, хотя резюме занимает три
+     четверти A4 — свободное место внизу пустили на воздух между блоками */
   .cv__content {
-    gap: 9px;
+    gap: 34px;
   }
   .cv__head {
-    gap: 7px;
+    gap: 14px;
+    /* после абзаца о себе отбивка больше, чем между разделами: шапка —
+       отдельный блок, и с ней резюме читается сверху вниз, а не сплошняком */
+    margin-bottom: 22px;
   }
   .cv__entries {
-    gap: 6px;
+    gap: 16px;
   }
   .cv__bullets {
-    margin-top: 2px;
-    gap: 0;
+    margin-top: 5px;
+    gap: 3px;
   }
   .cv__notes {
-    gap: 4px;
-    margin-right: 0;
+    gap: 8px;
+  }
+  /* абзац о себе, подписи мест работы, буллиты и скиллы обрываются по одной
+     мерке — правый край у всего мелкого текста общий, период остаётся на своём
+     месте (он вторая колонка сетки .cv__entry, ограничение его не двигает) */
+  .cv__about,
+  .cv__entry-sub,
+  .cv__bullets,
+  .cv__notes {
+    max-width: var(--cv-measure);
   }
   .cv__avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
   }
   .cv__name {
+    font-size: 22px;
     line-height: 1;
+  }
+  .cv__name-full {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+  .cv__name-short,
+  .cv__mobile-role {
+    display: none;
   }
   .cv__about,
   .cv__label--contacts,

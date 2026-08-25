@@ -39,6 +39,8 @@ type Note = { text: string };
 type Section = { label: string; entries?: Entry[]; notes?: Note[] };
 
 const NAME = "карина\nрамазанова";
+const MOBILE_NAME = "карина р.";
+const ROLE = "продуктовый дизайнер";
 
 // контакты — кликабельные: телеграм ведёт в чат, почта открывает письмо.
 // в cv.pdf ссылки остаются рабочими (chrome сохраняет их при печати)
@@ -275,7 +277,7 @@ export function CvPage() {
             alt=""
             aria-hidden="true"
           />
-          <span>карина р.</span>
+          <span>{typo(MOBILE_NAME)}</span>
         </Link>
         <a className="cv__sticky-download" href={CV_FILE} download={CV_FILENAME}>
           скачать
@@ -287,12 +289,20 @@ export function CvPage() {
           {/* шапка: аватар · имя, ниже контакты · о себе — две строки той же
              сетки, чтобы контакты стояли ровно против абзаца */}
           <div className="cv__head">
-            <div className="cv__row">
+            <div className="cv__row cv__row--intro">
               <div className="cv__label cv__label--avatar">
                 <img className="cv__avatar" src="/avatar.jpeg" alt="Карина Р." />
               </div>
               <div className="cv__body">
-                <h1 className="cv__name">{withBreaks(NAME)}</h1>
+                <h1 className="cv__name">
+                  <span className="cv__name-full">{withBreaks(NAME)}</span>
+                  <span className="cv__name-short" aria-hidden="true">
+                    {typo(MOBILE_NAME)}
+                  </span>
+                </h1>
+                <p className="cv__mobile-role" aria-hidden="true">
+                  {typo(ROLE)}
+                </p>
               </div>
             </div>
             <div className="cv__row">

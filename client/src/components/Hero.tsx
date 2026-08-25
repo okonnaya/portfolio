@@ -52,7 +52,7 @@ const FACTS = [
   },
   {
     img: "/facts/sber.svg",
-    lines: ["рисовала картинки", "для грефа"],
+    lines: ["рисовала картинки", "для грефа"],
     x: "var(--fact-x3)",
     y: "calc(24.2vh * var(--fact-spread, 1) + 100px)",
     tilt: "-5deg",
