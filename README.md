@@ -15,6 +15,20 @@
 
 ## Запуск (dev)
 
+Самый простой способ — один скрипт из корня, поднимает оба процесса,
+Ctrl+C гасит оба:
+
+```sh
+bin/dev                    # Rails :3000 + Vite :5173
+PORT=3001 bin/dev          # если нужен другой порт бэка
+```
+
+Перед первым запуском: `bundle install`, `bin/rails db:create`,
+`cd client && npm install`.
+
+<details>
+<summary>Или вручную, в двух терминалах</summary>
+
 **Терминал 1 — бэкенд:**
 
 ```sh
@@ -33,6 +47,8 @@ cd client
 npm install           # один раз
 npm run dev           # http://localhost:5173
 ```
+
+</details>
 
 Откройте http://localhost:5173 — страница покажет статус подключения к API
 (`GET /api/health`). Это подтверждает рабочую связку фронт↔бэк.
