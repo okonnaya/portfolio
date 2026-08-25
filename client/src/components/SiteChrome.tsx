@@ -25,7 +25,7 @@ export function SiteHeader() {
           карина р.
         </Link>
         <span className="chrome-dot" aria-hidden="true" />
-        <Link className="chrome-link" to="/cv">
+        <Link className="chrome-link" to="/cv/">
           cv
         </Link>
       </div>

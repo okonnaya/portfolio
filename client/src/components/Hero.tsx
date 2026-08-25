@@ -375,7 +375,7 @@ export function Hero({ onActiveChange }: Props) {
             />
             <span>карина р.</span>
             <span className="hero__dot" aria-hidden="true" />
-            <Link className="hero__link" to="/cv">
+            <Link className="hero__link" to="/cv/">
               cv
             </Link>
           </div>
