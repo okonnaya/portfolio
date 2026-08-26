@@ -170,6 +170,11 @@
   flex-direction: column;
   gap: 2px;
 }
+.cv__entry-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .cv__entry-title {
   margin: 0;
   color: var(--cv-color-primary);
@@ -355,7 +360,7 @@
     border-radius: 11px;
   }
   .cv__name {
-    font-size: 22px;
+    font-size: 24px;
     line-height: 1;
   }
   .cv__name-full {
@@ -372,14 +377,29 @@
   }
   .cv__mobile-role {
     display: block;
-    margin: 10px 0 0;
+    margin: 4px 0 0;
     color: var(--cv-color-secondary);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: var(--cv-weight-regular);
     line-height: 1;
   }
   .cv__row--intro + .cv__row {
-    margin-top: 16px;
+    margin-top: 8px;
+  }
+  .cv__label--contacts {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .cv__contact {
+    display: inline;
+  }
+  .cv__contact:not(.cv__contact--print) + .cv__contact:not(.cv__contact--print)::before {
+    content: " · ";
+  }
+  .cv__section-title {
+    font-size: 24px;
   }
   .cv__entry {
     grid-template-columns: 1fr;
@@ -390,6 +410,20 @@
   }
   .cv__period {
     text-align: left;
+  }
+  .cv__entry--with-bullets .cv__entry-heading {
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 0;
+  }
+  .cv__entry--with-bullets .cv__entry-sub::before {
+    content: " · ";
+    white-space: pre;
+  }
+  .cv__notes {
+    width: 100%;
+    margin-right: 0;
   }
 }
 
@@ -428,6 +462,17 @@
   .cv__contact--print {
     display: block;
   }
+  .cv__label--contacts,
+  .cv__entry--with-bullets .cv__entry-heading {
+    display: block;
+  }
+  .cv__contact {
+    display: block;
+  }
+  .cv__contact::before,
+  .cv__entry--with-bullets .cv__entry-sub::before {
+    content: none;
+  }
   .cv {
     max-width: none;
     padding: 0;
@@ -440,6 +485,9 @@
   .cv__label {
     padding-right: 16px;
     line-height: 1.05;
+  }
+  .cv__section-title {
+    font-size: var(--cv-text-lg);
   }
   .cv__entry {
     grid-template-columns: minmax(0, 1fr) max-content;

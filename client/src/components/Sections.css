@@ -113,8 +113,8 @@
   display: inline-flex;
   align-items: center;
   min-height: 24px;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 4px 12px;
+  border-radius: 64px;
   background: rgba(var(--ink), 0.06);
   color: var(--text-muted);
   font-family: var(--font-sans);
@@ -582,7 +582,7 @@
     justify-content: flex-start;
     align-self: stretch;
     width: 100%;
-    gap: 4px;
+    gap: 8px;
     margin: -8px 0 0;
   }
   .cases__title {
