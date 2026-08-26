@@ -134,7 +134,7 @@
 /* имя — как lead-заголовок кейса */
 .cv__name {
   margin: 0;
-  font-size: var(--cv-text-lg);
+  font-size: 38px;
   font-weight: var(--cv-weight-strong);
   line-height: 1.05;
   letter-spacing: 0;
