@@ -27,11 +27,9 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
 
-      - name: Build frontend
+      - name: Install dependencies
         working-directory: client
-        run: |
-          npm ci
-          npm run build
+        run: npm ci
 
       - name: Install SSH key
         run: |
@@ -40,9 +38,36 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Upload build
+      - name: Ensure web roots
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "mkdir -p /var/www/portfolio /var/www/portfolio-kinopoisk"
+
+      - name: Build main portfolio
+        working-directory: client
+        env:
+          VITE_PORTFOLIO_VARIANT: main
+          VITE_SITE_URL: https://okonnaya.com
+        run: npm run build
+
+      - name: Upload main portfolio
         run: |
           rsync -az --delete \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
             client/dist/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/portfolio/"
+
+      - name: Build Kinopoisk portfolio
+        working-directory: client
+        env:
+          VITE_PORTFOLIO_VARIANT: kinopoisk
+          VITE_SITE_URL: https://kinopoisk.okonnaya.com
+        run: npm run build
+
+      - name: Upload Kinopoisk portfolio
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            client/dist/ \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/portfolio-kinopoisk/"

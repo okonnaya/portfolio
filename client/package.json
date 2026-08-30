@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs && node scripts/cv-pdf.mjs",
+    "build:kinopoisk": "VITE_PORTFOLIO_VARIANT=kinopoisk VITE_SITE_URL=https://kinopoisk.okonnaya.com npm run build",
     "og": "node scripts/og-image.mjs",
     "cv:pdf": "node scripts/cv-pdf.mjs",
     "posters": "node scripts/video-posters.mjs",

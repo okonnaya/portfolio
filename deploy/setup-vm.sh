@@ -9,17 +9,21 @@
 # Переменные (опционально):
 #   REPO_URL   — репозиторий (по умолчанию github.com/okonnaya/portfolio)
 #   BRANCH     — ветка (main)
-#   DOMAIN     — домен для nginx (portfolio.example.com)
+#   DOMAIN     — основной домен для nginx (okonnaya.com)
+#   KINOPOISK_DOMAIN — поддомен для версии под Kinopoisk
 #   APP_DIR    — где хранить исходники (/var/www/portfolio-src)
 #   WEB_ROOT   — откуда nginx раздаёт статику (/var/www/portfolio)
+#   KINOPOISK_WEB_ROOT — откуда nginx раздаёт Kinopoisk-версию
 
 set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/okonnaya/portfolio.git}"
 BRANCH="${BRANCH:-main}"
-DOMAIN="${DOMAIN:-portfolio.example.com}"
+DOMAIN="${DOMAIN:-okonnaya.com}"
+KINOPOISK_DOMAIN="${KINOPOISK_DOMAIN:-kinopoisk.okonnaya.com}"
 APP_DIR="${APP_DIR:-/var/www/portfolio-src}"
 WEB_ROOT="${WEB_ROOT:-/var/www/portfolio}"
+KINOPOISK_WEB_ROOT="${KINOPOISK_WEB_ROOT:-/var/www/portfolio-kinopoisk}"
 
 if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
   echo "Запусти от root: sudo bash $0"
@@ -46,8 +50,8 @@ echo "==> Chromium для og.jpg и cv.pdf при сборке (необязат
 apt-get install -y -qq chromium-browser || apt-get install -y -qq chromium || true
 
 echo "==> Каталоги"
-mkdir -p "$APP_DIR" "$WEB_ROOT"
-chown -R "${SUDO_USER:-root}:${SUDO_USER:-root}" "$APP_DIR" "$WEB_ROOT" 2>/dev/null || true
+mkdir -p "$APP_DIR" "$WEB_ROOT" "$KINOPOISK_WEB_ROOT"
+chown -R "${SUDO_USER:-root}:${SUDO_USER:-root}" "$APP_DIR" "$WEB_ROOT" "$KINOPOISK_WEB_ROOT" 2>/dev/null || true
 
 echo "==> Клонирование репозитория"
 if [[ ! -d "$APP_DIR/.git" ]]; then
@@ -58,7 +62,12 @@ fi
 
 echo "==> nginx"
 NGINX_SITE="/etc/nginx/sites-available/portfolio"
-sed "s/portfolio.example.com/${DOMAIN}/g" "$APP_DIR/deploy/nginx.conf" > "$NGINX_SITE"
+sed \
+  -e "s#__PRIMARY_DOMAIN__#${DOMAIN}#g" \
+  -e "s#__KINOPOISK_DOMAIN__#${KINOPOISK_DOMAIN}#g" \
+  -e "s#__KINOPOISK_WEB_ROOT__#${KINOPOISK_WEB_ROOT}#g" \
+  -e "s#__WEB_ROOT__#${WEB_ROOT}#g" \
+  "$APP_DIR/deploy/nginx.conf" > "$NGINX_SITE"
 ln -sf "$NGINX_SITE" /etc/nginx/sites-enabled/portfolio
 rm -f /etc/nginx/sites-enabled/default
 nginx -t
@@ -71,10 +80,12 @@ bash "$APP_DIR/deploy/deploy.sh"
 echo ""
 echo "Готово."
 echo "  Статика:  $WEB_ROOT"
+echo "  Kinopoisk: $KINOPOISK_WEB_ROOT"
 echo "  Исходники: $APP_DIR"
 echo "  Сайт:     http://${DOMAIN}"
+echo "  Kinopoisk: http://${KINOPOISK_DOMAIN}"
 echo ""
 echo "Дальше:"
-echo "  1. Настрой DNS A-запись на IP виртуалки"
-echo "  2. SSL: sudo apt install certbot python3-certbot-nginx && sudo certbot --nginx -d ${DOMAIN}"
+echo "  1. Настрой DNS A-записи на IP виртуалки: ${DOMAIN}, ${KINOPOISK_DOMAIN}"
+echo "  2. SSL: sudo apt install certbot python3-certbot-nginx && sudo certbot --nginx -d ${DOMAIN} -d ${KINOPOISK_DOMAIN}"
 echo "  3. Обновления: sudo bash $APP_DIR/deploy/deploy.sh"

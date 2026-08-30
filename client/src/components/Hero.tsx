@@ -7,6 +7,7 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 import { TELEGRAM_URL, WRITE_LABEL } from "../lib/contacts";
+import { PORTFOLIO_VARIANT } from "../lib/site";
 import "./Hero.css";
 
 type Props = {
@@ -90,6 +91,7 @@ const GUIDE_DOT_YS = ["0px", "var(--fact-y2)"];
  * курсора (если поле не закреплено) убирает его.
  */
 export function Hero({ onActiveChange }: Props) {
+  const isKinopoiskVariant = PORTFOLIO_VARIANT === "kinopoisk";
   const [active, setActive] = useState(false);
   const pinned = useRef(false); // закреплено кликом — не гаснет на mouseleave
 
@@ -437,7 +439,9 @@ export function Hero({ onActiveChange }: Props) {
               двигаю&nbsp;компоненты,<br />смотрю&nbsp;метрики;
             </span>
             <span className="hero__mobile-only">
-              разбираю сложные сценарии, двигаю компоненты, смотрю метрики;
+              {isKinopoiskVariant
+                ? "придумываю продукты, разбираю сценарии, смотрю метрики;"
+                : "разбираю сложные сценарии, двигаю компоненты, смотрю метрики;"}
               <span className="hero__mobile-paragraph">
                 люблю красоту и приколы, сейчас рисую в&nbsp;яндексе
                 <span className="hero__logos hero__logos--mobile" aria-hidden="true">

@@ -36,7 +36,7 @@ export function ContactNudge() {
         <span className="contact-nudge__close-icon" aria-hidden="true" />
       </button>
       <p className="contact-nudge__text">
-        {"может, пора "}
+        {"может пора "}
         <br />
         познакомиться лично?
       </p>

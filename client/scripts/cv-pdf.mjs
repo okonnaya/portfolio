@@ -25,6 +25,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = join(root, "dist");
 const OUT_DIST = join(DIST, "cv.pdf");
 const OUT_PUBLIC = join(root, "public", "cv.pdf");
+const PORTFOLIO_VARIANT = process.env.VITE_PORTFOLIO_VARIANT ?? "main";
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -166,8 +167,10 @@ async function main() {
     return;
   }
 
-  await mkdir(dirname(OUT_PUBLIC), { recursive: true });
-  await copyFile(OUT_DIST, OUT_PUBLIC); // чтобы файл отдавался и в дев-режиме
+  if (PORTFOLIO_VARIANT === "main") {
+    await mkdir(dirname(OUT_PUBLIC), { recursive: true });
+    await copyFile(OUT_DIST, OUT_PUBLIC); // чтобы файл отдавался и в дев-режиме
+  }
   const { size } = await stat(OUT_DIST);
   console.log(`[cv-pdf] cv.pdf собран, ${Math.round(size / 1024)} кб`);
 }

@@ -12,6 +12,7 @@ import { Gallery, type GallerySlide } from "./Gallery";
 import { LazyVideo } from "./LazyVideo";
 import { typo } from "../lib/typo";
 import { isVideoSrc } from "../lib/media";
+import { PORTFOLIO_VARIANT } from "../lib/site";
 import "./Sections.css";
 
 /**
@@ -36,7 +37,7 @@ type CaseItem = {
 
 // «продуктовые кейсы»: каждый кейс сопровождается плейсхолдером под медиа,
 // клик по которому ведёт на страницу кейса
-const PRODUCT_CASES: CaseItem[] = [
+const MAIN_PRODUCT_CASES: CaseItem[] = [
   {
     slug: "ai-component",
     label: ["ai-ассистент\nв b2e"],
@@ -71,6 +72,16 @@ const PRODUCT_CASES: CaseItem[] = [
     image: "/case4_1.png",
   },
 ];
+
+const KINOPOISK_PRODUCT_CASES: CaseItem[] = [
+  MAIN_PRODUCT_CASES[3], // архив радостей
+  MAIN_PRODUCT_CASES[1], // поисковой сервис
+  MAIN_PRODUCT_CASES[0], // ai-компонент
+  MAIN_PRODUCT_CASES[2], // ai research platform
+];
+
+const PRODUCT_CASES =
+  PORTFOLIO_VARIANT === "kinopoisk" ? KINOPOISK_PRODUCT_CASES : MAIN_PRODUCT_CASES;
 
 // «для души» — не список кейсов, а коллаж: то, что делалось без брифа и без
 // метрик, и подписи ему только мешают. Плитки разложены свободно, поэтому
@@ -819,8 +830,8 @@ export function Sections() {
             опыт
           </h2>
         </header>
-        {PRODUCT_CASES.map((item, i) => (
-          <CaseRow key={i} item={item} />
+        {PRODUCT_CASES.map((item) => (
+          <CaseRow key={item.slug} item={item} />
         ))}
       </section>
 

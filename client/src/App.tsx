@@ -6,6 +6,7 @@ import { CvPage } from "./components/CvPage";
 import { Home } from "./components/Home";
 import { NotFound } from "./components/NotFound";
 import { sendHit } from "./lib/metrika";
+import { PORTFOLIO_VARIANT } from "./lib/site";
 
 /** Сброс скролла при смене маршрута. Если в url есть якорь (#case-<slug>) —
     это возврат «назад» из кейса: скроллим к соответствующему блоку на главной,
@@ -52,6 +53,10 @@ function MetrikaHits() {
 
 /** Роутинг: главная, страница отдельного кейса (по клику на медиа) и резюме. */
 function App() {
+  useEffect(() => {
+    document.documentElement.dataset.portfolioVariant = PORTFOLIO_VARIANT;
+  }, []);
+
   return (
     <>
       <ScrollToTop />
