@@ -4,6 +4,7 @@ import { CasePage } from "./components/CasePage";
 import { ContactNudge } from "./components/ContactNudge";
 import { CvPage } from "./components/CvPage";
 import { Home } from "./components/Home";
+import { KinopoiskHome } from "./components/KinopoiskHome";
 import { NotFound } from "./components/NotFound";
 import { sendHit } from "./lib/metrika";
 
@@ -52,12 +53,19 @@ function MetrikaHits() {
 
 /** Роутинг: главная, страница отдельного кейса (по клику на медиа) и резюме. */
 function App() {
+  const { pathname } = useLocation();
+  const isKinopoiskHost =
+    typeof window !== "undefined" &&
+    window.location.hostname.split(".")[0]?.toLowerCase() === "kinopoisk";
+  const home = isKinopoiskHost && pathname === "/" ? <KinopoiskHome /> : <Home />;
+
   return (
     <>
       <ScrollToTop />
       <ContactNudge />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={home} />
+        <Route path="/kinopoisk" element={<KinopoiskHome />} />
         <Route path="/case/:slug" element={<CasePage />} />
         <Route path="/cv" element={<CvPage />} />
         {/* любой другой адрес — 404, а не пустой экран */}

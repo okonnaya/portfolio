@@ -2,6 +2,7 @@
 
 const VIDEO_RE = /\.(webm|mp4)$/i;
 const WEBM_RE = /\.webm$/i;
+const VIDEO_VERSION = "20260904-safari";
 
 type VideoSource = {
   src: string;
@@ -23,32 +24,28 @@ export function isVideoSrc(src?: string) {
  */
 export function posterFor(src: string) {
   const file = src.split("/").pop() ?? "";
-  return `/posters/${file.replace(VIDEO_RE, "")}.webp`;
+  return withVideoVersion(`/posters/${file.replace(VIDEO_RE, "")}.webp`);
 }
 
-function isSafariLike() {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent;
-  const iOS =
-    /iphone|ipad|ipod/i.test(ua) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  return (
-    iOS ||
-    (/safari/i.test(ua) &&
-      !/chrome|chromium|crios|fxios|android/i.test(ua))
-  );
+function withVideoVersion(src: string) {
+  const sep = src.includes("?") ? "&" : "?";
+  return `${src}${sep}v=${VIDEO_VERSION}`;
 }
 
 /**
  * Источники для <video>. Для .webm рядом ожидается одноимённый .mp4: Safari
  * иногда либо не умеет WebM-кодек, либо выбирает его слишком оптимистично.
+ * MP4 ставим первым всегда: сайт пререндерится, и Safari может начать выбор
+ * источника ещё до гидрации React, когда browser-specific порядок уже поздно
+ * переставлять. Codec-string не уточняем: Safari очень чувствителен к
+ * расхождению type/codecs и реального H.264-потока.
  */
 export function videoSourcesFor(src: string): VideoSource[] {
-  if (!WEBM_RE.test(src)) return [{ src, type: "video/mp4" }];
+  if (!WEBM_RE.test(src)) return [{ src: withVideoVersion(src), type: "video/mp4" }];
 
   const mp4 = src.replace(WEBM_RE, ".mp4");
-  const webm = { src, type: 'video/webm; codecs="vp9"' };
-  const fallback = { src: mp4, type: 'video/mp4; codecs="avc1.42E01E"' };
+  const fallback = { src: withVideoVersion(mp4), type: "video/mp4" };
+  const webm = { src: withVideoVersion(src), type: "video/webm" };
 
-  return isSafariLike() ? [fallback, webm] : [webm, fallback];
+  return [fallback, webm];
 }

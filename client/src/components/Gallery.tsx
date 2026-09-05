@@ -178,6 +178,9 @@ export function Gallery({
               loop
               muted
               playsInline
+              controls={false}
+              disablePictureInPicture
+              controlsList="nodownload nofullscreen noremoteplayback"
               preload="metadata"
             >
               {videoSourcesFor(slide.src).map((source) => (

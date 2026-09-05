@@ -9,6 +9,7 @@ const template = await readFile(resolve(distDir, "index.html"), "utf8");
 
 const routes = [
   "/",
+  "/kinopoisk",
   "/cv",
   "/case/ai-component",
   "/case/search-button",

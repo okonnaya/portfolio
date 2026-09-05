@@ -5,7 +5,6 @@ import { typo } from "../lib/typo";
 import {
   EMAIL,
   EMAIL_URL,
-  SITE_LABEL,
   SITE_URL,
   TELEGRAM_HANDLE,
   TELEGRAM_URL,
@@ -47,13 +46,13 @@ const NAME = "карина\nрамазанова";
 // сайте ссылка на этот же сайт лишняя. пока SITE_URL пуст (см.
 // lib/contacts.ts), строки просто нет — пустая ссылка хуже её отсутствия
 const CONTACTS: { label: string; href: string; printOnly?: boolean }[] = [
-  ...(SITE_URL ? [{ label: SITE_LABEL, href: SITE_URL, printOnly: true }] : []),
+  ...(SITE_URL ? [{ label: "портфолио", href: SITE_URL, printOnly: true }] : []),
   { label: TELEGRAM_HANDLE, href: TELEGRAM_URL },
   { label: EMAIL, href: EMAIL_URL },
 ];
 
 const ABOUT =
-  "продуктовый дизайнер с опытом создания сложных цифровых решений. люблю, когда дизайн не только решает задачи, но и выглядит классно. писала код до появления chatgpt :)";
+  "продуктовый дизайнер с опытом сложных цифровых продуктов. люблю, когда дизайн не только решает задачи, но и выглядит классно. писала код до появления chatgpt :)";
 
 // файл резюме. собирается из этой же страницы на каждой сборке
 // (client/scripts/cv-pdf.mjs), поэтому не расходится с текстом ниже
@@ -73,10 +72,12 @@ const SECTIONS: Section[] = [
         subtitle: "дизайнер продукта",
         period: "апрель 2025 –\nсейчас",
         bullets: [
-          "отвечаю за весь дизайн двух внутренних продуктов в соло",
-          "унифицировала ии-фичи: внедрение сократилось с 3 до 1 спринта, дизайн полностью исключён из этого процесса",
-          "запускала новый ai-продукт",
+          "отвечаю за весь дизайн двух внутренних продуктов: от исследований и сценариев до релиза и метрик",
+          "унифицировала ии-фичи: сократила внедрение с 3 до 1 спринта и сделала его самостоятельным для продуктовых команд",
+          "вела дизайн нового AI-продукта от исследования до запуска в прод",
           "вела редизайн продукта с полным циклом исследований и тестов",
+          "нахожу и проверяю продуктовые улучшения через интервью и метрики",
+          "работаю в связке с разработкой: предлагаю варианты реализации, согласовываю продуктовые решения с учётом технических ограничений и довожу макеты до прода",
         ],
       },
       {
@@ -84,16 +85,14 @@ const SECTIONS: Section[] = [
         subtitle: "intern → strategic designer",
         period: "декабрь 2022 –\nапрель 2025",
         bullets: [
-          "интерфейсы и флоу для концептов и их защиты",
-          "исследовала пользователей и рынок",
-          "визуал для c-level’а",
-          "работа с gen ai",
-          "визуализация данных",
+          "исследовала пользователей и рынок, превращала выводы в продуктовые концепции",
+          "проектировала пользовательские сценарии и интерфейсы для новых цифровых продуктов",
+          "визуализировала продуктовые концепции для защит перед c-level",
         ],
       },
       {
         title: "lieu commun",
-        subtitle: "communication designer",
+        subtitle: "communication designer · проектно",
         period: "2023",
         bullets: [
           "коммуникационный дизайн для horeca",
@@ -161,15 +160,15 @@ const SECTIONS: Section[] = [
     // сначала что умею, потом чем делаю, и только в конце смежное
     notes: [
       {
-        text: "интерфейсы, прототипирование, юзабилити-тестирование, исследование пользователей, jtbd, userflow, атомарный подход, дизайн-системы",
+        text: "Интерфейсы, прототипирование, исследование пользователей, юзабилити-тестирование, JTBD, User Flow, дизайн-системы",
       },
       {
-        text: "figma, figjam, protopie, miro, photoshop, illustrator, indesign, fontlab, ai tools",
+        text: "Figma, FigJam, ProtoPie, Miro, AI Tools",
       },
-      { text: "яндекс метрика, google analytics, google tag manager, excel" },
-      { text: "html, css, javascript, react, git, p5.js, webflow, readymag" },
-      { text: "after effects, cinema 4d, blender, spark ar" },
-      { text: "keynote, powerpoint, think-cell" },
+      { text: "HTML, CSS, JavaScript, React, Git, p5.js, Webflow, Readymag" },
+      { text: "Яндекс Метрика, Google Analytics, Google Tag Manager, Excel" },
+      { text: "Photoshop, Illustrator, InDesign, FontLab, After Effects, Cinema 4D, Blender" },
+      { text: "Keynote, PowerPoint, think-cell" },
     ],
   },
 ];
@@ -193,13 +192,15 @@ function withoutBreaks(text: string) {
 // пункт: текстовая часть в первой колонке, период — во второй, у правого края
 function EntryView({ entry }: { entry: Entry }) {
   return (
-    <div className="cv__entry">
+    <div className={`cv__entry${entry.bullets ? " cv__entry--with-bullets" : ""}`}>
       <div className="cv__entry-text">
-        {/* место работы / вуз / пункт — h3 внутри своего раздела */}
-        <h3 className="cv__entry-title">{withBreaks(entry.title)}</h3>
-        {entry.subtitle && (
-          <p className="cv__entry-sub">{withBreaks(entry.subtitle)}</p>
-        )}
+        <div className="cv__entry-heading">
+          {/* место работы / вуз / пункт — h3 внутри своего раздела */}
+          <h3 className="cv__entry-title">{withBreaks(entry.title)}</h3>
+          {entry.subtitle && (
+            <p className="cv__entry-sub">{withBreaks(entry.subtitle)}</p>
+          )}
+        </div>
         {entry.bullets && (
           <ul className="cv__bullets">
             {entry.bullets.map((item, i) => (
@@ -280,12 +281,20 @@ export function CvPage() {
           {/* шапка: аватар · имя, ниже контакты · о себе — две строки той же
              сетки, чтобы контакты стояли ровно против абзаца */}
           <div className="cv__head">
-            <div className="cv__row">
+            <div className="cv__row cv__row--intro">
               <div className="cv__label cv__label--avatar">
                 <img className="cv__avatar" src="/avatar.jpeg" alt="Карина Р." />
               </div>
               <div className="cv__body">
-                <h1 className="cv__name">{withBreaks(NAME)}</h1>
+                <h1 className="cv__name">
+                  <span className="cv__name-full">{withBreaks(NAME)}</span>
+                  <span className="cv__name-short" aria-hidden="true">
+                    карина р.
+                  </span>
+                </h1>
+                <p className="cv__mobile-role" aria-hidden="true">
+                  продуктовый дизайнер
+                </p>
               </div>
             </div>
             <div className="cv__row">
