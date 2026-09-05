@@ -2,7 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Safari can rasterize an SVG favicon with dark edge artifacts. Keep the
+         scalable version for modern browsers and provide an opaque PNG fallback
+         plus a dedicated home-screen icon. -->
+    <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- полное имя: заголовок уходит во вкладку, в выдачу поисковика и в
          закладку — «карина р.» там нечего ни найти, ни вбить в ats -->

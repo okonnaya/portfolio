@@ -177,6 +177,9 @@
   font-size: var(--fs-xl);
   line-height: 1.2;
 }
+.case__wrap-mobile {
+  display: none;
+}
 
 /* зачин над списком («отвечала за»): буллиты продолжают эту строку, поэтому
    она держится к ним вплотную */
@@ -695,6 +698,12 @@
   .case__label--lead {
     font-size: clamp(36px, 10.2vw, 48px);
     line-height: 0.98;
+  }
+  .case__wrap-desktop {
+    display: none;
+  }
+  .case__wrap-mobile {
+    display: inline;
   }
   .case__label {
     font-size: clamp(26px, 7.8vw, 34px);

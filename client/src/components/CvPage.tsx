@@ -5,7 +5,6 @@ import { typo } from "../lib/typo";
 import {
   EMAIL,
   EMAIL_URL,
-  SITE_LABEL,
   SITE_URL,
   TELEGRAM_HANDLE,
   TELEGRAM_URL,
@@ -49,7 +48,7 @@ const ROLE = "продуктовый дизайнер";
 // сайте ссылка на этот же сайт лишняя. пока SITE_URL пуст (см.
 // lib/contacts.ts), строки просто нет — пустая ссылка хуже её отсутствия
 const CONTACTS: { label: string; href: string; printOnly?: boolean }[] = [
-  ...(SITE_URL ? [{ label: SITE_LABEL, href: SITE_URL, printOnly: true }] : []),
+  ...(SITE_URL ? [{ label: "портфолио", href: SITE_URL, printOnly: true }] : []),
   { label: TELEGRAM_HANDLE, href: TELEGRAM_URL },
   { label: EMAIL, href: EMAIL_URL },
 ];
@@ -79,7 +78,8 @@ const SECTIONS: Section[] = [
           "унифицировала ии-фичи: сократила внедрение с 3 до 1 спринта и сделала его самостоятельным для продуктовых команд",
           "вела дизайн нового AI-продукта от исследования до запуска в прод",
           "вела редизайн продукта с полным циклом исследований и тестов",
-          "нахожу и проверяю продуктовые улучшения через интервью и метрики"
+          "нахожу и проверяю продуктовые улучшения через интервью и метрики",
+          "работаю в связке с разработкой: предлагаю варианты реализации, согласовываю продуктовые решения с учётом технических ограничений и довожу макеты до прода",
         ],
       },
       {
@@ -94,7 +94,7 @@ const SECTIONS: Section[] = [
       },
       {
         title: "lieu commun",
-        subtitle: "communication designer",
+        subtitle: "communication designer · проектно",
         period: "2023",
         bullets: [
           "коммуникационный дизайн для horeca",
@@ -162,22 +162,22 @@ const SECTIONS: Section[] = [
     // сначала что умею, потом чем делаю, и только в конце смежное
     notes: [
       {
-        text: "интерфейсы, прототипирование, исследование пользователей, юзабилити-тестирование, jtbd, userflow, дизайн-системы",
+        text: "Интерфейсы, прототипирование, исследование пользователей, юзабилити-тестирование, JTBD, User Flow, дизайн-системы",
       },
       {
-        text: "figma, figjam, protopie, miro, ai tools",
+        text: "Figma, FigJam, ProtoPie, Miro, AI Tools",
       },
       {
-        text: "html, css, javascript, react, git, p5.js, webflow, readymag",
+        text: "HTML, CSS, JavaScript, React, Git, p5.js, Webflow, Readymag",
       },
       {
-        text: "яндекс метрика, google analytics, google tag manager, excel",
+        text: "Яндекс Метрика, Google Analytics, Google Tag Manager, Excel",
       },
       {
-        text: "photoshop, illustrator, indesign, fontlab, after effects, cinema 4d, blender",
+        text: "Photoshop, Illustrator, InDesign, FontLab, After Effects, Cinema 4D, Blender",
       },
       {
-        text: "keynote, powerpoint, think-cell",
+        text: "Keynote, PowerPoint, think-cell",
       },
     ],
   },
@@ -202,13 +202,15 @@ function withoutBreaks(text: string) {
 // пункт: текстовая часть в первой колонке, период — во второй, у правого края
 function EntryView({ entry }: { entry: Entry }) {
   return (
-    <div className="cv__entry">
+    <div className={`cv__entry${entry.bullets ? " cv__entry--with-bullets" : ""}`}>
       <div className="cv__entry-text">
-        {/* место работы / вуз / пункт — h3 внутри своего раздела */}
-        <h3 className="cv__entry-title">{withBreaks(entry.title)}</h3>
-        {entry.subtitle && (
-          <p className="cv__entry-sub">{withBreaks(entry.subtitle)}</p>
-        )}
+        <div className="cv__entry-heading">
+          {/* место работы / вуз / пункт — h3 внутри своего раздела */}
+          <h3 className="cv__entry-title">{withBreaks(entry.title)}</h3>
+          {entry.subtitle && (
+            <p className="cv__entry-sub">{withBreaks(entry.subtitle)}</p>
+          )}
+        </div>
         {entry.bullets && (
           <ul className="cv__bullets">
             {entry.bullets.map((item, i) => (

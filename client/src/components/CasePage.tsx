@@ -653,9 +653,22 @@ function withBreaks(text: string) {
   ));
 }
 
+// В лид-блоке десктоп сохраняет авторские переносы, а на телефоне заголовок
+// и описание набираются естественно по доступной ширине. Заодно убираем NBSP:
+// на узкой колонке типографические склейки слишком рано переносят всю пару.
+function withMobileNaturalWrap(text: string) {
+  const mobileText = text.replace(/\n/g, " ").replace(/\u00a0/g, " ");
+  return (
+    <>
+      <span className="case__wrap-desktop">{withBreaks(text)}</span>
+      <span className="case__wrap-mobile">{mobileText}</span>
+    </>
+  );
+}
+
 // правая колонка: буллиты (точка слева от пункта), колонка (точка между
 // пунктами) или абзац текста
-function BodyView({ body }: { body: Body }) {
+function BodyView({ body, naturalMobile = false }: { body: Body; naturalMobile?: boolean }) {
   if ("bullets" in body) {
     return (
       <>
@@ -684,7 +697,11 @@ function BodyView({ body }: { body: Body }) {
       </ul>
     );
   }
-  return <p className="case__text">{withBreaks(body.text)}</p>;
+  return (
+    <p className="case__text">
+      {naturalMobile ? withMobileNaturalWrap(body.text) : withBreaks(body.text)}
+    </p>
+  );
 }
 
 // одна единица медиа: картинка/видео (или розовый плейсхолдер) + опциональная
@@ -870,12 +887,12 @@ function BlockView({
           {/* название кейса — h1 страницы: до этого вся страница шла без
              единого заголовка, и парсеры видели плоскую простыню абзацев */}
           <h1 className="case__label case__label--lead">
-            {withBreaks(block.label)}
+            {withMobileNaturalWrap(block.label)}
           </h1>
           {block.meta && <CaseMetaLine meta={block.meta} />}
         </div>
         <div className="case__body case__body--lead">
-          <BodyView body={block.body} />
+          <BodyView body={block.body} naturalMobile />
         </div>
       </div>
     );
