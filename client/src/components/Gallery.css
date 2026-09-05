@@ -45,6 +45,16 @@
   background: #f7f7fa;
 }
 
+.gallery__media::-webkit-media-controls,
+.gallery__media::-webkit-media-controls-enclosure,
+.gallery__media::-webkit-media-controls-panel,
+.gallery__media::-webkit-media-controls-play-button,
+.gallery__media::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* плейсхолдер-слайд, пока нет картинок */
 .gallery__ph {
   width: min(70vw, 900px);

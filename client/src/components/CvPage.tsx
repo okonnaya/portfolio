@@ -38,8 +38,6 @@ type Note = { text: string };
 type Section = { label: string; entries?: Entry[]; notes?: Note[] };
 
 const NAME = "карина\nрамазанова";
-const MOBILE_NAME = "карина р.";
-const ROLE = "продуктовый дизайнер";
 
 // контакты — кликабельные: телеграм ведёт в чат, почта открывает письмо.
 // в cv.pdf ссылки остаются рабочими (chrome сохраняет их при печати)
@@ -54,7 +52,7 @@ const CONTACTS: { label: string; href: string; printOnly?: boolean }[] = [
 ];
 
 const ABOUT =
-  "продуктовый дизайнер с опытом сложных цифровых продуктов. люблю, когда дизайн не только решает задачи, но и выглядит классно. писала код до появления chatgpt :)";
+  "продуктовый дизайнер с опытом сложных цифровых продуктов. люблю, когда дизайн не только решает задачи, но и выглядит классно. писала код до появления chatgpt :)";
 
 // файл резюме. собирается из этой же страницы на каждой сборке
 // (client/scripts/cv-pdf.mjs), поэтому не расходится с текстом ниже
@@ -74,9 +72,9 @@ const SECTIONS: Section[] = [
         subtitle: "дизайнер продукта",
         period: "апрель 2025 –\nсейчас",
         bullets: [
-          "отвечаю за весь дизайн двух внутренних продуктов: от исследований и сценариев до релиза и метрик",
+          "отвечаю за весь дизайн двух внутренних продуктов: от исследований и сценариев до релиза и метрик",
           "унифицировала ии-фичи: сократила внедрение с 3 до 1 спринта и сделала его самостоятельным для продуктовых команд",
-          "вела дизайн нового AI-продукта от исследования до запуска в прод",
+          "вела дизайн нового AI-продукта от исследования до запуска в прод",
           "вела редизайн продукта с полным циклом исследований и тестов",
           "нахожу и проверяю продуктовые улучшения через интервью и метрики",
           "работаю в связке с разработкой: предлагаю варианты реализации, согласовываю продуктовые решения с учётом технических ограничений и довожу макеты до прода",
@@ -167,18 +165,10 @@ const SECTIONS: Section[] = [
       {
         text: "Figma, FigJam, ProtoPie, Miro, AI Tools",
       },
-      {
-        text: "HTML, CSS, JavaScript, React, Git, p5.js, Webflow, Readymag",
-      },
-      {
-        text: "Яндекс Метрика, Google Analytics, Google Tag Manager, Excel",
-      },
-      {
-        text: "Photoshop, Illustrator, InDesign, FontLab, After Effects, Cinema 4D, Blender",
-      },
-      {
-        text: "Keynote, PowerPoint, think-cell",
-      },
+      { text: "HTML, CSS, JavaScript, React, Git, p5.js, Webflow, Readymag" },
+      { text: "Яндекс Метрика, Google Analytics, Google Tag Manager, Excel" },
+      { text: "Photoshop, Illustrator, InDesign, FontLab, After Effects, Cinema 4D, Blender" },
+      { text: "Keynote, PowerPoint, think-cell" },
     ],
   },
 ];
@@ -279,7 +269,7 @@ export function CvPage() {
             alt=""
             aria-hidden="true"
           />
-          <span>{typo(MOBILE_NAME)}</span>
+          <span>карина р.</span>
         </Link>
         <a className="cv__sticky-download" href={CV_FILE} download={CV_FILENAME}>
           скачать
@@ -299,11 +289,11 @@ export function CvPage() {
                 <h1 className="cv__name">
                   <span className="cv__name-full">{withBreaks(NAME)}</span>
                   <span className="cv__name-short" aria-hidden="true">
-                    {typo(MOBILE_NAME)}
+                    карина р.
                   </span>
                 </h1>
                 <p className="cv__mobile-role" aria-hidden="true">
-                  {typo(ROLE)}
+                  продуктовый дизайнер
                 </p>
               </div>
             </div>

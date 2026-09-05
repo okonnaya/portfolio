@@ -1,5 +1,12 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type SyntheticEvent,
+} from "react";
 import { posterFor, videoSourcesFor } from "../lib/media";
+import "./LazyVideo.css";
 
 /**
  * Автоплей-луп, который начинает грузиться только когда доезжает до экрана.
@@ -11,14 +18,10 @@ import { posterFor, videoSourcesFor } from "../lib/media";
  * пользователь увидит только после нескольких экранов скролла, а платил за них
  * трафиком с первой секунды.
  *
- * Как работает: preload="none" + никакого autoplay в разметке. Файл представлен
- * постером (лёгкий webp, собирается `npm run posters`), а play() дёргается из
- * IntersectionObserver, когда плитка появляется во вьюпорте. При уходе за
- * границу — pause(): луп за экраном зря греет процессор и жжёт батарейку.
- *
- * prefers-reduced-motion: сами не запускаем, но отдаём нативные контролы —
- * иначе стоп-моушен (а это самостоятельная работа, а не декор) остался бы
- * недоступным вообще.
+ * Как работает: нативный autoplay/muted/playsinline стоит прямо в разметке:
+ * Safari надёжнее запускает такие видео сам, чем после одиночного play() из
+ * IntersectionObserver. JS остаётся только как страховка: будит видимые лупы и
+ * ставит на паузу те, что уехали за экран.
  */
 type Props = {
   src: string;
@@ -36,6 +39,30 @@ type Props = {
   playOn?: "view" | "hover";
 };
 
+function pxFromRootMargin(rootMargin: string) {
+  const first = rootMargin.trim().split(/\s+/)[0];
+  return first?.endsWith("px") ? Number.parseFloat(first) || 0 : 0;
+}
+
+function isNearViewport(video: HTMLVideoElement, rootMargin: string) {
+  const box = video.getBoundingClientRect();
+  const margin = pxFromRootMargin(rootMargin);
+  return box.bottom > -margin && box.top < window.innerHeight + margin;
+}
+
+function isSafariLike() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  const iOS =
+    /iphone|ipad|ipod/i.test(ua) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  return (
+    iOS ||
+    (/safari/i.test(ua) &&
+      !/chrome|chromium|crios|fxios|android/i.test(ua))
+  );
+}
+
 export function LazyVideo({
   src,
   className,
@@ -44,16 +71,68 @@ export function LazyVideo({
   playOn = "view",
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [manualPlayback, setManualPlayback] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const sources = videoSourcesFor(src);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setManualPlayback(isSafariLike()), 0);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      video.controls = true;
-      return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.controls = false;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load();
+
+    const play = () => {
+      video.autoplay = true;
+      video.setAttribute("autoplay", "");
+      video.preload = "auto";
+      if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load();
+      void video.play().catch(() => {});
+    };
+
+    const stop = () => {
+      video.autoplay = false;
+      video.removeAttribute("autoplay");
+      video.pause();
+    };
+
+    const onPlaying = () => setIsPlaying(true);
+    const onStopped = () => setIsPlaying(false);
+    video.addEventListener("playing", onPlaying);
+    video.addEventListener("pause", onStopped);
+    video.addEventListener("ended", onStopped);
+
+    if (manualPlayback) {
+      video.autoplay = false;
+      video.removeAttribute("autoplay");
+      video.preload = "metadata";
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) stop();
+          }
+        },
+        { rootMargin },
+      );
+      observer.observe(video);
+
+      return () => {
+        observer.disconnect();
+        video.removeEventListener("playing", onPlaying);
+        video.removeEventListener("pause", onStopped);
+        video.removeEventListener("ended", onStopped);
+      };
     }
 
     // По ховеру: наблюдатель не нужен вовсе, ролик стоит на постере, пока на
@@ -64,9 +143,9 @@ export function LazyVideo({
     // ended, пока курсор внутри.
     if (playOn === "hover") {
       let hovering = false;
-      const play = () => {
+      const playOnHover = () => {
         hovering = true;
-        void video.play().catch(() => {});
+        play();
       };
       // только снимаем флаг: доигрывает текущий круг, дальше сработает ended
       const release = () => {
@@ -76,9 +155,9 @@ export function LazyVideo({
         video.currentTime = 0;
         // круг повторяется, только пока курсор внутри; иначе замираем на первом
         // кадре — в том числе после единственного показа при первой прокрутке
-        if (hovering) void video.play().catch(() => {});
+        if (hovering) play();
       };
-      video.addEventListener("pointerenter", play);
+      video.addEventListener("pointerenter", playOnHover);
       video.addEventListener("pointerleave", release);
       video.addEventListener("ended", onEnded);
 
@@ -91,7 +170,7 @@ export function LazyVideo({
           for (const entry of entries) {
             if (!entry.isIntersecting) continue;
             intro.disconnect();
-            void video.play().catch(() => {});
+            play();
           }
         },
         { threshold: 0.5 },
@@ -100,11 +179,54 @@ export function LazyVideo({
 
       return () => {
         intro.disconnect();
-        video.removeEventListener("pointerenter", play);
+        video.removeEventListener("pointerenter", playOnHover);
         video.removeEventListener("pointerleave", release);
         video.removeEventListener("ended", onEnded);
       };
     }
+
+    let shouldPlay = false;
+    let retry = 0;
+    let retryTimer = 0;
+    let raf = 0;
+
+    const kick = () => {
+      raf = 0;
+      if (!shouldPlay || !isNearViewport(video, rootMargin)) return;
+      play();
+
+      if (video.paused && retry < 8) {
+        retry += 1;
+        retryTimer = window.setTimeout(queueKick, 250 * retry);
+      }
+    };
+
+    const queueKick = () => {
+      if (!raf) raf = window.requestAnimationFrame(kick);
+    };
+
+    const stopRetry = () => {
+      retry = 0;
+      window.clearTimeout(retryTimer);
+    };
+
+    const onAutoPlaying = () => {
+      stopRetry();
+      setIsPlaying(true);
+    };
+    const onWake = () => {
+      if (shouldPlay) queueKick();
+    };
+
+    video.removeEventListener("playing", onPlaying);
+    video.addEventListener("playing", onAutoPlaying);
+    window.addEventListener("scroll", onWake, { passive: true });
+    window.addEventListener("resize", onWake);
+    window.addEventListener("pageshow", onWake);
+    document.addEventListener("visibilitychange", onWake);
+    window.addEventListener("pointerdown", onWake, { passive: true });
+    window.addEventListener("touchstart", onWake, { passive: true });
+    window.addEventListener("keydown", onWake);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -112,39 +234,104 @@ export function LazyVideo({
           if (entry.isIntersecting) {
             // play() отклоняется, если браузер счёл автозапуск нежелательным
             // (политика автоплея, экономия трафика) — это не ошибка, просто
-            // остаёмся на постере
-            void video.play().catch(() => {});
+            // остаёмся на постере и повторяем попытку на ближайших wake-событиях.
+            shouldPlay = true;
+            queueKick();
           } else {
-            video.pause();
+            shouldPlay = false;
+            stopRetry();
+            stop();
           }
         }
       },
       { rootMargin },
     );
     observer.observe(video);
-    return () => observer.disconnect();
-  }, [rootMargin, playOn]);
+    queueKick();
+
+    return () => {
+      observer.disconnect();
+      stopRetry();
+      if (raf) window.cancelAnimationFrame(raf);
+      video.removeEventListener("playing", onAutoPlaying);
+      video.removeEventListener("pause", onStopped);
+      video.removeEventListener("ended", onStopped);
+      window.removeEventListener("scroll", onWake);
+      window.removeEventListener("resize", onWake);
+      window.removeEventListener("pageshow", onWake);
+      document.removeEventListener("visibilitychange", onWake);
+      window.removeEventListener("pointerdown", onWake);
+      window.removeEventListener("touchstart", onWake);
+      window.removeEventListener("keydown", onWake);
+    };
+  }, [manualPlayback, rootMargin, playOn]);
+
+  const startManualPlayback = (event?: SyntheticEvent<HTMLElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const video = ref.current;
+    if (!video) return;
+    video.controls = false;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.preload = "auto";
+    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load();
+    void video.play().catch(() => {});
+  };
+
+  const poster = posterFor(src);
+  const videoClassName = "lazy-video__media";
+  const rootClassName = ["lazy-video", manualPlayback && "lazy-video--manual", className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <video
-      ref={ref}
-      className={className}
-      style={style}
-      poster={posterFor(src)}
-      /* в hover-режиме цикл крутится вручную (см. эффект): нативный loop не
-         давал бы событию ended сработать, и ролик нельзя было бы остановить
-         ровно на конце круга */
-      loop={playOn !== "hover"}
-      muted
-      playsInline
-      /* по ховеру ждать нечего: пока курсор доедет, метаданные уже есть, и
-         первый кадр появляется без паузы на загрузку. в остальных режимах
-         ролик может быть за несколькими экранами — там по-прежнему none */
-      preload={playOn === "hover" ? "metadata" : "none"}
-    >
-      {sources.map((source) => (
-        <source key={source.src} src={source.src} type={source.type} />
-      ))}
-    </video>
+    <span className={rootClassName} style={style}>
+      <video
+        ref={ref}
+        className={videoClassName}
+        poster={poster}
+        /* в hover-режиме цикл крутится вручную (см. эффект): нативный loop не
+           давал бы событию ended сработать, и ролик нельзя было бы остановить
+           ровно на конце круга */
+        loop={playOn !== "hover"}
+        muted
+        playsInline
+        controls={false}
+        disablePictureInPicture
+        controlsList="nodownload nofullscreen noremoteplayback"
+        autoPlay={!manualPlayback && playOn === "view"}
+        /* Для Safari важнее ручной понятный старт, чем невидимая борьба с
+           autoplay-политикой. Остальные браузеры оставляем на быстрых лупах. */
+        preload={!manualPlayback && playOn === "view" ? "auto" : "metadata"}
+      >
+        {sources.map((source) => (
+          <source key={source.src} src={source.src} type={source.type} />
+        ))}
+      </video>
+      {manualPlayback && !isPlaying && (
+        <img className="lazy-video__poster" src={poster} alt="" aria-hidden="true" />
+      )}
+      {manualPlayback && !isPlaying && (
+        <span
+          className="lazy-video__play"
+          role="button"
+          tabIndex={0}
+          aria-label="Запустить видео"
+          onPointerDown={startManualPlayback}
+          onClick={startManualPlayback}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              startManualPlayback(event);
+            }
+          }}
+        >
+          <span className="lazy-video__play-icon" aria-hidden="true" />
+        </span>
+      )}
+    </span>
   );
 }

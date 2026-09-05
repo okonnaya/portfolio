@@ -14,9 +14,10 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PUBLIC = join(root, "public");
-const MAX_WIDTH = 1600;
+const MAX_WIDTH = 1280;
 const MAX_FPS = 30;
 const CRF = 24;
+const FORCE = process.env.FORCE_VIDEO_MP4 === "1";
 
 function run(cmd, args) {
   return new Promise((done, fail) => {
@@ -84,7 +85,7 @@ async function main() {
     const out = join(PUBLIC, `${basename(file, ".webm")}.mp4`);
     const tmp = join(PUBLIC, `${basename(file, ".webm")}.tmp.mp4`);
 
-    if (existsSync(out)) {
+    if (!FORCE && existsSync(out)) {
       const [srcStat, outStat] = await Promise.all([stat(src), stat(out)]);
       if (outStat.mtimeMs >= srcStat.mtimeMs) {
         console.log(`[video:mp4] ${file}: уже есть`);
@@ -106,9 +107,9 @@ async function main() {
         "-c:v",
         "libx264",
         "-profile:v",
-        "baseline",
+        "main",
         "-level",
-        "3.1",
+        "4.1",
         "-pix_fmt",
         "yuv420p",
         "-crf",

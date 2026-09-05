@@ -1,0 +1,92 @@
+.lazy-video {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  line-height: 0;
+  background: #f7f7fa;
+}
+
+.lazy-video__media,
+.lazy-video__poster {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.lazy-video__poster {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lazy-video__media::-webkit-media-controls,
+.lazy-video__media::-webkit-media-controls-enclosure,
+.lazy-video__media::-webkit-media-controls-panel,
+.lazy-video__media::-webkit-media-controls-play-button,
+.lazy-video__media::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.lazy-video--manual .lazy-video__media {
+  pointer-events: none;
+}
+
+.lazy-video.cases__img .lazy-video__media,
+.lazy-video.cases__img .lazy-video__poster,
+.lazy-video.soul__media .lazy-video__media,
+.lazy-video.soul__media .lazy-video__poster,
+.soul-cells .lazy-video.soulw__media .lazy-video__media,
+.soul-cells .lazy-video.soulw__media .lazy-video__poster {
+  height: 100%;
+}
+
+.lazy-video.soulw__media .lazy-video__media,
+.lazy-video.soulw__media .lazy-video__poster {
+  aspect-ratio: inherit;
+}
+
+.soul-cells .lazy-video.soulw__media .lazy-video__media,
+.soul-cells .lazy-video.soulw__media .lazy-video__poster {
+  aspect-ratio: auto;
+}
+
+.lazy-video__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 9%, 46px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(var(--ink), 0.5);
+  box-shadow: 0 6px 18px rgba(var(--ink), 0.16);
+  -webkit-backdrop-filter: blur(12px) saturate(1.05);
+  backdrop-filter: blur(12px) saturate(1.05);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transform: translate(-50%, -50%);
+}
+
+.lazy-video__play-icon {
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 9px solid white;
+}
+
+.lazy-video__play:focus-visible {
+  outline: 2px solid rgba(var(--ink), 0.3);
+  outline-offset: -4px;
+}
