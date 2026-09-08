@@ -44,6 +44,21 @@ jobs:
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
             "sudo mkdir -p /var/www/portfolio /var/www/portfolio-kinopoisk && sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /var/www/portfolio /var/www/portfolio-kinopoisk"
 
+      - name: Configure nginx
+        run: |
+          sed \
+            -e 's#__PRIMARY_DOMAIN__#okonnaya.com#g' \
+            -e 's#__KINOPOISK_DOMAIN__#kinopoisk.okonnaya.com#g' \
+            -e 's#__WEB_ROOT__#/var/www/portfolio#g' \
+            -e 's#__KINOPOISK_WEB_ROOT__#/var/www/portfolio-kinopoisk#g' \
+            deploy/nginx.conf > /tmp/portfolio-nginx.conf
+          scp -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            /tmp/portfolio-nginx.conf \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/portfolio-nginx.conf"
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "sudo install -m 644 /tmp/portfolio-nginx.conf /etc/nginx/sites-available/portfolio && sudo ln -sf /etc/nginx/sites-available/portfolio /etc/nginx/sites-enabled/portfolio && sudo rm -f /etc/nginx/sites-enabled/default && sudo nginx -t && sudo systemctl reload nginx"
+
       - name: Build main portfolio
         working-directory: client
         env:
