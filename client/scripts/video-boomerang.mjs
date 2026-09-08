@@ -1,7 +1,7 @@
 /**
  * «Бумеранг» для коротких лупов: `npm run video:boomerang`.
  *
- * Что это: у <video> нет обратного воспроизведения — playbackRate не бывает
+ * Что это: у <video> нет обратного воспроизведения — playbackRate не бывает
  * отрицательным, а отматывать currentTime из requestAnimationFrame значит
  * гонять сотни обратных сиков по VP9 (и делать это одновременно для всех
  * лупов блока «для души»). Поэтому реверс запекаем в файл: forward + reverse
@@ -16,14 +16,14 @@
  * а на пятнадцатисекундном видео полминутный цикл уже не читается как приём.
  *
  * Идемпотентность: в готовый файл пишется тег comment=boomerang, и повторный
- * запуск такие файлы пропускает — иначе второй прогон дал бы
+ * запуск такие файлы пропускает — иначе второй прогон дал бы
  * forward+reverse+reverse+forward.
  *
  * Файл в public заменяется, предыдущая версия уезжает в
  * assets-src/originals/loops/ (репозиторий её не тащит, см. .gitignore).
  * Первый кадр не меняется, поэтому постеры (npm run posters) пересобирать не нужно.
  *
- * Если ffmpeg не найден — предупреждаем и выходим с нулевым кодом, как это
+ * Если ffmpeg не найден — предупреждаем и выходим с нулевым кодом, как это
  * делают cv-pdf.mjs и video-compress.mjs: скрипт не должен ронять сборку.
  *   поставить: brew install ffmpeg
  */
@@ -42,7 +42,7 @@ const ORIGINALS = resolve(root, "..", "assets-src", "originals", "loops");
 // отсутствуют: 15 с × 2 = полминуты цикла и лишние ~3,4 МБ веса
 const TARGETS = ["flowers.webm", "gabdula.webm", "motion.webm"];
 
-// тот же CRF, что у video-compress.mjs: файл в public уже пережат, и склейка —
+// тот же CRF, что у video-compress.mjs: файл в public уже пережат, и склейка —
 // это вторая генерация VP9, мягчить её сильнее нет смысла
 const CRF = 34;
 // метка в теге comment: по ней узнаём уже развёрнутый файл
@@ -109,7 +109,7 @@ const kb = (n) => `${Math.round(n / 1024)} кб`;
 
 /**
  * Фильтр склейки. Развёрнутая копия обрезается с двух краёв на кадр:
- * без этого крайние кадры показывались бы дважды подряд — на развороте
+ * без этого крайние кадры показывались бы дважды подряд — на развороте
  * (конец forward = первый кадр reverse) и на стыке цикла (последний кадр
  * reverse = начало forward), и луп заметно «спотыкался» бы в этих точках.
  */
@@ -123,7 +123,7 @@ function filter(frames) {
 async function main() {
   if (!(await hasFfmpeg())) {
     console.warn(
-      "[boomerang] ffmpeg не найден — видео не тронуты.\n" +
+      "[boomerang] ffmpeg не найден — видео не тронуты.\n" +
         "            поставить: brew install ffmpeg",
     );
     return;
@@ -135,7 +135,7 @@ async function main() {
   for (const file of TARGETS) {
     const src = join(PUBLIC, file);
     if (!existsSync(src)) {
-      console.warn(`[boomerang] ${file}: нет в public — пропускаем`);
+      console.warn(`[boomerang] ${file}: нет в public — пропускаем`);
       continue;
     }
     if (await isBoomerang(src)) {

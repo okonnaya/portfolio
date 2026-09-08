@@ -3,19 +3,19 @@ import { TELEGRAM_URL, WRITE_LABEL } from "../lib/contacts";
 import "./SiteChrome.css";
 
 /**
- * Единый «хром» сайта — хедер и подвал в одном месте, чтобы не править их
+ * Единый «хром» сайта — хедер и подвал в одном месте, чтобы не править их
  * в двух файлах. Общие мелочи (шрифт меты, точка-разделитель, ссылка-ховер)
  * живут в классах .chrome-* и переиспользуются обоими.
  *
- * SiteHeader — sticky-навбар: аватар · карина р. · cv | > приветик.
- * SiteFooter — подвал: для mvp просто «коммит карины р. 2026».
- * Интерактив «клик · чтобы вытянуть карту дня» пока скрыт — код ниже
+ * SiteHeader — sticky-навбар: аватар · карина р. · cv | > приветик.
+ * SiteFooter — подвал: для mvp просто «коммит карины р. 2026».
+ * Интерактив «клик · чтобы вытянуть карту дня» пока скрыт — код ниже
  * закомментирован (KeyRays + разметка), стили остались в SiteChrome.css.
  */
 
 // ── хедер ──────────────────────────────────────────────────────────────
 // Та же мета, что и на первом экране главной. Без сложной механики залипания
-// hero — просто sticky-строка в 20px от верха.
+// hero — просто sticky-строка в 20px от верха.
 export function SiteHeader() {
   return (
     <header className="site-header">
@@ -64,7 +64,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="cases-footer">
-      {/* пока mvp — одна строка вместо интерактива с картой дня:
+      {/* пока mvp — одна строка вместо интерактива с картой дня:
       <span className="cases-footer__key" aria-hidden="true">
         <KeyRays side="left" />
         <span className="cases-footer__word">клик</span>
@@ -72,7 +72,7 @@ export function SiteFooter() {
       </span>
       <span>чтобы вытянуть карту дня</span>
       <span className="chrome-dot" aria-hidden="true" /> */}
-      {/* в подвале — полное имя: шапка везде сокращает до «карина р.», и
+      {/* в подвале — полное имя: шапка везде сокращает до «карина р.», и
           фамилия иначе живёт только на странице резюме */}
       <span>карина рамазанова</span>
       <span className="chrome-dot" aria-hidden="true" />

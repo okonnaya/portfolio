@@ -3,13 +3,13 @@ import type { Sketch, SketchContext } from "../components/Canvas";
 /* Поле частиц, сгенерированное один раз при монтировании (DOM load).
 
    Первый цвет (#FF4DA2):
-   - целевое покрытие COVERAGE, размер частицы — size;
-   - кластеризация — растут пятнами от затравок (CLUSTER:1 — во сколько раз рост
+   - целевое покрытие COVERAGE, размер частицы — size;
+   - кластеризация — растут пятнами от затравок (CLUSTER:1 — во сколько раз рост
      от существующего пятна вероятнее новой одиночной затравки);
    - затухание к краям: внутри PAD частиц нет, дальше плотность нарастает (FADE).
 
    Второй цвет (#FEAAFF):
-   - их МЕНЬШЕ (SECONDARY — доля от числа первых);
+   - их МЕНЬШЕ (SECONDARY — доля от числа первых);
    - затравки сеются либо вплотную к первым частицам, либо в кольце ~FAR_VH от
      них, в соотношении NEAR_RATIO:1;
    - дальше так же кластеризуются между собой (рост от своей границы).
@@ -19,7 +19,7 @@ import type { Sketch, SketchContext } from "../components/Canvas";
 
    Поле генерируется один раз (позиции = «дом» каждой частицы), а draw каждый
    кадр рисует частицы заново с физикой ховера: импульс от курсора, трение,
-   пружина к дому — поэтому композиция восстанавливается, когда курсор уходит. */
+   пружина к дому — поэтому композиция восстанавливается, когда курсор уходит. */
 
 const COLOR = "#F6DDFF";
 const COLOR2 = "#FEAAFF";
@@ -32,27 +32,27 @@ const TERTIARY = 0.2; // множитель к числу вторых част�
 const PAD = 30; // px у края, где частиц нет
 const CLUSTER = 15; // во сколько раз рост от пятна вероятнее новой затравки
 const JITTER = 3; // разброс внутри клетки: смещение ±(JITTER/2)·клетки
-const SPACING = 0.5; // шаг сетки как доля диаметра: <1 — точки плотнее налезают
+const SPACING = 0.5; // шаг сетки как доля диаметра: <1 — точки плотнее налезают
 const FAR_VH = 2; // «на расстоянии 2vh» для вторичной затравки
 const NEAR_RATIO = 3; // вторичные: рядом с первыми : в кольце = NEAR_RATIO : 1
 
 // ховер (как в первой анимации): импульс от курсора + трение + пружина домой
-const REPEL_RADIUS = 300; // px — радиус влияния курсора
+const REPEL_RADIUS = 300; // px — радиус влияния курсора
 const REPEL = 2; // сила отталкивания
 const FRICTION = 0.85; // затухание скорости
 const SPRING = 0.006; // возврат к «домашней» позиции
 
 // проявление/исчезновение: поле включается извне (setActive) и собирается/тает
-// не разом, а вразнобой — у каждой частицы своя задержка старта фейда
-const SPREAD_IN = 700; // мс — разброс задержек проявления
-const SPREAD_OUT = 450; // мс — разброс задержек ухода
-const FADE = 320; // мс — длительность фейда одной частицы
+// не разом, а вразнобой — у каждой частицы своя задержка старта фейда
+const SPREAD_IN = 700; // мс — разброс задержек проявления
+const SPREAD_OUT = 450; // мс — разброс задержек ухода
+const FADE = 320; // мс — длительность фейда одной частицы
 
 type Dot = {
   x: number;
   y: number; // текущая позиция
   hx: number;
-  hy: number; // «дом» — куда возвращается
+  hy: number; // «дом» — куда возвращается
   vx: number;
   vy: number; // скорость
   r: number;
@@ -83,7 +83,7 @@ function applyPhysics(dot: Dot, mx: number, my: number) {
 
 export type Field = {
   sketch: Sketch;
-  /** включить/выключить поле — оно проявится/растает вразнобой */
+  /** включить/выключить поле — оно проявится/растает вразнобой */
   setActive: (v: boolean) => void;
 };
 
@@ -124,7 +124,7 @@ export function createField(): Field {
     const FADE = Math.min(W, H) * 0.12; // зона спада плотности от PAD внутрь
 
     // вес ячейки по расстоянию до НИЖНЕГО края: 0 внутри PAD, 1 выше зоны FADE
-    // (сверху/слева/справа padding нет — частицы доходят до кромки)
+    // (сверху/слева/справа padding нет — частицы доходят до кромки)
     const edgeFactor = (y: number) => {
       const d = H - y;
       if (d <= PAD) return 0;
@@ -151,7 +151,7 @@ export function createField(): Field {
       }
     }
 
-    const placed = new Uint8Array(n); // 0 — пусто, 1 — первый цвет, 2 — второй
+    const placed = new Uint8Array(n); // 0 — пусто, 1 — первый цвет, 2 — второй
 
     dots = [];
 
@@ -336,7 +336,7 @@ export function createField(): Field {
       let count = 0;
       for (const i of rim) {
         if (Math.random() < density) {
-          placeCell(i, mark, noFr, color); // без роста — только обводка
+          placeCell(i, mark, noFr, color); // без роста — только обводка
           count++;
         }
       }
@@ -354,12 +354,12 @@ export function createField(): Field {
 
   const setup = ({ width, height }: SketchContext) => generate(width, height);
 
-  // оптимизация: пока курсор не двигается, частицы успокоились и фейд завершён —
+  // оптимизация: пока курсор не двигается, частицы успокоились и фейд завершён —
   // не перерисовываем (иначе backdrop-filter над полем пересчитывается впустую)
   let lastMx = NaN;
   let lastMy = NaN;
   let asleep = true; // на старте поле выключено и прозрачно → спим
-  let stateChange = 0; // время последней смены active — от него идут задержки
+  let stateChange = 0; // время последней смены active — от него идут задержки
   let prevActive = false;
 
   const draw = ({ ctx, width, height, mouse, time, dt }: SketchContext) => {
@@ -373,7 +373,7 @@ export function createField(): Field {
     lastMy = mouse.y;
     if (asleep) return; // пиксели не меняются → нет лишнего перекомпозита
 
-    ctx.clearRect(0, 0, width, height); // прозрачный фон — поля может не быть вовсе
+    ctx.clearRect(0, 0, width, height); // прозрачный фон — поля может не быть вовсе
 
     const elapsed = time - stateChange;
     const target = active ? 1 : 0;
@@ -389,7 +389,7 @@ export function createField(): Field {
           dot.alpha = Math.max(target, dot.alpha - aStep);
       }
       if (dot.alpha !== target) allAtTarget = false;
-      if (dot.alpha <= 0.001) continue; // невидима — ни физики, ни отрисовки
+      if (dot.alpha <= 0.001) continue; // невидима — ни физики, ни отрисовки
 
       applyPhysics(dot, mouse.x, mouse.y);
       const e =

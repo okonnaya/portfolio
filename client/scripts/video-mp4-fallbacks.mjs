@@ -1,7 +1,7 @@
 /**
  * MP4-фолбэки для Safari: `npm run video:mp4`.
  *
- * Основной формат лупов на сайте — WebM/VP9, но Safari не всегда воспроизводит
+ * Основной формат лупов на сайте — WebM/VP9, но Safari не всегда воспроизводит
  * такие файлы. Этот скрипт кладёт рядом с каждым public/*.webm одноимённый
  * public/*.mp4 в H.264, чтобы компонент мог отдать браузеру оба источника.
  */
@@ -68,7 +68,7 @@ const kb = (n) => `${Math.round(n / 1024)} кб`;
 async function main() {
   if (!(await hasFfmpeg())) {
     console.warn(
-      "[video:mp4] ffmpeg не найден — MP4-фолбэки не собраны.\n" +
+      "[video:mp4] ffmpeg не найден — MP4-фолбэки не собраны.\n" +
         "            поставить: brew install ffmpeg",
     );
     return;

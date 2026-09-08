@@ -1,15 +1,15 @@
 /**
- * Сборка client/public/cv.pdf из страницы /cv — чтобы кнопка «скачать» отдавала
+ * Сборка client/public/cv.pdf из страницы /cv — чтобы кнопка «скачать» отдавала
  * файл сразу, без диалога печати, и при этом файл не расходился с вёрсткой.
  *
  * Как работает: поднимает статику собранного dist на свободном порту, печатает
  * /cv в pdf через headless-chrome (тот же движок, что и в диалоге печати, то
  * есть внешний вид задаёт @media print в CvPage.css), кладёт результат в dist
- * и в public. Запускается сам в конце `npm run build`, отдельно — `npm run
+ * и в public. Запускается сам в конце `npm run build`, отдельно — `npm run
  * cv:pdf` (нужен уже собранный dist).
  *
  * Зависимостей нет: статику отдаёт node, chrome ищется среди уже установленных.
- * Если chrome не найден — предупреждаем и выходим с нулевым кодом, чтобы не
+ * Если chrome не найден — предупреждаем и выходим с нулевым кодом, чтобы не
  * ронять сборку: в dist останется прежний cv.pdf из public.
  */
 
@@ -45,7 +45,7 @@ const MIME = {
   ".pdf": "application/pdf",
 };
 
-/** статика dist с spa-фолбэком на index.html (маршрут /cv — клиентский) */
+/** статика dist с spa-фолбэком на index.html (маршрут /cv — клиентский) */
 function serveDist() {
   const server = createServer(async (req, res) => {
     const url = new URL(req.url, "http://127.0.0.1");
@@ -108,14 +108,14 @@ async function findChrome() {
 
 async function main() {
   if (!existsSync(join(DIST, "index.html"))) {
-    console.warn("[cv-pdf] нет dist — сначала `npm run build`");
+    console.warn("[cv-pdf] нет dist — сначала `npm run build`");
     return;
   }
 
   const chrome = await findChrome();
   if (!chrome) {
     console.warn(
-      "[cv-pdf] chrome не найден — cv.pdf не пересобран (в dist остался прежний).\n" +
+      "[cv-pdf] chrome не найден — cv.pdf не пересобран (в dist остался прежний).\n" +
         "         поставить: npx puppeteer browsers install chrome-headless-shell\n" +
         "         или указать путь: CHROME_PATH=/path/to/chrome npm run cv:pdf"
     );
@@ -142,14 +142,14 @@ async function main() {
     `http://127.0.0.1:${port}/cv`,
   ];
 
-  // некоторые сборки chrome в headless на macos просто зависают — не держим
+  // некоторые сборки chrome в headless на macos просто зависают — не держим
   // из-за этого сборку бесконечно
   const TIMEOUT_MS = 90_000;
   const code = await new Promise((ok) => {
     const p = spawn(chrome, args, { stdio: ["ignore", "ignore", "pipe"] });
     let err = "";
     const timer = setTimeout(() => {
-      console.warn(`[cv-pdf] chrome не ответил за ${TIMEOUT_MS / 1000}с — прерываю`);
+      console.warn(`[cv-pdf] chrome не ответил за ${TIMEOUT_MS / 1000}с — прерываю`);
       p.kill("SIGKILL");
     }, TIMEOUT_MS);
     p.stderr.on("data", (d) => (err += d));
@@ -163,7 +163,7 @@ async function main() {
   await rm(profile, { recursive: true, force: true });
 
   if (code !== 0 || !existsSync(OUT_DIST)) {
-    console.warn("[cv-pdf] печать не удалась — cv.pdf не пересобран");
+    console.warn("[cv-pdf] печать не удалась — cv.pdf не пересобран");
     return;
   }
 

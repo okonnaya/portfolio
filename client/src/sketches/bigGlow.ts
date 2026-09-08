@@ -3,7 +3,7 @@ import type { Sketch, SketchContext } from "../components/Canvas";
 /* Отдельный слой КРУПНЫХ светящихся частиц #FEAAFF (plus-lighter).
 
    Рисуется на своём canvas поверх блюр-оверлея. Мягкость даёт радиальный
-   градиент каждой частицы (не CSS-блюр — он на полный экран дорогой). Фон слоя
+   градиент каждой частицы (не CSS-блюр — он на полный экран дорогой). Фон слоя
    прозрачный, режим plus-lighter, поэтому перекрытия частиц светлеют.
 
    Курсор на этот слой НЕ влияет. Вместо этого каждое пятно (кластер) слегка
@@ -13,7 +13,7 @@ import type { Sketch, SketchContext } from "../components/Canvas";
 const COLOR_RGB = "254, 170, 255"; // #FEAAFF в rgb для градиента
 const GLOW_SOFT = 10; // РАЗМЕР свечения = radius × GLOW_SOFT (не мягкость!)
 const GLOW_CORE = 0.15; // доля радиуса с яркой сердцевиной; МЕНЬШЕ → мягче (длиннее хвост)
-const GLOW_ALPHA = 0.4; // прозрачность пятна: 0 — невидимо, 1 — плотно
+const GLOW_ALPHA = 0.4; // прозрачность пятна: 0 — невидимо, 1 — плотно
 const SIZE_VH = 0.13; // крупные (основное поле ~2.5vh)
 const SIZE_VARY = 0.4; // разброс диаметра: множитель в [1−SIZE_VARY, 1+SIZE_VARY]
 const COVERAGE = 0.05; // их немного
@@ -23,8 +23,8 @@ const JITTER = 2; // разброс внутри клетки
 const SPACING = 2.5; // шаг сетки как доля диаметра: больше → пятна дальше, меньше слипаются
 
 // дрейф пятна
-const DRIFT = 14; // px — амплитуда покачивания
-const DRIFT_PERIOD = 7000; // ms — базовый период (на пятно ±40%)
+const DRIFT = 14; // px — амплитуда покачивания
+const DRIFT_PERIOD = 7000; // ms — базовый период (на пятно ±40%)
 
 type Dot = { x: number; y: number; cluster: number; s: number };
 type Motion = { ax: number; ay: number; sx: number; sy: number; px: number; py: number };
@@ -34,7 +34,7 @@ export function createBigGlow(): Sketch {
   let motion: Motion[] = []; // параметры дрейфа на каждый кластер
   let radius = 0;
   // спрайт свечения, отрисованный один раз (радиальный градиент дорого считать
-  // попиксельно каждый кадр на каждую частицу — кешируем и блитим drawImage)
+  // попиксельно каждый кадр на каждую частицу — кешируем и блитим drawImage)
   let sprite: HTMLCanvasElement | null = null;
   let spriteR = 0; // логический радиус, под который отрендерен спрайт
 
@@ -180,16 +180,16 @@ export function createBigGlow(): Sketch {
     buildSprite();
   };
 
-  // дрейф медленный — рендерим вполовину частоты (между кадрами держим прошлый),
+  // дрейф медленный — рендерим вполовину частоты (между кадрами держим прошлый),
   // экономя заливку/композитинг полноэкранного plus-lighter слоя
   let lastDraw = -Infinity;
   const FRAME_MS = 1000 / 30;
 
   const draw = ({ ctx, width, height, time }: SketchContext) => {
-    if (time - lastDraw < FRAME_MS) return; // кадр не перерисовываем — висит прошлый
+    if (time - lastDraw < FRAME_MS) return; // кадр не перерисовываем — висит прошлый
     lastDraw = time;
 
-    ctx.clearRect(0, 0, width, height); // прозрачный фон — слой ложится поверх
+    ctx.clearRect(0, 0, width, height); // прозрачный фон — слой ложится поверх
     ctx.globalCompositeOperation = "plus-lighter" as GlobalCompositeOperation;
 
     // смещение каждого пятна на этот кадр (по разу на кластер, не на частицу)

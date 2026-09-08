@@ -7,16 +7,44 @@ import { Home } from "./components/Home";
 import { KinopoiskHome } from "./components/KinopoiskHome";
 import { NotFound } from "./components/NotFound";
 import { sendHit } from "./lib/metrika";
-import { PORTFOLIO_VARIANT } from "./lib/site";
+import { PORTFOLIO_VARIANT, SITE_URL } from "./lib/site";
 
-/** Сброс скролла при смене маршрута. Если в url есть якорь (#case-<slug>) —
+const KINOPOISK_HOSTNAME = "kinopoisk.okonnaya.com";
+
+function configuredHostname() {
+  try {
+    return new URL(SITE_URL).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function runtimeHostname() {
+  return typeof window !== "undefined" ? window.location.hostname.toLowerCase() : "";
+}
+
+function isKinopoiskSubdomain() {
+  const hostname = runtimeHostname();
+
+  return (
+    hostname === KINOPOISK_HOSTNAME ||
+    configuredHostname() === KINOPOISK_HOSTNAME
+  );
+}
+
+function isLocalPreviewHost() {
+  const hostname = runtimeHostname();
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
+/** Сброс скролла при смене маршрута. Если в url есть якорь (#case-<slug>) —
     это возврат «назад» из кейса: скроллим к соответствующему блоку на главной,
-    иначе новая страница открывалась бы на прежней позиции. Без якоря — наверх. */
+    иначе новая страница открывалась бы на прежней позиции. Без якоря — наверх. */
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     if (hash) {
-      // элемент может ещё не быть в dom на момент эффекта — ждём кадр
+      // элемент может ещё не быть в dom на момент эффекта — ждём кадр
       const id = hash.slice(1);
       requestAnimationFrame(() => {
         const el = document.getElementById(id);
@@ -31,18 +59,18 @@ function ScrollToTop() {
 }
 
 /** Просмотры страниц в Метрику при навигации роутером (см. lib/metrika.ts).
-    Первый экран считает сам счётчик на init — его пропускаем, иначе вход
-    удвоился бы. Дальше на каждый новый адрес шлём хит, referer'ом — предыдущий:
+    Первый экран считает сам счётчик на init — его пропускаем, иначе вход
+    удвоился бы. Дальше на каждый новый адрес шлём хит, referer'ом — предыдущий:
     так в отчётах виден путь по сайту, а не набор изолированных заходов.
     Якорь в адрес не берём: возврат «назад» из кейса открывает главную как
-    /#case-<slug> — это тот же просмотр главной, а не отдельный. */
+    /#case-<slug> — это тот же просмотр главной, а не отдельный. */
 function MetrikaHits() {
   const { pathname, search } = useLocation();
   const prevUrl = useRef<string | null>(null);
 
   useEffect(() => {
     const url = window.location.origin + pathname + search;
-    // на монтировании только запоминаем адрес входа — хит по нему уже ушёл
+    // на монтировании только запоминаем адрес входа — хит по нему уже ушёл
     if (prevUrl.current !== null && prevUrl.current !== url) {
       sendHit(url, prevUrl.current);
     }
@@ -59,13 +87,12 @@ function App() {
   }, []);
 
   const { pathname } = useLocation();
-  const isKinopoiskHost =
-    typeof window !== "undefined" &&
-    window.location.hostname.split(".")[0]?.toLowerCase() === "kinopoisk";
-  const isKinopoiskHome =
-    pathname === "/" &&
-    (PORTFOLIO_VARIANT === "kinopoisk" || isKinopoiskHost);
-  const home = isKinopoiskHome ? <KinopoiskHome /> : <Home />;
+  const home =
+    pathname === "/" && isKinopoiskSubdomain() ? (
+      <KinopoiskHome withPortfolio />
+    ) : (
+      <Home />
+    );
 
   return (
     <>
@@ -73,14 +100,14 @@ function App() {
       <ContactNudge />
       <Routes>
         <Route path="/" element={home} />
-        <Route path="/kinopoisk" element={<KinopoiskHome />} />
+        <Route path="/kinopoisk" element={<KinopoiskHome withPortfolio={isLocalPreviewHost()} />} />
         <Route path="/case/:slug" element={<CasePage />} />
         <Route path="/cv" element={<CvPage />} />
-        {/* любой другой адрес — 404, а не пустой экран */}
+        {/* любой другой адрес — 404, а не пустой экран */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       {/* ПОСЛЕ Routes: эффекты соседей срабатывают по порядку в дереве, а
-          страницы (резюме, 404) правят document.title своими эффектами —
+          страницы (резюме, 404) правят document.title своими эффектами —
           стоя выше, счётчик отправлял бы хит с заголовком прошлой страницы */}
       <MetrikaHits />
     </>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 /* Контекст, который скетч получает в setup/draw.
-   Координаты и размеры — в CSS-пикселях (DPR уже учтён через ctx.scale),
+   Координаты и размеры — в CSS-пикселях (DPR уже учтён через ctx.scale),
    так что рисуем в логических единицах и не думаем про Retina. */
 export type SketchContext = {
   ctx: CanvasRenderingContext2D;
@@ -25,7 +25,7 @@ type Props = {
   sketch: Sketch;
   className?: string;
   style?: React.CSSProperties;
-  /** множитель к DPR для бэкинг-стора: <1 — рендер в пониженном разрешении
+  /** множитель к DPR для бэкинг-стора: <1 — рендер в пониженном разрешении
       (дешевле заливка/композитинг). Годится для размытых/мягких слоёв. */
   resolution?: number;
 };

@@ -7,13 +7,13 @@
 #   sudo bash deploy/setup-vm.sh
 #
 # Переменные (опционально):
-#   REPO_URL   — репозиторий (по умолчанию github.com/okonnaya/portfolio)
-#   BRANCH     — ветка (main)
-#   DOMAIN     — основной домен для nginx (okonnaya.com)
-#   KINOPOISK_DOMAIN — поддомен для версии под Kinopoisk
-#   APP_DIR    — где хранить исходники (/var/www/portfolio-src)
-#   WEB_ROOT   — откуда nginx раздаёт статику (/var/www/portfolio)
-#   KINOPOISK_WEB_ROOT — откуда nginx раздаёт Kinopoisk-версию
+#   REPO_URL   — репозиторий (по умолчанию github.com/okonnaya/portfolio)
+#   BRANCH     — ветка (main)
+#   DOMAIN     — основной домен для nginx (okonnaya.com)
+#   KINOPOISK_DOMAIN — поддомен для версии под Kinopoisk
+#   APP_DIR    — где хранить исходники (/var/www/portfolio-src)
+#   WEB_ROOT   — откуда nginx раздаёт статику (/var/www/portfolio)
+#   KINOPOISK_WEB_ROOT — откуда nginx раздаёт Kinopoisk-версию
 
 set -euo pipefail
 

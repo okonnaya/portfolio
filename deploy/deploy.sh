@@ -7,13 +7,13 @@
 #   sudo bash /var/www/portfolio-src/deploy/deploy.sh
 #
 # Переменные:
-#   APP_DIR   — путь к репозиторию
-#   WEB_ROOT  — каталог, откуда nginx раздаёт файлы
-#   KINOPOISK_WEB_ROOT — каталог для kinopoisk.okonnaya.com
-#   BRANCH    — ветка для деплоя
-#   SITE_URL  — основной публичный адрес
-#   KINOPOISK_SITE_URL — публичный адрес Kinopoisk-версии
-#   DEPLOY_KINOPOISK=0 — не выкладывать Kinopoisk-версию
+#   APP_DIR   — путь к репозиторию
+#   WEB_ROOT  — каталог, откуда nginx раздаёт файлы
+#   KINOPOISK_WEB_ROOT — каталог для kinopoisk.okonnaya.com
+#   BRANCH    — ветка для деплоя
+#   SITE_URL  — основной публичный адрес
+#   KINOPOISK_SITE_URL — публичный адрес Kinopoisk-версии
+#   DEPLOY_KINOPOISK=0 — не выкладывать Kinopoisk-версию
 
 set -euo pipefail
 
