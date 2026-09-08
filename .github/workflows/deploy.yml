@@ -42,7 +42,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "mkdir -p /var/www/portfolio /var/www/portfolio-kinopoisk"
+            "sudo mkdir -p /var/www/portfolio /var/www/portfolio-kinopoisk && sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /var/www/portfolio /var/www/portfolio-kinopoisk"
 
       - name: Build main portfolio
         working-directory: client
