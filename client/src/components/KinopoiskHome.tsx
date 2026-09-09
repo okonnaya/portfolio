@@ -147,7 +147,7 @@ function KinopoiskHeader({
     >
       <div
         ref={innerRef}
-        className="hero__inner"
+        className={`hero__inner${isStuck ? " is-stuck" : ""}`}
         style={{ "--meta-top": `${metaTop}px` } as CSSProperties}
       >
         <div className="hero__meta hero__meta--left">
