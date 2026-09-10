@@ -292,6 +292,7 @@
   min-width: 0;
 }
 .soulw__frame {
+  position: relative;
   display: block;
   height: 100%;
   overflow: hidden;
@@ -300,6 +301,17 @@
 }
 .soulw--wide .soulw__frame {
   border-radius: var(--soul-r-wide, 32px);
+}
+.soulw__frame--soul-screen-2026-09-09 {
+  border: 2px solid rgba(var(--ink), 0.02);
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.soulw__frame--soul-screen-2026-09-09 .soulw__media,
+.soulw__frame--soul-screen-2026-09-09 .lazy-video__media,
+.soulw__frame--soul-screen-2026-09-09 .lazy-video__poster {
+  height: 100%;
 }
 .soulw__media {
   display: block;

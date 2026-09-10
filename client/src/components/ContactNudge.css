@@ -11,7 +11,7 @@
   width: 200px;
   height: 200px;
   padding: 8px 20px;
-  border: 1px solid #f9f9f9;
+  border: 1px solid rgba(249, 249, 249, 0.62);
   border-radius: 1000px;
   background: #ff69b4;
   color: #fff;

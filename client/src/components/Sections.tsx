@@ -242,6 +242,13 @@ type SoulWork = {
 const SOUL_WORKS: SoulWork[] = [
   { key: "yamusic", src: "/yamusic.webm", w: 1200, h: 545.318, wide: true },
   {
+    key: "soul-screen-2026-09-09",
+    src: "/soul-screen-2026-09-09.mp4",
+    w: 1400,
+    h: 722,
+    wide: true,
+  },
+  {
     key: "poster",
     src: "/soul/poster.webp",
     alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
@@ -675,9 +682,12 @@ function splitColumns(works: SoulWork[], cols: number) {
 // «обложка → полотно мелочи → финал», а не как ровный столбец карточек.
 function SoulMasonry() {
   const cols = useSoulColumns();
-  const anchors = SOUL_WORKS.filter((work) => work.wide);
+  const firstBodyIndex = SOUL_WORKS.findIndex((work) => !work.wide);
+  const splitAt = firstBodyIndex === -1 ? SOUL_WORKS.length : firstBodyIndex;
+  const leadingAnchors = SOUL_WORKS.slice(0, splitAt).filter((work) => work.wide);
+  const trailingAnchors = SOUL_WORKS.slice(splitAt).filter((work) => work.wide);
   const columns = splitColumns(
-    SOUL_WORKS.filter((work) => !work.wide),
+    SOUL_WORKS.slice(splitAt).filter((work) => !work.wide),
     cols,
   );
   const anchor = (work: SoulWork) => (
@@ -687,7 +697,7 @@ function SoulMasonry() {
   );
   return (
     <div className="soul-flow">
-      {anchors.length > 0 && anchor(anchors[0])}
+      {leadingAnchors.map(anchor)}
       <div className="soul-flow__cols">
         {columns.map((column, i) => (
           <div className="soul-flow__col" key={i}>
@@ -699,7 +709,7 @@ function SoulMasonry() {
           </div>
         ))}
       </div>
-      {anchors.slice(1).map(anchor)}
+      {trailingAnchors.map(anchor)}
     </div>
   );
 }

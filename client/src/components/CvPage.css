@@ -479,6 +479,7 @@
   }
 
   .cv__contact::before,
+  .cv__contact:not(.cv__contact--print) + .cv__contact:not(.cv__contact--print)::before,
   .cv__entry--with-bullets .cv__entry-sub::before {
     content: none;
   }

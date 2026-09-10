@@ -242,6 +242,31 @@ function LoveSeatsTicket() {
   );
 }
 
+const MATCH_CARD_IMAGES = [
+  "/kinopoisk/match/card-1.png?v=2",
+  "/kinopoisk/match/card-2.png?v=2",
+  "/kinopoisk/match/card-3.png?v=2",
+  "/kinopoisk/match/card-4.png?v=2",
+  "/kinopoisk/match/card-5.png?v=2",
+];
+
+function MatchGenreCards() {
+  return (
+    <div className="kp-match-cards" aria-hidden="true">
+      {MATCH_CARD_IMAGES.map((src, index) => (
+        <img
+          key={src}
+          className={`kp-match-cards__item kp-match-cards__item--${index + 1}`}
+          src={src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+      ))}
+    </div>
+  );
+}
+
 function ConceptBlocks() {
   return (
     <>
@@ -360,8 +385,17 @@ function KinopoiskStage({
   }, [metaTop]);
 
   return (
-    <div className="kp-stage-shell">
-      <div className="kp-stage" ref={stageRef}>
+    <>
+      <KinopoiskHeader
+        innerRef={headerInnerRef}
+        gridRef={headerGridRef}
+        avatarRef={headerAvatarRef}
+        isStuck={isHeaderStuck}
+        metaTop={metaTop}
+      />
+
+      <div className="kp-stage-shell">
+        <div className="kp-stage" ref={stageRef}>
         <KinopoiskRays />
         <ProgressiveBlur tune={BLUR_TUNE} isCompact={isCompact} />
 
@@ -369,14 +403,6 @@ function KinopoiskStage({
         <div className="kp-fade kp-fade--between-1" aria-hidden="true" />
         <div className="kp-fade kp-fade--middle" aria-hidden="true" />
         <div className="kp-fade kp-fade--between-2" aria-hidden="true" />
-
-        <KinopoiskHeader
-          innerRef={headerInnerRef}
-          gridRef={headerGridRef}
-          avatarRef={headerAvatarRef}
-          isStuck={isHeaderStuck}
-          metaTop={metaTop}
-        />
 
         <h1 className="kp-title">
           специальный показ
@@ -399,10 +425,11 @@ function KinopoiskStage({
         <section className="kp-copy-block kp-copy-block--match" aria-label="Мэтч по жанрам">
           <h2>мэтч по жанрам</h2>
           <p>
-            мне нравится ваш стык продукта и коммуникаций — я начинала с комдиза,
+            мне нравится ваш стык продукта и коммуникаций — я начинала с комдиза,
             а сейчас занимаюсь продуктами в инфре яндекса и очень горю по хорошим
             картинкам
           </p>
+          <MatchGenreCards />
         </section>
 
         <section className="kp-copy-block kp-copy-block--pay" aria-label="Концепты">
@@ -443,8 +470,9 @@ function KinopoiskStage({
             <span className="kp-scroll__arrow" aria-hidden="true" />
           </button>
         ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

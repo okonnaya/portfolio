@@ -63,7 +63,7 @@
   z-index: 2;
   display: grid;
   place-items: center;
-  width: clamp(34px, 9%, 46px);
+  width: clamp(56px, 5vw, 68px);
   aspect-ratio: 1;
   padding: 0;
   border: 0;
@@ -80,10 +80,10 @@
 .lazy-video__play-icon {
   width: 0;
   height: 0;
-  margin-left: 3px;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-left: 9px solid white;
+  margin-left: 4px;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-left: 14px solid white;
 }
 
 .lazy-video__play:focus-visible {
