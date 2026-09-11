@@ -102,9 +102,13 @@
 
 /* вертикальный ритм крупных блоков */
 .case__content {
+  --case-gap: 144px;
   display: flex;
   flex-direction: column;
-  gap: 144px;
+  gap: var(--case-gap);
+}
+.case__row--compact-after {
+  margin-bottom: calc(24px - var(--case-gap));
 }
 
 /* ряд секции: две колонки, выключка к центру */
@@ -123,6 +127,13 @@
   line-height: 1.1;
 }
 
+
+@media (min-width: 761px) {
+  .case__label--right-column {
+    grid-column: 2;
+    text-align: left;
+  }
+}
 
 /* Опциональное залипание названия: вешается точечно (sticky: true у блока), а не
    на все ряды подряд — в коротких секциях ехать некуда и смысла в нём нет.
@@ -283,6 +294,10 @@
   width: 100%;
   border-radius: 32px;
   display: block;
+}
+.case__img--outlined {
+  outline: 2px solid #f7f7fa;
+  outline-offset: -2px;
 }
 /* подпись под медиа: ширина в половину колонки, выключена к центру —
    как любой текст на странице. --left: левая половина, текст вправо;
@@ -613,7 +628,7 @@
   display: block;
   margin-top: 96px;
   padding-top: 24px;
-  border-top: 1px solid var(--rule);
+  border-top: 2px solid var(--rule);
   text-align: right;
   text-decoration: none;
 }
@@ -667,7 +682,7 @@
     margin-bottom: 24px;
   }
   .case__content {
-    gap: 56px;
+    --case-gap: 56px;
   }
   .case__steps {
     gap: 24px;

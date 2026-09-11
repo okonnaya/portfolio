@@ -30,7 +30,7 @@ type Body =
 // неё показывается розовый плейсхолдер. tall — высокий блок. align — выключка
 // подписи к центру: "left" (левая половина, текст вправо) — по умолчанию,
 // "right" (правая половина, текст влево)
-type MediaItem = { src?: string; tall?: boolean; caption?: string; align?: "left" | "right" };
+type MediaItem = { src?: string; tall?: boolean; caption?: string; alt?: string; outlined?: boolean; align?: "left" | "right" };
 
 // ряд блока процесса: либо «шаг (лево) · описание (право)», либо вставка медиа
 // между шагами — чтобы картинка стояла ровно после того шага, к которому
@@ -50,6 +50,8 @@ type Block =
   | {
       block: "section";
       label: string;
+      compactAfter?: boolean;
+      labelAlign?: "right";
       lead?: boolean;
       meta?: CaseMeta;
       sticky?: boolean;
@@ -228,6 +230,21 @@ const CASES: Record<string, Case> = {
           },
         ],
       },
+      {
+        block: "section",
+        label: "концепты",
+        compactAfter: true,
+        labelAlign: "right",
+        body: { text: "" },
+      },
+      {
+        block: "group",
+        items: [
+          { src: "/ai-concepts/projects@3x.png", alt: "Концепт проектов в AI-ассистенте", outlined: true },
+          { src: "/ai-concepts/customization@3x.png", alt: "Концепт настройки и оценки ответа AI-ассистента" },
+          { src: "/ai-concepts/reasoning@3x.png", alt: "Концепт режима «Рассуждать» в AI-ассистенте" },
+        ],
+      },
     ],
   },
 
@@ -330,6 +347,20 @@ const CASES: Record<string, Case> = {
             "инициировала новогодний прикол с поисковыми итогами. этот проект повысил узнаваемость бренда и посещаемость главной страницы сервиса, знатно пошумел во внутренних сервисах и познакомил бумеров со словом «друллеги»",
           ],
         },
+      },
+      {
+        block: "section",
+        label: "концепты",
+        compactAfter: true,
+        labelAlign: "right",
+        body: { text: "" },
+      },
+      {
+        block: "group",
+        items: [
+          { src: "/search-concepts/results-v4@3x.png", alt: "Концепт поисковой выдачи с быстрыми действиями", outlined: true },
+          { src: "/search-concepts/search@3x.png", alt: "Концепт единого поиска по интранету", outlined: true },
+        ],
       },
     ],
   },
@@ -708,9 +739,9 @@ function MediaView({ item }: { item: MediaItem }) {
           />
         ) : (
           <img
-            className={`case__img${item.tall ? " case__img--tall" : ""}`}
+            className={`case__img${item.tall ? " case__img--tall" : ""}${item.outlined ? " case__img--outlined" : ""}`}
             src={item.src}
-            alt={item.caption ?? ""}
+            alt={item.alt ?? item.caption ?? ""}
             // страница кейса — длинная лента медиа; без lazy браузер тянет все
             // картинки сразу, хотя видно от них один-два экрана
             loading="lazy"
@@ -893,8 +924,8 @@ function BlockView({
   // уходят на уровень ниже — под его собственный h2
   const Heading = depth > 0 ? "h3" : "h2";
   return (
-    <div className={rowClass(block.sticky)} id={id}>
-      <Heading className="case__label">{withBreaks(block.label)}</Heading>
+    <div className={`${rowClass(block.sticky)}${block.compactAfter ? " case__row--compact-after" : ""}`} id={id}>
+      <Heading className={`case__label${block.labelAlign === "right" ? " case__label--right-column" : ""}`}>{withBreaks(block.label)}</Heading>
       <div className="case__body">
         <BodyView body={block.body} />
       </div>

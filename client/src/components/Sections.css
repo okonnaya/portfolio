@@ -301,6 +301,15 @@
 .soulw--wide .soulw__frame {
   border-radius: var(--soul-r-wide, 32px);
 }
+.soulw__frame--soul-screen-2026-09-09 {
+  border: 2px solid #f7f7fa;
+  background: #fff;
+}
+.soulw__frame--soul-screen-2026-09-09 .soulw__media,
+.soulw__frame--soul-screen-2026-09-09 .lazy-video__media,
+.soulw__frame--soul-screen-2026-09-09 .lazy-video__poster {
+  height: 100%;
+}
 .soulw__media {
   display: block;
   width: 100%;
@@ -324,7 +333,42 @@
   filter: brightness(0.55);
 }
 .soul-cells .soulw {
+  position: relative;
   transition: filter 0.3s ease;
+}
+.soulw__caption {
+  position: absolute;
+  left: calc(100% + 24px);
+  top: 0;
+  width: min(220px, max(0px, calc(20vw - 48px)));
+  font-size: var(--fs-md);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--text-secondary);
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.soulw__caption--left {
+  left: auto;
+  right: calc(100% + 24px);
+  text-align: right;
+}
+@media (hover: hover) and (min-width: 761px) {
+  .soulw:has(.soulw__frame:hover) > .soulw__caption {
+    opacity: 1;
+  }
+}
+@media (max-width: 760px) {
+  .soulw__caption {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .soulw__caption {
+    transition: none;
+  }
 }
 /* на тачах ховер «залипает» после тапа — там гасить нечего и незачем */
 @media (hover: none) {
