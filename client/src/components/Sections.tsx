@@ -220,6 +220,8 @@ const SOUL_TILES: SoulTile[] = [
 // w/h взяты из макета и совпадают с интринсиком файлов (макет = ½ пикселей).
 type SoulWork = {
   key: string;
+  caption?: string;
+  captionSide?: "left" | "right";
   src: string; // .webm → видео-луп, иначе картинка
   alt?: string; // у видео нет: LazyVideo рисует немой декоративный луп
   href?: string; // внешняя ссылка на работу
@@ -240,27 +242,34 @@ type SoulWork = {
 // не бывает отрицательным. Длинные diary и yamusic намеренно обычные лупы —
 // у них цикл вперёд-назад вышел бы на полминуты
 const SOUL_WORKS: SoulWork[] = [
-  { key: "yamusic", src: "/yamusic.webm", w: 1200, h: 545.318, wide: true },
-  {
-    key: "soul-screen-2026-09-09",
-    src: "/soul-screen-2026-09-09.mp4",
-    w: 1400,
-    h: 722,
-    wide: true,
-  },
+  { key: "yamusic", src: "/yamusic.webm", w: 1200, h: 545.318, wide: true,
+    caption: "концепт вечеринки в яндекс музыке" },
   {
     key: "poster",
+    caption: "плакат к вечеринке",
+    captionSide: "left",
     src: "/soul/poster.webp",
     alt: "афиша вечеринки «танцуем под сеты с lim и чихо»",
     w: 563,
     h: 792,
   },
-  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883 },
+  { key: "diary", src: "/diary.webm", w: 389.634, h: 345.883,
+    caption: "мой блокнот с поездки в тбилиси" },
+  {
+    key: "soul-screen-2026-09-09",
+    src: "/internetometer-original.mp4",
+    w: 1736,
+    h: 896,
+    wide: true,
+    caption: "рабочий концепт расширенного режима интернетометра",
+  },
   
-  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600 },
+  { key: "gabdula", src: "/gabdula.webm", w: 600, h: 600,
+    caption: "отрывок из типографического моушена", captionSide: "left" },
   {
     key: "sticker1",
     src: "/soul/sticker1.jpg",
+    caption: "визитки для чихо",
     alt: "красная наклейка-коробочка в руке: «чихо это правда китай»",
     w: 584,
     h: 354,
@@ -268,6 +277,8 @@ const SOUL_WORKS: SoulWork[] = [
   {
     key: "phone1",
     src: "/soul/phone1.webp",
+    caption: "обои на телефон",
+    captionSide: "left",
     alt: "экран концепта: размытые красные цветы и подпись «всё хорошо»",
     w: 545,
     h: 1182,
@@ -276,6 +287,7 @@ const SOUL_WORKS: SoulWork[] = [
   {
     key: "phone2",
     src: "/soul/phone2.webp",
+    caption: "обои на телефон",
     alt: "экран концепта: слово «останавливаться», набранное по кругам",
     w: 545,
     h: 1178,
@@ -285,15 +297,19 @@ const SOUL_WORKS: SoulWork[] = [
   {
     key: "sticker2",
     src: "/soul/sticker2.jpg",
+    caption: "зин",
+    captionSide: "left",
     alt: "красные наклейки на стене: «мы с твоей 6 лет вместе, ну так, если ты не знал»",
     w: 584,
     h: 411,
   },
-   { key: "flowers", src: "/flowers.webm", w: 298.743, h: 298.743 },
+   { key: "flowers", src: "/flowers.webm", w: 298.743, h: 298.743,
+     caption: "отрывок из типографического моушена" },
   {
     key: "motion",
     src: "/motion.webm",
     w: 1200,
+    caption: "стопмоушен для песни «over the rainbow»",
     h: 669,
     wide: true,
     href: "https://youtu.be/dy7JG_fK-gQ?si=qzivTsX3kw403P_R",
@@ -805,6 +821,11 @@ function SoulGrid() {
             onPointerEnter={onTileEnter}
           >
             {workFrame(work)}
+            {work.caption && (
+              <span className={`soulw__caption${work.captionSide === "left" ? " soulw__caption--left" : ""}`}>
+                {typo(work.caption)}
+              </span>
+            )}
           </li>
         ))}
       </ul>
