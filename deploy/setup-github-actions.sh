@@ -4,8 +4,8 @@
 set -euo pipefail
 
 REPO="${REPO:-okonnaya/portfolio}"
-VPS_HOST="${VPS_HOST:-111.88.159.139}"
-VPS_USER="${VPS_USER:-okonnaya}"
+: "${VPS_HOST:?Set VPS_HOST to the verified server IP}"
+VPS_USER="${VPS_USER:-portfolio-deploy}"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "gh is required. Install GitHub CLI first."
@@ -31,6 +31,8 @@ ssh-keygen -t ed25519 -C "github-actions-${REPO}" -f "$key_file" -N ""
 ssh "${VPS_USER}@${VPS_HOST}" 'mkdir -p ~/.ssh && chmod 700 ~/.ssh'
 ssh "${VPS_USER}@${VPS_HOST}" \
   "grep -qxF '$(cat "$key_file.pub")' ~/.ssh/authorized_keys 2>/dev/null || printf '%s\n' '$(cat "$key_file.pub")' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+ssh-keygen -F "$VPS_HOST" | gh secret set VPS_KNOWN_HOSTS --repo "$REPO"
 
 gh secret set VPS_HOST --repo "$REPO" --body "$VPS_HOST"
 gh secret set VPS_USER --repo "$REPO" --body "$VPS_USER"

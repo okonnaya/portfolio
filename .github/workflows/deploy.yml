@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: production-deploy
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -32,32 +32,14 @@ jobs:
         run: npm ci
 
       - name: Install SSH key
+        env:
+          DEPLOY_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Ensure web roots
-        run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "sudo mkdir -p /var/www/portfolio /var/www/portfolio-kinopoisk && sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /var/www/portfolio /var/www/portfolio-kinopoisk"
-
-      - name: Configure nginx
-        run: |
-          sed \
-            -e 's#__PRIMARY_DOMAIN__#okonnaya.com#g' \
-            -e 's#__KINOPOISK_DOMAIN__#kinopoisk.okonnaya.com#g' \
-            -e 's#__WEB_ROOT__#/var/www/portfolio#g' \
-            -e 's#__KINOPOISK_WEB_ROOT__#/var/www/portfolio-kinopoisk#g' \
-            deploy/nginx.conf > /tmp/portfolio-nginx.conf
-          scp -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            /tmp/portfolio-nginx.conf \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/portfolio-nginx.conf"
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "sudo install -m 644 /tmp/portfolio-nginx.conf /etc/nginx/sites-available/portfolio && sudo ln -sf /etc/nginx/sites-available/portfolio /etc/nginx/sites-enabled/portfolio && sudo rm -f /etc/nginx/sites-enabled/default && sudo nginx -t && sudo systemctl reload nginx"
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
       - name: Build main portfolio
         working-directory: client
@@ -68,7 +50,7 @@ jobs:
 
       - name: Upload main portfolio
         run: |
-          rsync -az --delete \
+          rsync -az --delete --exclude=.well-known/ \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
             client/dist/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/portfolio/"
@@ -82,7 +64,23 @@ jobs:
 
       - name: Upload Kinopoisk portfolio
         run: |
-          rsync -az --delete \
+          rsync -az --delete --exclude=.well-known/ \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
             client/dist/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/portfolio-kinopoisk/"
+
+      - name: Update server source checkout
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" \
+            "git -C /var/www/portfolio-src fetch origin main && git -C /var/www/portfolio-src reset --hard $GITHUB_SHA"
+
+      - name: Check deployed pages
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          curl --fail --silent --show-error --resolve "okonnaya.com:80:$VPS_HOST" http://okonnaya.com/ -o /dev/null
+          curl --fail --silent --show-error --resolve "kinopoisk.okonnaya.com:80:$VPS_HOST" http://kinopoisk.okonnaya.com/ -o /dev/null

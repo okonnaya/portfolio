@@ -37,7 +37,7 @@ apt-get update -qq
 apt-get upgrade -y -qq
 
 echo "==> Базовые утилиты"
-apt-get install -y -qq git curl ca-certificates rsync nginx
+apt-get install -y -qq git curl ca-certificates rsync nginx certbot
 
 echo "==> Node.js 22 (через NodeSource)"
 if ! command -v node >/dev/null 2>&1 || [[ "$(node -v)" != v22* ]]; then
@@ -67,7 +67,15 @@ sed \
   -e "s#__KINOPOISK_DOMAIN__#${KINOPOISK_DOMAIN}#g" \
   -e "s#__KINOPOISK_WEB_ROOT__#${KINOPOISK_WEB_ROOT}#g" \
   -e "s#__WEB_ROOT__#${WEB_ROOT}#g" \
-  "$APP_DIR/deploy/nginx.conf" > "$NGINX_SITE"
+  "$APP_DIR/deploy/nginx.conf" > "${NGINX_SITE}.candidate"
+# На новой ВМ сертификата ещё нет: сначала запускаем только HTTP.
+# Полный HTTPS-конфиг включается после выпуска сертификата через enable-tls.sh.
+if [[ -s "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" && -s "/etc/letsencrypt/live/${DOMAIN}/privkey.pem" ]]; then
+  mv "${NGINX_SITE}.candidate" "$NGINX_SITE"
+else
+  sed '/^# BEGIN TLS/,$d' "${NGINX_SITE}.candidate" > "$NGINX_SITE"
+  rm "${NGINX_SITE}.candidate"
+fi
 ln -sf "$NGINX_SITE" /etc/nginx/sites-enabled/portfolio
 rm -f /etc/nginx/sites-enabled/default
 nginx -t
@@ -87,5 +95,5 @@ echo "  Kinopoisk: http://${KINOPOISK_DOMAIN}"
 echo ""
 echo "Дальше:"
 echo "  1. Настрой DNS A-записи на IP виртуалки: ${DOMAIN}, ${KINOPOISK_DOMAIN}"
-echo "  2. SSL: sudo apt install certbot python3-certbot-nginx && sudo certbot --nginx -d ${DOMAIN} -d ${KINOPOISK_DOMAIN}"
+echo "  2. SSL (после настройки DNS): sudo bash $APP_DIR/deploy/enable-tls.sh"
 echo "  3. Обновления: sudo bash $APP_DIR/deploy/deploy.sh"
