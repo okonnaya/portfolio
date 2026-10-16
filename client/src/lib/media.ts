@@ -24,6 +24,9 @@ export function isVideoSrc(src?: string) {
  */
 export function posterFor(src: string) {
   const file = src.split("/").pop() ?? "";
+  if (file === "mig-animation.mp4") {
+    return withVideoVersion("/posters/mig-animation.png");
+  }
   if (file === "internetometer-original.mp4") {
     return withVideoVersion("/posters/internetometer-original.png");
   }

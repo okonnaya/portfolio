@@ -451,14 +451,36 @@
   --cols: 2;
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-  grid-auto-rows: calc(
-    (100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols)
-  );
+  grid-auto-rows: auto;
   grid-auto-flow: row dense;
   gap: var(--gap);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.soul-cells > .soulw {
+  height: calc((100cqw - var(--gap)) / 2);
+}
+.soul-wallpapers-row {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.soul-wallpapers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.soul-wallpapers > .soulw {
+  aspect-ratio: 545 / 1182;
+}
+/* Подпись средней карточки выносим за левый край всего ряда. */
+.soul-wallpapers > .soulw:nth-child(2) > .soulw__caption {
+  left: auto;
+  right: calc(200% + var(--gap) + 24px);
+  text-align: right;
 }
 /* широкая работа — на обе колонки, во всю ширину сетки */
 .soul-cells .soulw--wide {

@@ -295,6 +295,15 @@ const SOUL_WORKS: SoulWork[] = [
   },
 
   {
+    key: "mig",
+    src: "/mig-animation.mp4",
+    caption: "эту картинку репостнули сбпч!",
+    w: 540,
+    h: 1170,
+    tall: true,
+  },
+
+  {
     key: "sticker2",
     src: "/soul/sticker2.jpg",
     caption: "зин",
@@ -808,12 +817,13 @@ function SoulGrid() {
           плитками есть зазор, и на нём иначе успевал бы проскочить лишний
           запуск-остановка */}
       <ul className="soul-cells" ref={gridRef} onPointerLeave={release}>
-        {SOUL_WORKS.map((work) => (
+        {SOUL_WORKS.flatMap((work) => {
+          const renderTile = (work: SoulWork) => (
           <li
             className={[
               "soulw",
               work.wide && "soulw--wide",
-              work.tall && "soulw--tall",
+
             ]
               .filter(Boolean)
               .join(" ")}
@@ -827,7 +837,17 @@ function SoulGrid() {
               </span>
             )}
           </li>
-        ))}
+          );
+          if (!work.tall) return [renderTile(work)];
+          if (work.key !== "phone1") return [];
+          return [
+            <li className="soul-wallpapers-row" key="wallpapers">
+              <ul className="soul-wallpapers">
+                {SOUL_WORKS.filter((item) => item.tall).map(renderTile)}
+              </ul>
+            </li>,
+          ];
+        })}
       </ul>
     </div>
   );
